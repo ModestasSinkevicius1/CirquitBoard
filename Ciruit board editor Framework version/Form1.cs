@@ -7,21 +7,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Media;
+using System.Runtime.CompilerServices;
 
 namespace Ciruit_board_editor_Framework_version
 {
     public partial class Form1 : Form
     {
 
-        private Graphics g;
-        private Pen p;
-        private Point cursor;
+        //private Graphics g;
+        //private Pen p;
+        //private Point cursor;
+
+        private int x = 0;
+        private int y = 0;
+
+        DatabaseControl dc = new DatabaseControl();
+        private string pictureName = "";       
 
         public Form1()
         {
             InitializeComponent();
-            g = this.CreateGraphics();
-            p = new Pen(Color.Black, 3);           
+            //g = this.CreateGraphics();
+            //p = new Pen(Color.Black, 3);           
         }
 
         private void pictureBox7_Click(object sender, EventArgs e)
@@ -35,19 +43,17 @@ namespace Ciruit_board_editor_Framework_version
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        {
-            DatabaseControl dc = new DatabaseControl();
-            CreateImageBoxes(dc);                   
+        {                                  
+            CreateImageBoxes();
             /*
             foreach(Element t in dc.GetElements())
             {
                 MessageBox.Show(t.GetType());
             }
-            */
-
+            */                                  
         }
 
-        private void CreateImageBoxes(DatabaseControl dc)
+        private void CreateImageBoxes()
         {
             PictureBox pb;
 
@@ -67,17 +73,76 @@ namespace Ciruit_board_editor_Framework_version
                 this.Controls.Add(pb);
                 i++;
             }
-        }
+        }       
 
         public void Image_Click(object sender, EventArgs e)
         {           
-            PictureBox i = (PictureBox)sender;           
-            MessageBox.Show(i.Tag.ToString());
+            PictureBox i = (PictureBox)sender;
+            //MessageBox.Show(i.Tag.ToString());
+            pictureName = i.Tag.ToString();
         }             
 
         private void Form1_Click(object sender, EventArgs e)
-        {         
-            g.DrawEllipse(p, cursor.X - 10, cursor.Y - 10, 20, 20);
+        {
+            //MessageBox.Show(cursor.X + " AND " + cursor.Y);
+            //g.DrawEllipse(p, cursor.X - 10, cursor.Y - 10, 20, 20);
         }
+
+        private void Form1_Paint(object sender, PaintEventArgs e)
+        {
+            /*Color lightGray = Color.FromArgb(224, 227, 213);            
+            Pen myPen = new Pen(Color.Black, 3);
+            Brush myBrush = new SolidBrush(lightGray);
+            Rectangle rect = new Rectangle(12, 27, 740, 500);
+            g.FillRectangle(myBrush, rect);
+            DrawGrids();
+            */
+            //g.DrawEllipse(p, cursor.X - 10, cursor.Y - 10, 200, 200);
+        }
+
+        private void Form1_MouseClick(object sender, MouseEventArgs e)
+        {
+            //g.DrawEllipse(p, e.X - 10, e.Y - 10, 20, 20);
+            CreateNewImageOnPanel(e);
+        }
+
+        private void CreateNewImageOnPanel(MouseEventArgs e)
+        {
+            if (pictureName != ""&& e.Y < 500)
+            {
+                PictureBox pb = new PictureBox();
+                pb.Location = new Point(e.X - 25, e.Y - 25);
+                pb.Size = new Size(50, 50);
+                pb.SizeMode = PictureBoxSizeMode.StretchImage;
+                pb.Image = Image.FromFile(@"Cirquit element images/" + pictureName + ".png");
+                this.Controls.Add(pb);
+            }
+        }
+
+        private void DrawGrids()
+        {
+            /*
+            Pen myPen = new Pen(Color.LightGray);
+            for(int i=0;i<100;i++)
+            {
+                g.DrawLine(myPen, 12*i, 525, 12*i, 27);                
+            }
+            for (int i = 0; i < 45; i++)
+            {               
+                g.DrawLine(myPen, 755, 12 * i, 12, 12 * i);
+            }
+            */
+        }
+
+        private void Form1_MouseHover(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            
+        }        
+      
     }
 }
