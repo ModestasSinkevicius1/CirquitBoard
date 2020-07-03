@@ -15,21 +15,24 @@ namespace Ciruit_board_editor_Framework_version
     public partial class Form1 : Form
     {
 
-        //private Graphics g;
-        //private Pen p;
-        //private Point cursor;
+        private Graphics g;
+        Pen p = new Pen(Color.Red, 3);
 
         private int x = 0;
         private int y = 0;
 
-        DatabaseControl dc = new DatabaseControl();
-        private string pictureName = "";       
+        int previousX = 0;
+        int previousY = 0;
+
+        private DatabaseControl dc = new DatabaseControl();
+        private string pictureName = "";
+
+        private List<WindowGridPosition> wgpList = new List<WindowGridPosition>();
 
         public Form1()
         {
             InitializeComponent();
-            //g = this.CreateGraphics();
-            //p = new Pen(Color.Black, 3);           
+            g = this.CreateGraphics();                   
         }
 
         private void pictureBox7_Click(object sender, EventArgs e)
@@ -44,13 +47,7 @@ namespace Ciruit_board_editor_Framework_version
 
         private void Form1_Load(object sender, EventArgs e)
         {                                  
-            CreateImageBoxes();
-            /*
-            foreach(Element t in dc.GetElements())
-            {
-                MessageBox.Show(t.GetType());
-            }
-            */                                  
+            CreateImageBoxes();                                           
         }
 
         private void CreateImageBoxes()
@@ -77,32 +74,22 @@ namespace Ciruit_board_editor_Framework_version
 
         public void Image_Click(object sender, EventArgs e)
         {           
-            PictureBox i = (PictureBox)sender;
-            //MessageBox.Show(i.Tag.ToString());
+            PictureBox i = (PictureBox)sender;            
             pictureName = i.Tag.ToString();
         }             
 
         private void Form1_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show(cursor.X + " AND " + cursor.Y);
-            //g.DrawEllipse(p, cursor.X - 10, cursor.Y - 10, 20, 20);
+            
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
-        {
-            /*Color lightGray = Color.FromArgb(224, 227, 213);            
-            Pen myPen = new Pen(Color.Black, 3);
-            Brush myBrush = new SolidBrush(lightGray);
-            Rectangle rect = new Rectangle(12, 27, 740, 500);
-            g.FillRectangle(myBrush, rect);
-            DrawGrids();
-            */
-            //g.DrawEllipse(p, cursor.X - 10, cursor.Y - 10, 200, 200);
+        {           
+            DrawDots();
         }
 
         private void Form1_MouseClick(object sender, MouseEventArgs e)
-        {
-            //g.DrawEllipse(p, e.X - 10, e.Y - 10, 20, 20);
+        {           
             CreateNewImageOnPanel(e);
         }
 
@@ -110,39 +97,79 @@ namespace Ciruit_board_editor_Framework_version
         {
             if (pictureName != ""&& e.Y < 500)
             {
-                PictureBox pb = new PictureBox();
-                pb.Location = new Point(e.X - 25, e.Y - 25);
+                SnapToClosestDot(e);
+                PictureBox pb = new PictureBox();              
+                pb.Location = new Point(x-14, y-13);
                 pb.Size = new Size(50, 50);
                 pb.SizeMode = PictureBoxSizeMode.StretchImage;
                 pb.Image = Image.FromFile(@"Cirquit element images/" + pictureName + ".png");
                 this.Controls.Add(pb);
             }
-        }
+        }       
 
-        private void DrawGrids()
+        private void SnapToClosestDot(MouseEventArgs cursor)
         {
-            /*
-            Pen myPen = new Pen(Color.LightGray);
-            for(int i=0;i<100;i++)
+            int distanceX=0;
+            int distanceY=0;
+
+            int oldDistanceX = 9999;
+            int oldDistanceY = 9999;            
+
+            foreach(WindowGridPosition pos in wgpList)
             {
-                g.DrawLine(myPen, 12*i, 525, 12*i, 27);                
+                distanceX = Math.Abs(pos.GetX() - cursor.X);
+                distanceY = Math.Abs(pos.GetY() - cursor.Y);
+                if (oldDistanceX > distanceX)
+                {
+                    oldDistanceX = distanceX;
+                    x = pos.GetX();
+                }
+                if (oldDistanceY > distanceY)
+                {
+                    oldDistanceY = distanceY;
+                    y = pos.GetY();
+                }
+
             }
-            for (int i = 0; i < 45; i++)
-            {               
-                g.DrawLine(myPen, 755, 12 * i, 12, 12 * i);
-            }
-            */
+            //MessageBox.Show(oldDistanceX + " and " + oldDistanceY);
         }
 
-        private void Form1_MouseHover(object sender, EventArgs e)
-        {
-           
+        private void DrawDots()
+        {            
+            int posX;
+            int posY;
+
+            Pen myPen = new Pen(Color.Black, 3);
+            for (int j = 0; j < 18; j++)
+            {
+                posY = 30 * j;
+                
+                for (int i = 0; i < 18; i++)
+                {
+                    posX = 12 * i * 4;                    
+                    g.DrawEllipse(myPen, posX, posY, 20, 20);
+
+                    WindowGridPosition wgp = new WindowGridPosition(posX, posY);
+                    wgpList.Add(wgp);
+                }
+            }
         }
 
         private void Form1_MouseMove(object sender, MouseEventArgs e)
-        {
+        {            
+            SnapToClosestDot(e);            
             
-        }        
-      
+            if(previousX!=x || previousY!=y)
+            {
+                p.Color = Color.Black;
+                g.DrawEllipse(p, previousX, previousY, 20, 20);
+            }
+            p.Color = Color.Red;
+
+            g.DrawEllipse(p, x, y, 20, 20);
+            
+            previousX = x;
+            previousY = y;
+        }
     }
 }
