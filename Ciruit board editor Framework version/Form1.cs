@@ -16,10 +16,14 @@ namespace Ciruit_board_editor_Framework_version
     {
 
         private Graphics g;
-        Pen p = new Pen(Color.Red, 3);
+        private Pen p = new Pen(Color.Red, 3);
+
+        private List<ConnectionDotInfo> cdiList = new List<ConnectionDotInfo>();
 
         private int x = 0;
         private int y = 0;
+
+        private int queue = 0;
 
         int previousX = 0;
         int previousY = 0;
@@ -46,7 +50,7 @@ namespace Ciruit_board_editor_Framework_version
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        {                                  
+        {           
             CreateImageBoxes();                                           
         }
 
@@ -94,18 +98,126 @@ namespace Ciruit_board_editor_Framework_version
         }
 
         private void CreateNewImageOnPanel(MouseEventArgs e)
-        {
+        {           
             if (pictureName != ""&& e.Y < 500)
-            {
-                SnapToClosestDot(e);
+            {               
+                SnapToClosestDot(e);               
+
                 PictureBox pb = new PictureBox();              
                 pb.Location = new Point(x-14, y-13);
                 pb.Size = new Size(50, 50);
                 pb.SizeMode = PictureBoxSizeMode.StretchImage;
                 pb.Image = Image.FromFile(@"Cirquit element images/" + pictureName + ".png");
+                pb.MouseEnter += new EventHandler(PictureBoxDynamic_MouseEnter);
+                pb.MouseLeave += new EventHandler(PictureBoxDynamic_MouseLeave);
+                pb.Tag = pictureName + queue;
+
+                ConnectionDotInfo cdi = new ConnectionDotInfo(pb.Tag.ToString());
+
                 this.Controls.Add(pb);
+                for(int i=0;i<4;i++)
+                    CreateConnectionDots(i, cdi);                
+                cdiList.Add(cdi);
+                HideConnectionDots(pb);
+                queue++;
             }
         }       
+
+        private void PictureBoxDynamic_MouseEnter(object sender, EventArgs e)
+        {
+            PictureBox pbElement = (PictureBox)sender;
+            ShowConnectionDots(pbElement);
+        }
+
+        private void PictureBoxDynamic_MouseLeave(object sender, EventArgs e)
+        {
+            PictureBox pbElement = (PictureBox)sender;
+            HideConnectionDots(pbElement);
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            SnapToClosestDot(e);
+
+            if (previousX != x || previousY != y)
+            {
+                p.Color = Color.Black;
+                g.DrawEllipse(p, previousX, previousY, 20, 20);
+            }
+            p.Color = Color.Red;
+
+            g.DrawEllipse(p, x, y, 20, 20);
+
+            previousX = x;
+            previousY = y;
+        }
+
+        private void PictureBoxDot_MouseEnter(object sender, EventArgs e)
+        {            
+            PictureBox pb = (PictureBox)sender;
+            pb.Image = Image.FromFile(@"WireDots/dotRed.png");           
+        }
+
+        private void PictureBoxDot_MouseLeave(object sender, EventArgs e)
+        {
+            PictureBox pb = (PictureBox)sender;
+            pb.Image = Image.FromFile(@"WireDots/dot.png");         
+        }
+
+        private void CreateConnectionDots(int i, ConnectionDotInfo cdi)
+        {
+            int sign=1;
+
+            if (i > 1)
+                sign = -1;
+
+            PictureBox pb = new PictureBox();
+            if(i==0||i==2)
+                pb.Location = new Point(x-15*sign, y);
+            else
+                pb.Location = new Point(x, y-15*sign);
+            pb.Size = new Size(15, 15);
+            pb.SizeMode = PictureBoxSizeMode.StretchImage;
+            pb.Image = Image.FromFile(@"WireDots/dot.png");
+
+            pb.MouseEnter += new EventHandler(PictureBoxDot_MouseEnter);
+            pb.MouseLeave += new EventHandler(PictureBoxDot_MouseLeave);
+
+            this.Controls.Add(pb);
+
+            cdi.AddDotToList(pb);
+
+            pb.BringToFront();          
+        }
+
+        private void HideConnectionDots(PictureBox pbElement)
+        {
+            foreach (ConnectionDotInfo cdi in cdiList)
+            {
+                if (cdi.GetTag() == pbElement.Tag.ToString())
+                {
+                    foreach (PictureBox pb in cdi.GetPictureBoxList())
+                    {
+                        pb.Hide();
+                    }
+                }
+            }
+        }
+
+        private void ShowConnectionDots(PictureBox pbElement)
+        {
+            foreach(ConnectionDotInfo cdi in cdiList)
+            {
+                if(cdi.GetTag()==pbElement.Tag.ToString())
+                {
+                    foreach (PictureBox pb in cdi.GetPictureBoxList())
+                    {
+                        pb.Show();
+                    }                    
+                }
+            }
+           
+        }
 
         private void SnapToClosestDot(MouseEventArgs cursor)
         {
@@ -153,23 +265,6 @@ namespace Ciruit_board_editor_Framework_version
                     wgpList.Add(wgp);
                 }
             }
-        }
-
-        private void Form1_MouseMove(object sender, MouseEventArgs e)
-        {            
-            SnapToClosestDot(e);            
-            
-            if(previousX!=x || previousY!=y)
-            {
-                p.Color = Color.Black;
-                g.DrawEllipse(p, previousX, previousY, 20, 20);
-            }
-            p.Color = Color.Red;
-
-            g.DrawEllipse(p, x, y, 20, 20);
-            
-            previousX = x;
-            previousY = y;
-        }
+        }        
     }
 }

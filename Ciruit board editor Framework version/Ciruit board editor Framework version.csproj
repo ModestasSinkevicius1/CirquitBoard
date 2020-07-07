@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectionDotInfo.cs" />
     <Compile Include="DatabaseConnection.cs" />
     <Compile Include="DatabaseControl.cs" />
     <Compile Include="Element.cs" />
