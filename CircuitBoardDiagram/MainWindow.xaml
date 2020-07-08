@@ -7,6 +7,16 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="707,10,0,0" VerticalAlignment="Top" Width="75"/>
+        <Canvas HorizontalAlignment="Left" Height="341" Margin="187,48,0,0" VerticalAlignment="Top" Width="595" RenderTransformOrigin="0.5,0.5" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1">
+            <Canvas.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FFA29A9A" Offset="0.604"/>
+                    <GradientStop Color="#FFF1E5E5" Offset="1"/>
+                </LinearGradientBrush>
+            </Canvas.Background>
+            <Rectangle Width="50" Height="50" Fill="Red" MouseLeftButtonUp="Canvas_MouseLeftButtonUp" MouseLeftButtonDown="Canvas_MouseLeftButtonDown" MouseMove="Canvas_MouseMove"/>
+        </Canvas>
+
     </Grid>
 </Window>
