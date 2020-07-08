@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Ciruit_board_editor_Framework_version.Properties
+namespace CircuitBoardDiagram.Properties
 {
 
 

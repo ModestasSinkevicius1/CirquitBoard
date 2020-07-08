@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Ciruit_board_editor_Framework_version.Properties
+namespace CircuitBoardDiagram.Properties
 {
 
 
@@ -44,7 +44,7 @@ namespace Ciruit_board_editor_Framework_version.Properties
             {
                 if ((resourceMan == null))
                 {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Ciruit_board_editor_Framework_version.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CircuitBoardDiagram.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
