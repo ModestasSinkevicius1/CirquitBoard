@@ -5,43 +5,63 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CircuitBoardDiagram"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="568" Width="816">
     <Grid>
-        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="707,10,0,0" VerticalAlignment="Top" Width="75"/>
-        <Canvas HorizontalAlignment="Left" Height="341" Margin="187,48,0,0" VerticalAlignment="Top" Width="595" RenderTransformOrigin="0.5,0.5" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1">
+        <Button x:Name="button" Content="Check" HorizontalAlignment="Left" Margin="683,10,0,0" VerticalAlignment="Top" Width="104" Height="33" Foreground="#FF383838" Background="#FF80B7E2" BorderBrush="#FFB68181" FontFamily="Arial Black"/>
+        <Canvas HorizontalAlignment="Left" Height="350" Margin="187,48,0,0" VerticalAlignment="Top" Width="600" RenderTransformOrigin="0.5,0.5" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1">
             <Canvas.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FFA29A9A" Offset="0.604"/>
                     <GradientStop Color="#FFF1E5E5" Offset="1"/>
                 </LinearGradientBrush>
             </Canvas.Background>
-            <Rectangle Width="50" Height="50" Fill="Red" MouseLeftButtonUp="Canvas_MouseLeftButtonUp" MouseLeftButtonDown="Canvas_MouseLeftButtonDown" MouseMove="Canvas_MouseMove"/>
-            <Grid x:Name="canvasGrid" Height="341" Width="595">
+            <Grid x:Name="canvasGrid" Height="350
+                  " Width="600" RenderTransformOrigin="0.5,0.5">
+                <Grid.LayoutTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform Y="-50"/>
+                    </TransformGroup>
+                </Grid.LayoutTransform>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50*"/>
-                    <ColumnDefinition Width="50*"/>
-                    <ColumnDefinition Width="50*"/>
-                    <ColumnDefinition Width="50*"/>
-                    <ColumnDefinition Width="50*"/>
-                    <ColumnDefinition Width="50*"/>
-                    <ColumnDefinition Width="50*"/>
-                    <ColumnDefinition Width="50*"/>
-                    <ColumnDefinition Width="49*"/>
-                    <ColumnDefinition Width="51*"/>
-                    <ColumnDefinition Width="45*"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
+                <Rectangle Fill="#338EFF07" RadiusY="1" x:Name="indicating_rectangle"/>
             </Grid>
         </Canvas>
-
+        <DockPanel HorizontalAlignment="Left" x:Name="dock_bottom" Height="110" LastChildFill="False" Margin="187,403,0,0" VerticalAlignment="Top" Width="600" RenderTransformOrigin="0.6,-0.07" Background="#7FA8A8A8">
+            <Image x:Name="image" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
+            <Image x:Name="image_Copy" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
+            <Image x:Name="image_Copy1" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
+            <Image x:Name="image_Copy2" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
+            <Image x:Name="image_Copy3" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
+            <Image x:Name="image_Copy4" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
+        </DockPanel>
+        <DockPanel HorizontalAlignment="Left" Height="465" LastChildFill="False" Margin="10,48,0,0" VerticalAlignment="Top" Width="172" RenderTransformOrigin="0.6,-0.07" Background="#7FA8A8A8"/>
+        <Expander x:Name="expander" Header="Element list" HorizontalAlignment="Left" Height="465" Margin="10,48,0,0" VerticalAlignment="Top" Width="171">
+            <Grid Background="#FFE5E5E5" RenderTransformOrigin="-0.031,-0.312"/>
+        </Expander>
     </Grid>
 </Window>
