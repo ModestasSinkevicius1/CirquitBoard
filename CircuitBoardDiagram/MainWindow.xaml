@@ -8,7 +8,7 @@
         Title="MainWindow" Height="568" Width="816">
     <Grid>
         <Button x:Name="button" Content="Check" HorizontalAlignment="Left" Margin="683,10,0,0" VerticalAlignment="Top" Width="104" Height="33" Foreground="#FF383838" Background="#FF80B7E2" BorderBrush="#FFB68181" FontFamily="Arial Black"/>
-        <Canvas HorizontalAlignment="Left" Height="350" Margin="187,48,0,0" VerticalAlignment="Top" Width="600" RenderTransformOrigin="0.5,0.5" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1">
+        <Canvas HorizontalAlignment="Left" Height="350" Margin="187,48,0,0" VerticalAlignment="Top" Width="600" RenderTransformOrigin="0.5,0.5" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1" MouseMove="canvas_MouseMove_1" MouseEnter="canvas_MouseEnter" MouseLeave="canvas_MouseLeave" >
             <Canvas.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FFA29A9A" Offset="0.604"/>

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace CircuitBoardDiagram
 {
-    class Element
+    class DatabaseElement
     {
         private int ID;
         private string type;
         private int connectionCount;
 
-        public Element(int ID, string type, int connectionCount)
+        public DatabaseElement(int ID, string type, int connectionCount)
         {
             this.ID = ID;
             this.type = type;

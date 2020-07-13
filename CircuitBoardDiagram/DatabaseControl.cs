@@ -10,8 +10,8 @@ namespace CircuitBoardDiagram
 {
     class DatabaseControl
     {
-        private List<Element> eList = new List<Element>();
-        public List<Element> GetElements()
+        private List<DatabaseElement> eList = new List<DatabaseElement>();
+        public List<DatabaseElement> GetElements()
         {
             DatabaseConnection DBc = new DatabaseConnection();
             string query = "SELECT * FROM ElementType";
@@ -22,7 +22,7 @@ namespace CircuitBoardDiagram
             {
                 while (result.Read())
                 {
-                    Element e = new Element(Convert.ToInt32(result["ID"]), Convert.ToString(result["Type"]), Convert.ToInt32(result["ConnectionCount"]));
+                    DatabaseElement e = new DatabaseElement(Convert.ToInt32(result["ID"]), Convert.ToString(result["Type"]), Convert.ToInt32(result["ConnectionCount"]));
                     eList.Add(e);
                 }
             }

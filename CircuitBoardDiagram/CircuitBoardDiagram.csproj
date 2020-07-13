@@ -70,7 +70,9 @@
     </Compile>
     <Compile Include="DatabaseConnection.cs" />
     <Compile Include="DatabaseControl.cs" />
-    <Compile Include="Element.cs" />
+    <Compile Include="DatabaseElement.cs" />
+    <Compile Include="ElementControl.cs" />
+    <Compile Include="SpecificElement.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
