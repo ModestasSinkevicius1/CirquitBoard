@@ -61,7 +61,38 @@
         </DockPanel>
         <DockPanel HorizontalAlignment="Left" Height="465" LastChildFill="False" Margin="10,48,0,0" VerticalAlignment="Top" Width="172" RenderTransformOrigin="0.6,-0.07" Background="#7FA8A8A8"/>
         <Expander x:Name="expander" Header="Element list" HorizontalAlignment="Left" Height="465" Margin="10,48,0,0" VerticalAlignment="Top" Width="171">
-            <Grid Background="#FFE5E5E5" RenderTransformOrigin="-0.031,-0.312"/>
+            <Grid Background="#FFE5E5E5" RenderTransformOrigin="-0.031,-0.312" x:Name="grid_expander">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="24"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="24"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
         </Expander>
     </Grid>
 </Window>

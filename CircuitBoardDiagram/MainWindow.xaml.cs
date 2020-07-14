@@ -26,7 +26,12 @@ namespace CircuitBoardDiagram
         private Point clickPosition;
         private TranslateTransform originTT;
         private ElementControl ec = new ElementControl();
+
+        private List<Wire> wList = new List<Wire>();
+        private Wire w;
+
         private bool turn = false;
+
 
         private Line previousLine;
         private string previousElementName="";
@@ -34,7 +39,9 @@ namespace CircuitBoardDiagram
         
         private string currentImageName;
        
-        private int queue=0;
+        private int queue = 0;
+        private int next = 0;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -47,12 +54,17 @@ namespace CircuitBoardDiagram
         {          
             Image draggableControl = sender as Image;
 
-            if (!Keyboard.IsKeyDown(Key.W)&&!Keyboard.IsKeyDown(Key.C))
+            if (!Keyboard.IsKeyDown(Key.W)&&!Keyboard.IsKeyDown(Key.C)&&!Keyboard.IsKeyDown(Key.X))
             {
                 originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
                 isDragging = true;
                 clickPosition = e.GetPosition(this);
                 draggableControl.CaptureMouse();
+            }
+            else if (Keyboard.IsKeyDown(Key.X))
+            {
+                ec.RemoveElementFromList(draggableControl.Tag.ToString());
+                canvas.Children.Remove(draggableControl);
             }
             else if(Keyboard.IsKeyDown(Key.C))
             {
@@ -62,7 +74,7 @@ namespace CircuitBoardDiagram
                 MessageBox.Show(status.ToString() + " and " +count);
             }
             else
-                DrawLineBetweenElements(draggableControl);
+                DrawWireBetweenElements(draggableControl);
 
         }
 
@@ -98,6 +110,9 @@ namespace CircuitBoardDiagram
                 r.Height = 50;
                 r.Width = 50;
                 r.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory+"Circuit element images/"+currentImageName+".png"));
+                r.Tag = currentImageName;
+                AddImageToCommon(r.Tag.ToString());
+                
                 r.Tag = currentImageName + queue;                
                 ec.AddElementToList(r.Tag.ToString());
 
@@ -115,8 +130,34 @@ namespace CircuitBoardDiagram
         
         private void Line_mouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Line l = sender as Line;
-            MessageBox.Show(l.Name);
+            if(Keyboard.IsKeyDown(Key.X))
+            {
+                Line l = sender as Line;
+
+                foreach (Wire w2 in wList)
+                {
+                    if (w2.GetName() == l.Name)
+                    {
+                        ec.RemoveConnectionCountFromSpecificElement(w2.elementA);
+                        ec.RemoveConnectionCountFromSpecificElement(w2.elementB);
+                        wList.Remove(w2);
+                        break;
+                    }
+                }
+                canvas.Children.Remove(l);
+            }
+            else if(Keyboard.IsKeyDown(Key.C))
+            {
+                Line l = sender as Line;
+                foreach (Wire w2 in wList)
+                {
+                    if (w2.GetName() == l.Name)
+                    {
+                        MessageBox.Show(w2.elementA + " connected with " + w2.elementB);
+                        break;
+                    }
+                }
+            }
         }
 
         private void SnapToClosestCell(Image draggableControl)
@@ -138,7 +179,7 @@ namespace CircuitBoardDiagram
 
             foreach (ColumnDefinition column in canvasGrid.ColumnDefinitions)
             {
-                distanceX = Math.Abs(Mouse.GetPosition(canvas).X - (column.Width.Value * i));
+                distanceX = (Math.Abs(Mouse.GetPosition(canvas).X - (column.Width.Value * i)))-column.Width.Value/2;
 
                 if (oldDistanceX > distanceX)
                 {
@@ -152,7 +193,7 @@ namespace CircuitBoardDiagram
 
             foreach (RowDefinition row in canvasGrid.RowDefinitions)
             {
-                distanceY = Math.Abs(Mouse.GetPosition(canvas).Y - (row.Height.Value * i));
+                distanceY = (Math.Abs(Mouse.GetPosition(canvas).Y - (row.Height.Value * i)))-row.Height.Value/2;
 
                 if (oldDistanceY > distanceY)
                 {
@@ -231,10 +272,10 @@ namespace CircuitBoardDiagram
             Grid.SetColumn(draggableControl, 0);
         }
 
-        private void DrawLineBetweenElements(Image draggableControl)
+        private void DrawWireBetweenElements(Image draggableControl)
         {
             if (!turn && previousElementName!=draggableControl.Tag.ToString())
-            {
+            {               
                 Line l = new Line();
                 SolidColorBrush bc = new SolidColorBrush();
                 bc.Color = Colors.Black;
@@ -253,7 +294,7 @@ namespace CircuitBoardDiagram
 
                 l.MouseLeftButtonDown += new MouseButtonEventHandler(Line_mouseLeftButtonDown);
 
-                canvas.Children.Add(l);
+                canvas.Children.Add(l);                
 
                 previousElementName = draggableControl.Tag.ToString();
                 previousLine = l;
@@ -269,8 +310,13 @@ namespace CircuitBoardDiagram
 
                 previousLine.Name += draggableControl.Tag.ToString();
 
-                previousElementName = draggableControl.Tag.ToString();
-                
+                w = new Wire(previousLine.Name);
+                w.elementA = previousElementName;
+                w.elementB = draggableControl.Tag.ToString();
+                wList.Add(w);
+
+                previousElementName = draggableControl.Tag.ToString();                           
+
                 turn = false;
             }           
             ec.EnableConnectionAvailability(draggableControl.Tag.ToString());
@@ -279,14 +325,71 @@ namespace CircuitBoardDiagram
         private void LoadImages()
         {
             DatabaseControl dc = new DatabaseControl();
+
             Image img;
+
             int i = 0;
+            int y = 0;
+            
             foreach(DatabaseElement e in dc.GetElements())
             {
-                img = dock_bottom.Children[i] as Image;
-                img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory+"Circuit element images/" + e.GetElementType() + ".png"));
+                if(i > 7)
+                {
+                    i = 0;
+                    y++;
+                }
+                img = new Image();
+                img.Width = 22;
+                img.Height = 22;
+                img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + e.GetElementType() + ".png"));
                 img.Tag = e.GetElementType();
+                img.Stretch = Stretch.Fill;
+
+                img.MouseLeftButtonDown += new MouseButtonEventHandler(image_MouseLeftButtonDown);
+
+                Grid.SetColumn(img, i);
+                Grid.SetRow(img, y);
+                grid_expander.Children.Add(img);
                 i++;
+            }                   
+        }
+
+        private void AddImageToCommon(string imageName)
+        {           
+            int i = 0;
+            bool allowAdd = true;
+
+            if (next > 5)
+                next = 0;
+
+            foreach(Image img in dock_bottom.Children)
+            {
+                if(img.Tag!=null)
+                    if(img.Tag.ToString()==imageName)
+                    {
+                        allowAdd = false;
+                    }
+            }
+
+            if (allowAdd)
+            {
+                foreach (Image img in dock_bottom.Children)
+                {
+                    if (img.Tag == null)
+                    {
+                        img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + imageName + ".png"));
+                        img.Tag = imageName;
+                        break;
+                    }
+                    else if (i > 4)
+                    {
+                        Image img2 = dock_bottom.Children[next] as Image;
+                        img2.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + imageName + ".png"));
+                        img2.Tag = imageName;
+                        next++;
+                    }
+                    i++;
+                }
             }
         }
 
