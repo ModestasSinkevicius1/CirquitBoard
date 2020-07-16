@@ -47,6 +47,7 @@ namespace CircuitBoardDiagram
             InitializeComponent();
 
             indicating_rectangle.Visibility = Visibility.Hidden;
+            highlighting_rectangle.Visibility = Visibility.Hidden;
             LoadImages();
         }         
 
@@ -119,6 +120,8 @@ namespace CircuitBoardDiagram
                 r.MouseLeftButtonDown += new MouseButtonEventHandler(Canvas_MouseLeftButtonDown);
                 r.MouseLeftButtonUp += new MouseButtonEventHandler(Canvas_MouseLeftButtonUp);
                 r.MouseMove += new MouseEventHandler(Canvas_MouseMove);
+                r.MouseEnter += new MouseEventHandler(Image_MouseEnter);
+                r.MouseLeave += new MouseEventHandler(Image_MouseLeave);
 
                 canvas.Children.Add(r);
                 Canvas.SetTop(r, Mouse.GetPosition(canvas).Y - r.Width / 2);
@@ -149,6 +152,7 @@ namespace CircuitBoardDiagram
             else if(Keyboard.IsKeyDown(Key.C))
             {
                 Line l = sender as Line;
+                
                 foreach (Wire w2 in wList)
                 {
                     if (w2.GetName() == l.Name)
@@ -275,26 +279,17 @@ namespace CircuitBoardDiagram
         private void DrawWireBetweenElements(Image draggableControl)
         {
             if (!turn && previousElementName!=draggableControl.Tag.ToString())
-            {               
-                Line l = new Line();
-                SolidColorBrush bc = new SolidColorBrush();
-                bc.Color = Colors.Black;
+            {
+                Line l = CreateLine();
+                l.Name = "line" + draggableControl.Tag.ToString();
 
                 ec.AddConnectionCountToSpecificElement(draggableControl.Tag.ToString());              
 
-                l.X1 = draggableControl.RenderTransform.Value.OffsetX;
-                l.Y1 = draggableControl.RenderTransform.Value.OffsetY;
+                l.X1 = draggableControl.RenderTransform.Value.OffsetX+draggableControl.Width/2;
+                l.Y1 = draggableControl.RenderTransform.Value.OffsetY+draggableControl.Height/2;
 
-                l.X2 = draggableControl.RenderTransform.Value.OffsetX;
-                l.Y2 = draggableControl.RenderTransform.Value.OffsetY;
-
-                l.StrokeThickness = 2;
-                l.Stroke = bc;
-                l.Name = "line" + draggableControl.Tag.ToString();
-
-                l.MouseLeftButtonDown += new MouseButtonEventHandler(Line_mouseLeftButtonDown);
-
-                canvas.Children.Add(l);                
+                l.X2 = draggableControl.RenderTransform.Value.OffsetX+draggableControl.Width/2;
+                l.Y2 = draggableControl.RenderTransform.Value.OffsetY+draggableControl.Height/2;                                 
 
                 previousElementName = draggableControl.Tag.ToString();
                 previousLine = l;
@@ -303,16 +298,26 @@ namespace CircuitBoardDiagram
             }
             else if (draggableControl.Tag.ToString() != previousElementName)
             {
+                Line l = CreateLine();               
+
                 ec.AddConnectionCountToSpecificElement(draggableControl.Tag.ToString());                
 
-                previousLine.X2 = draggableControl.RenderTransform.Value.OffsetX;
-                previousLine.Y2 = draggableControl.RenderTransform.Value.OffsetY;
+                previousLine.X2 = draggableControl.RenderTransform.Value.OffsetX+draggableControl.Width/2;                            
+
+                l.X1 = previousLine.X2;
+                l.Y1 = previousLine.Y2;
+
+                l.X2 = previousLine.X2;
+                l.Y2 = draggableControl.RenderTransform.Value.OffsetY + draggableControl.Height / 2;
 
                 previousLine.Name += draggableControl.Tag.ToString();
+                l.Name = previousLine.Name;
 
                 w = new Wire(previousLine.Name);
                 w.elementA = previousElementName;
                 w.elementB = draggableControl.Tag.ToString();
+                w.AddList(previousLine);
+                w.AddList(l);
                 wList.Add(w);
 
                 previousElementName = draggableControl.Tag.ToString();                           
@@ -320,7 +325,23 @@ namespace CircuitBoardDiagram
                 turn = false;
             }           
             ec.EnableConnectionAvailability(draggableControl.Tag.ToString());
-        }       
+        }
+        
+        private Line CreateLine()
+        {
+            Line l = new Line();
+            SolidColorBrush bc = new SolidColorBrush();
+            bc.Color = Colors.Black;
+
+            l.StrokeThickness = 2;
+            l.Stroke = bc;            
+
+            l.MouseLeftButtonDown += new MouseButtonEventHandler(Line_mouseLeftButtonDown);
+
+            canvas.Children.Add(l);
+
+            return l;
+        }
 
         private void LoadImages()
         {
@@ -403,6 +424,12 @@ namespace CircuitBoardDiagram
             return true;
         }
 
+        private void Highlight_cell(Image draggableControl)
+        {
+            highlighting_rectangle.Visibility = Visibility.Visible;           
+            highlighting_rectangle.RenderTransform = draggableControl.RenderTransform;
+        }
+
         private void image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Image img = sender as Image;
@@ -418,6 +445,17 @@ namespace CircuitBoardDiagram
         private void canvas_MouseEnter(object sender, MouseEventArgs e)
         {
             indicating_rectangle.Visibility = Visibility.Visible;
+        }
+
+        private void Image_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Image draggableControl = sender as Image;
+            Highlight_cell(draggableControl);
+        }
+
+        private void Image_MouseLeave(object sender, MouseEventArgs e)
+        {
+            highlighting_rectangle.Visibility = Visibility.Hidden;
         }
 
         private void canvas_MouseLeave(object sender, MouseEventArgs e)
