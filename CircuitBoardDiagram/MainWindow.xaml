@@ -22,7 +22,7 @@
             <Grid x:Name="canvasGrid" Height="350
                   " Width="600" RenderTransformOrigin="0.5,0.5">
                 <Grid.Background>
-                    <ImageBrush ImageSource="grid.png"/>
+                    <ImageBrush ImageSource="grid.png" Opacity="0.5"/>
                 </Grid.Background>
                 <Grid.LayoutTransform>
                     <TransformGroup>

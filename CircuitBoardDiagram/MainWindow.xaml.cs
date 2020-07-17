@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -131,6 +132,30 @@ namespace CircuitBoardDiagram
 
         }
         
+        private void Line_mouseEnter(object sender, MouseEventArgs e)
+        {
+            Line l = sender as Line;
+            SolidColorBrush bc = new SolidColorBrush();
+
+            if(Keyboard.IsKeyDown(Key.X))
+            {
+                bc.Color = Colors.Red;
+            }
+            else
+                bc.Color = Colors.Green;
+
+            ChangeLineStyle(l, bc, 4);
+        }
+
+        private void Line_mouseLeave(object sender, MouseEventArgs e)
+        {
+            Line l = sender as Line;
+            SolidColorBrush bc = new SolidColorBrush();
+            bc.Color = Colors.Black;
+
+            ChangeLineStyle(l, bc, 1);    
+        }
+
         private void Line_mouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if(Keyboard.IsKeyDown(Key.X))
@@ -219,6 +244,22 @@ namespace CircuitBoardDiagram
             Grid.SetColumn(draggableControl, 0);
             
 
+        }
+
+        private void ChangeLineStyle(Line l, SolidColorBrush bc, double thickness)
+        {
+            foreach (Wire w2 in wList)
+            {
+                if (w2.GetName() == l.Name)
+                {
+                    foreach (Line l2 in w2.GetList())
+                    {
+                        l2.Stroke = bc;
+                        l2.StrokeThickness = thickness;
+                    }
+                    break;
+                }
+            }
         }
 
         private void IndicateCell(Shape draggableControl)
@@ -334,9 +375,11 @@ namespace CircuitBoardDiagram
             bc.Color = Colors.Black;
 
             l.StrokeThickness = 2;
-            l.Stroke = bc;            
+            l.Stroke = bc;
 
             l.MouseLeftButtonDown += new MouseButtonEventHandler(Line_mouseLeftButtonDown);
+            l.MouseEnter += new MouseEventHandler(Line_mouseEnter);
+            l.MouseLeave += new MouseEventHandler(Line_mouseLeave);
 
             canvas.Children.Add(l);
 
