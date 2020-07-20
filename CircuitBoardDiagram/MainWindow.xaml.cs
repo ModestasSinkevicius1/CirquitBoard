@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,6 +44,8 @@ namespace CircuitBoardDiagram
         private int queue = 0;
         private int next = 0;
 
+        private bool isOnImage = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -54,14 +57,15 @@ namespace CircuitBoardDiagram
 
         private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {          
-            Image draggableControl = sender as Image;
+            Image draggableControl = sender as Image;           
 
             if (!Keyboard.IsKeyDown(Key.W)&&!Keyboard.IsKeyDown(Key.C)&&!Keyboard.IsKeyDown(Key.X))
             {
+                highlighting_rectangle.Visibility = Visibility.Hidden;
                 originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
                 isDragging = true;
-                clickPosition = e.GetPosition(this);
-                draggableControl.CaptureMouse();
+                clickPosition = e.GetPosition(this);               
+                draggableControl.CaptureMouse();                
             }
             else if (Keyboard.IsKeyDown(Key.X))
             {
@@ -84,9 +88,11 @@ namespace CircuitBoardDiagram
         {                        
             isDragging = false;
             Image draggable = sender as Image;
-            draggable.ReleaseMouseCapture();
+            draggable.ReleaseMouseCapture();            
             SnapToClosestCell(draggable);
-            indicating_rectangle.Visibility = Visibility.Hidden;
+            UpdateLineLocation(draggable);
+            IndicateCell(highlighting_rectangle);           
+            indicating_rectangle.Visibility = Visibility.Hidden;            
         }
 
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
@@ -99,7 +105,10 @@ namespace CircuitBoardDiagram
                 TranslateTransform transform = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
                 transform.X = originTT.X + (currentPosition.X - clickPosition.X);
                 transform.Y = originTT.Y + (currentPosition.Y - clickPosition.Y);
-                draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);               
+                draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);
+                
+                //SnapToClosestCell(draggableControl);
+                UpdateLineLocation(draggableControl);
             }
             
         }
@@ -126,7 +135,10 @@ namespace CircuitBoardDiagram
 
                 canvas.Children.Add(r);
                 Canvas.SetTop(r, Mouse.GetPosition(canvas).Y - r.Width / 2);
-                Canvas.SetLeft(r, Mouse.GetPosition(canvas).X - r.Height / 2);               
+                Canvas.SetLeft(r, Mouse.GetPosition(canvas).X - r.Height / 2);
+
+                Panel.SetZIndex(r, 1);
+
                 queue++;
             }
 
@@ -166,13 +178,16 @@ namespace CircuitBoardDiagram
                 {
                     if (w2.GetName() == l.Name)
                     {
+                        foreach(Line l2 in w2.GetList())
+                        {
+                            canvas.Children.Remove(l2);
+                        }
                         ec.RemoveConnectionCountFromSpecificElement(w2.elementA);
                         ec.RemoveConnectionCountFromSpecificElement(w2.elementB);
-                        wList.Remove(w2);
+                        wList.Remove(w2);                       
                         break;
                     }
-                }
-                canvas.Children.Remove(l);
+                }             
             }
             else if(Keyboard.IsKeyDown(Key.C))
             {
@@ -190,9 +205,7 @@ namespace CircuitBoardDiagram
         }
 
         private void SnapToClosestCell(Image draggableControl)
-        {
-            indicating_rectangle.Visibility = Visibility.Visible;
-
+        {            
             double distanceX = 0;
             double distanceY = 0;
 
@@ -208,7 +221,7 @@ namespace CircuitBoardDiagram
 
             foreach (ColumnDefinition column in canvasGrid.ColumnDefinitions)
             {
-                distanceX = (Math.Abs(Mouse.GetPosition(canvas).X - (column.Width.Value * i)))-column.Width.Value/2;
+                distanceX = (Math.Abs((Mouse.GetPosition(canvas).X - (column.Width.Value/2)) - (column.Width.Value * i)))-column.Width.Value/2;
 
                 if (oldDistanceX > distanceX)
                 {
@@ -222,7 +235,7 @@ namespace CircuitBoardDiagram
 
             foreach (RowDefinition row in canvasGrid.RowDefinitions)
             {
-                distanceY = (Math.Abs(Mouse.GetPosition(canvas).Y - (row.Height.Value * i)))-row.Height.Value/2;
+                distanceY = (Math.Abs((Mouse.GetPosition(canvas).Y - (row.Height.Value/2)) - (row.Height.Value * i)))-row.Height.Value/2;
 
                 if (oldDistanceY > distanceY)
                 {
@@ -264,7 +277,7 @@ namespace CircuitBoardDiagram
 
         private void IndicateCell(Shape draggableControl)
         {
-            indicating_rectangle.Visibility = Visibility.Visible;
+            draggableControl.Visibility = Visibility.Visible;
 
             double distanceX = 0;
             double distanceY = 0;
@@ -281,7 +294,7 @@ namespace CircuitBoardDiagram
 
             foreach (ColumnDefinition column in canvasGrid.ColumnDefinitions)
             {
-                distanceX = Math.Abs(Mouse.GetPosition(canvas).X - (column.Width.Value * i));
+                distanceX = Math.Abs((Mouse.GetPosition(canvas).X- (column.Width.Value/2)) - (column.Width.Value * i));
 
                 if (oldDistanceX > distanceX)
                 {
@@ -295,7 +308,7 @@ namespace CircuitBoardDiagram
 
             foreach (RowDefinition row in canvasGrid.RowDefinitions)
             {
-                distanceY = Math.Abs(Mouse.GetPosition(canvas).Y - (row.Height.Value * i));
+                distanceY = Math.Abs((Mouse.GetPosition(canvas).Y- (row.Height.Value/2)) - (row.Height.Value * i));
 
                 if (oldDistanceY > distanceY)
                 {
@@ -384,6 +397,53 @@ namespace CircuitBoardDiagram
             canvas.Children.Add(l);
 
             return l;
+        }
+
+        private void UpdateLineLocation(Image draggableControl)
+        {          
+            int i = 0;
+
+            foreach(Wire w2 in wList)
+            {               
+                if (w2.elementA == draggableControl.Tag.ToString())
+                {
+                    foreach (Line l in w2.GetList())
+                    {
+                        if (i <= 0)
+                        {
+                            l.X1 = draggableControl.RenderTransform.Value.OffsetX + draggableControl.Width / 2;
+                            l.Y1 = draggableControl.RenderTransform.Value.OffsetY + draggableControl.Height / 2;
+
+                            l.Y2 = draggableControl.RenderTransform.Value.OffsetY + draggableControl.Height / 2;
+                        }
+                        else
+                        {
+                            l.Y1 = draggableControl.RenderTransform.Value.OffsetY + draggableControl.Height / 2;
+                        }
+                        i++;
+                    }
+                    i = 0;
+                }              
+                if(w2.elementB == draggableControl.Tag.ToString())
+                {
+                    for(int j=w2.GetList().Count-1;j>=0;j--)
+                    {
+                        if (i <= 0)
+                        {                           
+                            w2.GetList()[j].X2 = draggableControl.RenderTransform.Value.OffsetX + draggableControl.Width / 2;
+                            w2.GetList()[j].Y2 = draggableControl.RenderTransform.Value.OffsetY + draggableControl.Height / 2;
+
+                            w2.GetList()[j].X1 = draggableControl.RenderTransform.Value.OffsetX + draggableControl.Width / 2;
+                        }
+                        else
+                        {                           
+                            w2.GetList()[j].X2 = draggableControl.RenderTransform.Value.OffsetX + draggableControl.Width / 2;
+                        }
+                        i++;
+                    }
+                    i = 0;
+                }
+            }
         }
 
         private void LoadImages()
@@ -477,27 +537,33 @@ namespace CircuitBoardDiagram
         {
             Image img = sender as Image;
             currentImageName = img.Tag.ToString();
-
         }
 
         private void canvas_MouseMove_1(object sender, MouseEventArgs e)
-        {          
-            IndicateCell(indicating_rectangle);          
+        {
+            if (!isOnImage||!IsMouseCaptured)
+                IndicateCell(indicating_rectangle);
+            else
+            {
+                indicating_rectangle.Visibility = Visibility.Hidden;                
+            }
         }
 
         private void canvas_MouseEnter(object sender, MouseEventArgs e)
         {
-            indicating_rectangle.Visibility = Visibility.Visible;
+            
         }
 
         private void Image_MouseEnter(object sender, MouseEventArgs e)
         {
-            Image draggableControl = sender as Image;
+            isOnImage = true;
+            Image draggableControl = sender as Image;            
             Highlight_cell(draggableControl);
         }
 
         private void Image_MouseLeave(object sender, MouseEventArgs e)
         {
+            isOnImage = false;
             highlighting_rectangle.Visibility = Visibility.Hidden;
         }
 
