@@ -107,7 +107,7 @@ namespace CircuitBoardDiagram
                 transform.Y = originTT.Y + (currentPosition.Y - clickPosition.Y);
                 draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);
                 
-                //SnapToClosestCell(draggableControl);
+                SnapToClosestCell(draggableControl);
                 UpdateLineLocation(draggableControl);
             }
             
@@ -223,27 +223,26 @@ namespace CircuitBoardDiagram
             {
                 distanceX = (Math.Abs((Mouse.GetPosition(canvas).X - (column.Width.Value/2)) - (column.Width.Value * i)))-column.Width.Value/2;
 
-                if (oldDistanceX > distanceX)
+                if (oldDistanceX > distanceX && i<24-1)
                 {
                     oldDistanceX = distanceX;
                     cellX = i;
                 }
                 i++;
-            }
-
+            }           
             i = 0;           
 
             foreach (RowDefinition row in canvasGrid.RowDefinitions)
             {
                 distanceY = (Math.Abs((Mouse.GetPosition(canvas).Y - (row.Height.Value/2)) - (row.Height.Value * i)))-row.Height.Value/2;
 
-                if (oldDistanceY > distanceY)
+                if (oldDistanceY > distanceY && i<14-1)
                 {
                     oldDistanceY = distanceY;
                     cellY = i;
                 }
                 i++;
-            }
+            }          
 
             cellWidth = canvasGrid.ColumnDefinitions[(int)cellX].Width.Value;
             cellHeight = canvasGrid.RowDefinitions[(int)cellY].Height.Value;
@@ -520,7 +519,11 @@ namespace CircuitBoardDiagram
         private bool isOutOfBounds(MouseEventArgs e)
         {
             Point cursorP = e.GetPosition(this);
-            if(cursorP.X<canvas.Margin.Left || cursorP.Y<canvas.Margin.Top || cursorP.X>canvas.Width+canvas.Margin.Left || cursorP.Y > canvas.Height + canvas.Margin.Top)
+
+            double gridX = 50 - canvasGrid.ColumnDefinitions[0].Width.Value;
+            double gridY = 50 - canvasGrid.RowDefinitions[0].Height.Value;
+           
+            if (cursorP.X<canvas.Margin.Left || cursorP.Y<canvas.Margin.Top || cursorP.X>(canvas.Width-gridX)+canvas.Margin.Left || cursorP.Y > (canvas.Height-gridY) + canvas.Margin.Top)
             {
                 return false;
             }
@@ -570,6 +573,12 @@ namespace CircuitBoardDiagram
         private void canvas_MouseLeave(object sender, MouseEventArgs e)
         {
             indicating_rectangle.Visibility = Visibility.Hidden;
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            OptionWindow ow = new OptionWindow();
+            ow.Show();
         }
     }
 }
