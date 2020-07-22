@@ -5,17 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CircuitBoardDiagram"
         mc:Ignorable="d"
-        Title="OptionWindow" Height="501" Width="800">
+        Title="OptionWindow" Height="501" Width="610">
     <Grid>
-        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Width="792" Height="470" VerticalAlignment="Top">
+        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Width="602" Height="470" VerticalAlignment="Top" Background="#FFE5E5E5">
             <TabItem Header="Elements and wires" Width="120">
-                <Grid Background="#FFE5E5E5" Margin="0,0,0,-4">
-                    <Label x:Name="label1" Content="Elements" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="109" Height="43" FontSize="24"/>
-                    <Label x:Name="label1_Copy" Content="Wires" HorizontalAlignment="Left" Margin="10,213,0,0" VerticalAlignment="Top" Width="109" Height="43" FontSize="24"/>
-                    <Separator HorizontalAlignment="Left" Height="391" Margin="0" VerticalAlignment="Top" Width="786" Grid.ColumnSpan="2"/>
-                    <RadioButton x:Name="radioButton" Content="Let elelemnt pozition itself by grids while moving" HorizontalAlignment="Left" Margin="10,87,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-                    <Button x:Name="button" Content="OK" HorizontalAlignment="Left" Margin="288,416,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.413,0.5"/>
-                    <Button x:Name="button_Copy" Content="Cancel" HorizontalAlignment="Left" Margin="401,416,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.413,0.5"/>
+                <Grid Background="#FFE5E5E5" Margin="0,0,0,47">
+                    <Label x:Name="label1" Content="Element behaviour" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="214" Height="43" FontSize="24"/>
+                    <Label x:Name="label1_Copy" Content="Wire behaviour" HorizontalAlignment="Left" Margin="10,213,0,0" VerticalAlignment="Top" Width="214" Height="43" FontSize="24"/>
+                    <Separator HorizontalAlignment="Left" Height="391" Margin="0" VerticalAlignment="Top" Width="596"/>
+                    <RadioButton x:Name="radioButton" Content="Always let element position itself by grids" HorizontalAlignment="Left" Margin="10,87,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+                    <RadioButton x:Name="radioButton_Copy" Content="Only let element position itself by grids when done moving" HorizontalAlignment="Left" Margin="10,107,0,0" VerticalAlignment="Top"/>
+                    <RadioButton x:Name="radioButton_Copy1" Content="Never let element position itself" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Grid" Width="120">
@@ -23,12 +23,26 @@
                     <Label x:Name="label" Content="Space X:" HorizontalAlignment="Left" Height="25" Margin="12,59,0,0" VerticalAlignment="Top" Width="59"/>
                     <Label x:Name="label2" Content="Size" HorizontalAlignment="Left" Margin="12,10,0,0" VerticalAlignment="Top" FontSize="24" Width="138" VerticalContentAlignment="Center" Height="46"/>
                     <Label x:Name="label_Copy" Content="Space Y:" HorizontalAlignment="Left" Height="25" Margin="12,117,0,0" VerticalAlignment="Top" Width="59"/>
-                    <Slider x:Name="slider" HorizontalAlignment="Left" Margin="12,89,0,0" VerticalAlignment="Top" Width="266" Maximum="50" Value="50" LargeChange="5" TickFrequency="5" SmallChange="5" TickPlacement="BottomRight" IsSnapToTickEnabled="True"/>
-                    <Slider x:Name="slider_Copy" HorizontalAlignment="Left" Margin="12,147,0,0" VerticalAlignment="Top" Width="266" Maximum="50" Value="50" LargeChange="5" TickFrequency="5" SmallChange="5" TickPlacement="BottomRight" IsSnapToTickEnabled="True"/>
+                    <Slider x:Name="slider" HorizontalAlignment="Left" Margin="12,89,0,0" VerticalAlignment="Top" Width="266" Maximum="50" Value="50" TickPlacement="BottomRight" IsSnapToTickEnabled="True" Foreground="#FFA07777" AutoToolTipPlacement="BottomRight" ValueChanged="slider_ValueChanged" Ticks="3.125, 6.25, 12.5, 25, 50" AutoToolTipPrecision="3" Minimum="3.125"/>
+                    <Slider x:Name="slider_Copy" HorizontalAlignment="Left" Margin="12,147,0,0" VerticalAlignment="Top" Width="266" Maximum="50" Value="50" TickPlacement="BottomRight" IsSnapToTickEnabled="True" Foreground="#FFA07777" ValueChanged="slider_Copy_ValueChanged" Ticks="3.125, 6.25, 12.5, 25, 50" AutoToolTipPrecision="3" Minimum="3.125"/>
+                    <Separator HorizontalAlignment="Left" Height="393" Margin="0" VerticalAlignment="Top" Width="596"/>
+                    <Label x:Name="label3" Content="Preview" HorizontalAlignment="Left" Margin="429,159,0,0" VerticalAlignment="Top"/>
+                    <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="405,59,0,0" VerticalAlignment="Top" Width="100" RenderTransformOrigin="0.29,0.2" Background="White"/>
+                    <Grid x:Name="grid_preview" HorizontalAlignment="Left" Height="100" Margin="405,59,0,0" VerticalAlignment="Top" Width="100" ShowGridLines="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="50"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="50"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
                 </Grid>
             </TabItem>
         </TabControl>
-
-
+        <Button x:Name="button" Content="OK" HorizontalAlignment="Left" Margin="229,425,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.413,0.5" Height="25" Click="button_Click"/>
+        <Button x:Name="button_Copy" Content="Cancel" HorizontalAlignment="Left" Margin="309,425,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.413,0.5" Height="25"/>
+        <Button x:Name="button_Copy1" Content="Default" HorizontalAlignment="Left" Margin="504,425,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.413,0.5" Height="25"/>
     </Grid>
 </Window>

@@ -19,9 +19,94 @@ namespace CircuitBoardDiagram
     /// </summary>
     public partial class OptionWindow : Window
     {
-        public OptionWindow()
+        private List<RowDefinition> rList = new List<RowDefinition>();
+        private List<ColumnDefinition> cList = new List<ColumnDefinition>();
+        private Window w;
+
+
+        public OptionWindow(Window w)
         {
             InitializeComponent();
-        }      
+            AddRow();
+            AddColumn();
+            this.w = w;
+        }
+
+        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (grid_preview != null)
+            {
+                foreach (ColumnDefinition column in grid_preview.ColumnDefinitions)
+                {
+                    column.Width = new GridLength(slider.Value);
+                }
+                //RemoveColumns();                
+            }
+        }
+
+        private void slider_Copy_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (grid_preview != null)
+            {
+                foreach (RowDefinition row in grid_preview.RowDefinitions)
+                {
+                    row.Height = new GridLength(slider_Copy.Value);
+                }
+                //RemoveRows();                
+            }
+        }
+
+        private void AddColumn()
+        {
+            double originalValue = 50;
+            int i = 0;
+
+            while (i < 32)
+            {
+                ColumnDefinition c = new ColumnDefinition();
+                c.Width = new GridLength(slider.Value);
+                grid_preview.ColumnDefinitions.Add(c);
+
+                i++;
+            }                    
+        }
+
+        private void AddRow()
+        {         
+            double originalValue = 50;
+            int i = 0;
+
+            while (i<32)
+            {
+                RowDefinition r = new RowDefinition();
+                r.Height = new GridLength(slider_Copy.Value);
+                grid_preview.RowDefinitions.Add(r);
+
+                i++;
+            }                      
+        }
+
+        private void RemoveColumns()
+        {
+            foreach(ColumnDefinition c in cList)
+            {
+                grid_preview.ColumnDefinitions.Remove(c);              
+            }      
+            rList.Clear();
+        }
+
+        private void RemoveRows()
+        {            
+            foreach (RowDefinition r in rList)
+            {
+                grid_preview.RowDefinitions.Remove(r);               
+            }
+            cList.Clear();
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
     }
 }

@@ -44,7 +44,7 @@ namespace CircuitBoardDiagram
         private int queue = 0;
         private int next = 0;
 
-        private bool isOnImage = false;
+        private bool isOnImage = false;        
 
         public MainWindow()
         {
@@ -577,8 +577,18 @@ namespace CircuitBoardDiagram
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            OptionWindow ow = new OptionWindow();
-            ow.Show();
+            OptionWindow opWindow = new OptionWindow(this);
+            opWindow.Show();           
+        }
+
+        public void SetRow(int value)
+        {
+
+        }
+
+        public void SetColumn(int value)
+        {
+
         }
     }
 }
