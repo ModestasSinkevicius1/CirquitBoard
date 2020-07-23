@@ -23,6 +23,8 @@ namespace CircuitBoardDiagram
         private List<ColumnDefinition> cList = new List<ColumnDefinition>();
         private Window w;
 
+        public bool isPressedOk = false;
+
 
         public OptionWindow(Window w)
         {
@@ -106,7 +108,18 @@ namespace CircuitBoardDiagram
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            
+            isPressedOk = true;
+            Close();
+        }
+
+        public double GetColumn()
+        {
+            return slider.Value;
+        }
+
+        public double GetRow()
+        {
+            return slider_Copy.Value;
         }
     }
 }

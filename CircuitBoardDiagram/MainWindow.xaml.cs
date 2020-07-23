@@ -36,7 +36,7 @@ namespace CircuitBoardDiagram
 
 
         private Line previousLine;
-        private string previousElementName="";
+        private string previousElementName = "";
         private string previousConnectedElementName = "";
         
         private string currentImageName;
@@ -52,6 +52,10 @@ namespace CircuitBoardDiagram
 
             indicating_rectangle.Visibility = Visibility.Hidden;
             highlighting_rectangle.Visibility = Visibility.Hidden;
+
+            //AddColumn();
+            AddRow();
+
             LoadImages();
         }         
 
@@ -204,6 +208,56 @@ namespace CircuitBoardDiagram
             }
         }
 
+        private void image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Image img = sender as Image;
+            currentImageName = img.Tag.ToString();
+        }
+
+        private void canvas_MouseMove_1(object sender, MouseEventArgs e)
+        {
+            if (!isOnImage || !IsMouseCaptured)
+                IndicateCell(indicating_rectangle);
+            else
+            {
+                indicating_rectangle.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void canvas_MouseEnter(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void Image_MouseEnter(object sender, MouseEventArgs e)
+        {
+            isOnImage = true;
+            Image draggableControl = sender as Image;
+            Highlight_cell(draggableControl);
+        }
+
+        private void Image_MouseLeave(object sender, MouseEventArgs e)
+        {
+            isOnImage = false;
+            highlighting_rectangle.Visibility = Visibility.Hidden;
+        }
+
+        private void canvas_MouseLeave(object sender, MouseEventArgs e)
+        {
+            indicating_rectangle.Visibility = Visibility.Hidden;
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            OptionWindow opWindow = new OptionWindow(this);
+            bool? result = opWindow.ShowDialog();
+
+            if (opWindow.isPressedOk == true)
+            {
+
+            }
+        }
+
         private void SnapToClosestCell(Image draggableControl)
         {            
             double distanceX = 0;
@@ -219,24 +273,45 @@ namespace CircuitBoardDiagram
             double cellWidth;
             double cellHeight;
 
+            int offCell = 0;
+
+            double length = 50;
+
+            while(canvasGrid.ColumnDefinitions[0].Width.Value < length)
+            {
+                offCell++;
+                length /= 2;
+            }
+
+            //MessageBox.Show(offCell.ToString());
+
             foreach (ColumnDefinition column in canvasGrid.ColumnDefinitions)
             {
                 distanceX = (Math.Abs((Mouse.GetPosition(canvas).X - (column.Width.Value/2)) - (column.Width.Value * i)))-column.Width.Value/2;
 
-                if (oldDistanceX > distanceX && i<24-1)
+                if (oldDistanceX > distanceX && i<canvasGrid.ColumnDefinitions.Count - offCell)
                 {
                     oldDistanceX = distanceX;
                     cellX = i;
                 }
                 i++;
-            }           
-            i = 0;           
+            }          
+
+            i = 0;
+            length = 50;
+            offCell = 0;           
+
+            while (canvasGrid.RowDefinitions[0].Height.Value < length)
+            {
+                offCell = 1;
+                length /= 2;
+            }            
 
             foreach (RowDefinition row in canvasGrid.RowDefinitions)
             {
                 distanceY = (Math.Abs((Mouse.GetPosition(canvas).Y - (row.Height.Value/2)) - (row.Height.Value * i)))-row.Height.Value/2;
 
-                if (oldDistanceY > distanceY && i<14-1)
+                if (oldDistanceY > distanceY && i< canvasGrid.RowDefinitions.Count - offCell)
                 {
                     oldDistanceY = distanceY;
                     cellY = i;
@@ -536,49 +611,76 @@ namespace CircuitBoardDiagram
             highlighting_rectangle.RenderTransform = draggableControl.RenderTransform;
         }
 
-        private void image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void AddColumn()
         {
-            Image img = sender as Image;
-            currentImageName = img.Tag.ToString();
-        }
+            double originalValue = 50;
+            double value = 6.25;
 
-        private void canvas_MouseMove_1(object sender, MouseEventArgs e)
-        {
-            if (!isOnImage||!IsMouseCaptured)
-                IndicateCell(indicating_rectangle);
-            else
+            int i = 0;
+            int j = 0;
+
+            int count = 0;
+            int newCount = canvasGrid.ColumnDefinitions.Count;           
+
+            while (originalValue > value)
             {
-                indicating_rectangle.Visibility = Visibility.Hidden;                
+                originalValue /= 2;
+                count++;
+            }            
+            
+            newCount = (newCount * count)+(12*3);                                               
+
+            while (i < newCount && count>0)
+            {
+                ColumnDefinition c = new ColumnDefinition();
+                c.Width = new GridLength(value);
+                canvasGrid.ColumnDefinitions.Add(c);
+
+                i++;
+            }
+
+            foreach(ColumnDefinition column in canvasGrid.ColumnDefinitions)
+            {
+                column.Width = new GridLength(value);
             }
         }
 
-        private void canvas_MouseEnter(object sender, MouseEventArgs e)
+        private void AddRow()
         {
-            
-        }
+            double originalValue = 50;
+            double value = 6.25;
 
-        private void Image_MouseEnter(object sender, MouseEventArgs e)
-        {
-            isOnImage = true;
-            Image draggableControl = sender as Image;            
-            Highlight_cell(draggableControl);
-        }
+            int i = 0;
+            int j = 0;
 
-        private void Image_MouseLeave(object sender, MouseEventArgs e)
-        {
-            isOnImage = false;
-            highlighting_rectangle.Visibility = Visibility.Hidden;
-        }
+            int count = 1;
+            int newCount = canvasGrid.RowDefinitions.Count;
 
-        private void canvas_MouseLeave(object sender, MouseEventArgs e)
-        {
-            indicating_rectangle.Visibility = Visibility.Hidden;
-        }
+            while (originalValue > value)
+            {
+                originalValue /= 2;
+                count++;
+            }
+           
+            newCount = newCount * count;              
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            OptionWindow opWindow = new OptionWindow(this);
-            opWindow.Show();           
+            MessageBox.Show(newCount.ToString());
+
+            while (i < newCount && count > 0)
+            {
+                RowDefinition r = new RowDefinition();
+                r.Height = new GridLength(value);
+                canvasGrid.RowDefinitions.Add(r);
+
+                i++;
+            }
+
+               
+
+            foreach (RowDefinition column in canvasGrid.RowDefinitions)
+            {
+                column.Height = new GridLength(value);
+            }
         }
 
         public void SetRow(int value)
