@@ -51,10 +51,7 @@ namespace CircuitBoardDiagram
             InitializeComponent();
 
             indicating_rectangle.Visibility = Visibility.Hidden;
-            highlighting_rectangle.Visibility = Visibility.Hidden;
-
-            //AddColumn();
-            AddRow();
+            highlighting_rectangle.Visibility = Visibility.Hidden;           
 
             LoadImages();
         }         
@@ -249,19 +246,26 @@ namespace CircuitBoardDiagram
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            OptionWindow opWindow = new OptionWindow(this);
+            OptionWindow opWindow = new OptionWindow(canvasGrid.ColumnDefinitions[0].Width.Value, canvasGrid.RowDefinitions[0].Height.Value);
             bool? result = opWindow.ShowDialog();
 
             if (opWindow.isPressedOk == true)
             {
+                ResetColumn();
+                ResetRow();
 
+                AddColumn(opWindow.slider.Value);
+                AddRow(opWindow.slider_Copy.Value);
+
+                UpdateIndicatorSize();
+                UpdateHighlightorSize();
             }
         }
 
         private void SnapToClosestCell(Image draggableControl)
         {            
-            double distanceX = 0;
-            double distanceY = 0;
+            double distanceX;
+            double distanceY;
 
             double oldDistanceX = 9999;
             double oldDistanceY = 9999;
@@ -277,13 +281,31 @@ namespace CircuitBoardDiagram
 
             double length = 50;
 
-            while(canvasGrid.ColumnDefinitions[0].Width.Value < length)
-            {
-                offCell++;
-                length /= 2;
-            }
+            double widthLength = canvasGrid.ColumnDefinitions[0].Width.Value;
+            double heightLength = canvasGrid.RowDefinitions[0].Height.Value;            
 
-            //MessageBox.Show(offCell.ToString());
+            if (widthLength < length)
+            {
+                if (widthLength < 25)
+                {
+                    if (widthLength < 12.5)
+                    {
+                        if (widthLength < 6.25)
+                            if (widthLength < 3.125)
+                            {
+                                offCell = 7;
+                            }
+                            else
+                                offCell = 15;
+                        else
+                            offCell = 7;
+                    }
+                    else
+                        offCell = 3;
+                }
+                else
+                    offCell = 1;
+            }           
 
             foreach (ColumnDefinition column in canvasGrid.ColumnDefinitions)
             {
@@ -299,13 +321,30 @@ namespace CircuitBoardDiagram
 
             i = 0;
             length = 50;
-            offCell = 0;           
+            offCell = 0;
 
-            while (canvasGrid.RowDefinitions[0].Height.Value < length)
+            if (heightLength < length)
             {
-                offCell = 1;
-                length /= 2;
-            }            
+                if (heightLength < 25)
+                {
+                    if (heightLength < 12.5)
+                    {
+                        if (heightLength < 6.25)
+                            if (heightLength < 3.125)
+                            {
+                                offCell = 7;
+                            }
+                            else
+                                offCell = 15;
+                        else
+                            offCell = 7;
+                    }
+                    else
+                        offCell = 3;
+                }
+                else
+                    offCell = 1;
+            }           
 
             foreach (RowDefinition row in canvasGrid.RowDefinitions)
             {
@@ -353,8 +392,8 @@ namespace CircuitBoardDiagram
         {
             draggableControl.Visibility = Visibility.Visible;
 
-            double distanceX = 0;
-            double distanceY = 0;
+            double distanceX;
+            double distanceY;
 
             double oldDistanceX = 9999;
             double oldDistanceY = 9999;
@@ -591,6 +630,110 @@ namespace CircuitBoardDiagram
             }
         }
 
+        private void UpdateIndicatorSize()
+        {
+            double lengthX = canvasGrid.ColumnDefinitions[0].Width.Value;
+            double lengthY = canvasGrid.RowDefinitions[0].Height.Value;
+
+            int spanX = 1;
+            int spanY = 1;
+
+            if (lengthX<50)
+            {
+                if (lengthX < 25)
+                {
+                    if (lengthX < 12.5)
+                    {
+                        if (lengthX < 6.25)
+                        {
+                            spanX = 16;
+                        }
+                        else
+                            spanX = 8;
+                    }
+                    else
+                        spanX = 4;
+                }
+                else
+                    spanX = 2;
+            }
+
+            if (lengthY < 50)
+            {
+                if (lengthY < 25)
+                {
+                    if (lengthY < 12.5)
+                    {
+                        if (lengthY < 6.25)
+                        {
+                            spanY = 16;
+                        }
+                        else
+                            spanY = 8;
+                    }
+                    else
+                        spanY = 4;
+                }
+                else
+                    spanY = 2;
+            }
+
+            indicating_rectangle.SetValue(Grid.ColumnSpanProperty, spanX);
+            indicating_rectangle.SetValue(Grid.RowSpanProperty, spanY);
+        }
+
+        private void UpdateHighlightorSize()
+        {
+            double lengthX = canvasGrid.ColumnDefinitions[0].Width.Value;
+            double lengthY = canvasGrid.RowDefinitions[0].Height.Value;
+
+            int spanX = 2;
+            int spanY = 2;
+
+            if (lengthX < 50)
+            {
+                if (lengthX < 25)
+                {
+                    if (lengthX < 12.5)
+                    {
+                        if (lengthX < 6.25)
+                        {
+                            spanX = 32;
+                        }
+                        else
+                            spanX = 16;
+                    }
+                    else
+                        spanX = 8;
+                }
+                else
+                    spanX = 4;
+            }
+
+            if (lengthY < 50)
+            {
+                if (lengthY < 25)
+                {
+                    if (lengthY < 12.5)
+                    {
+                        if (lengthY < 6.25)
+                        {
+                            spanY = 32;
+                        }
+                        else
+                            spanY = 16;
+                    }
+                    else
+                        spanY = 8;
+                }
+                else
+                    spanY = 4;
+            }
+
+            highlighting_rectangle.SetValue(Grid.ColumnSpanProperty, spanX);
+            highlighting_rectangle.SetValue(Grid.RowSpanProperty, spanY);
+        }
+
         private bool isOutOfBounds(MouseEventArgs e)
         {
             Point cursorP = e.GetPosition(this);
@@ -611,62 +754,77 @@ namespace CircuitBoardDiagram
             highlighting_rectangle.RenderTransform = draggableControl.RenderTransform;
         }
 
-        private void AddColumn()
+        
+        private void ResetColumn()
+        {
+            int count = canvasGrid.ColumnDefinitions.Count;
+            int i = 0;
+
+            while(count>0)
+            {
+                canvasGrid.ColumnDefinitions.RemoveAt(0);
+                count = canvasGrid.ColumnDefinitions.Count;
+                i++;
+            }
+        }
+
+        private void ResetRow()
+        {
+            int count = canvasGrid.RowDefinitions.Count;
+            int i = 0;
+
+            while (count > 0)
+            {
+                canvasGrid.RowDefinitions.RemoveAt(0);
+                count = canvasGrid.RowDefinitions.Count;
+                i++;
+            }
+        }
+
+        private void AddColumn(double value)
         {
             double originalValue = 50;
-            double value = 6.25;
 
             int i = 0;
-            int j = 0;
 
-            int count = 0;
-            int newCount = canvasGrid.ColumnDefinitions.Count;           
+            int newCount = 12;
 
             while (originalValue > value)
             {
+                newCount += newCount;
                 originalValue /= 2;
-                count++;
             }            
-            
-            newCount = (newCount * count)+(12*3);                                               
 
-            while (i < newCount && count>0)
+            while (i < newCount)
             {
                 ColumnDefinition c = new ColumnDefinition();
                 c.Width = new GridLength(value);
                 canvasGrid.ColumnDefinitions.Add(c);
 
                 i++;
-            }
+            }            
 
-            foreach(ColumnDefinition column in canvasGrid.ColumnDefinitions)
+            foreach (ColumnDefinition column in canvasGrid.ColumnDefinitions)
             {
                 column.Width = new GridLength(value);
             }
         }
 
-        private void AddRow()
+        private void AddRow(double value)
         {
-            double originalValue = 50;
-            double value = 6.25;
+            double originalValue = 50;           
 
             int i = 0;
-            int j = 0;
-
-            int count = 1;
-            int newCount = canvasGrid.RowDefinitions.Count;
+            
+            int newCount = 7;
 
             while (originalValue > value)
             {
-                originalValue /= 2;
-                count++;
-            }
-           
-            newCount = newCount * count;              
+                newCount += newCount;
+                originalValue /= 2;                
+            }                     
 
-            MessageBox.Show(newCount.ToString());
-
-            while (i < newCount && count > 0)
+            while (i < newCount)
             {
                 RowDefinition r = new RowDefinition();
                 r.Height = new GridLength(value);
@@ -674,23 +832,11 @@ namespace CircuitBoardDiagram
 
                 i++;
             }
-
-               
-
-            foreach (RowDefinition column in canvasGrid.RowDefinitions)
+            
+            foreach (RowDefinition row in canvasGrid.RowDefinitions)
             {
-                column.Height = new GridLength(value);
+                row.Height = new GridLength(value);
             }
-        }
-
-        public void SetRow(int value)
-        {
-
-        }
-
-        public void SetColumn(int value)
-        {
-
-        }
+        }        
     }
 }

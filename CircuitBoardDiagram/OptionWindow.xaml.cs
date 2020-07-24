@@ -23,15 +23,14 @@ namespace CircuitBoardDiagram
         private List<ColumnDefinition> cList = new List<ColumnDefinition>();
         private Window w;
 
-        public bool isPressedOk = false;
+        public bool isPressedOk = false;       
 
-
-        public OptionWindow(Window w)
-        {
+        public OptionWindow(double column, double row)
+        {            
             InitializeComponent();
             AddRow();
             AddColumn();
-            this.w = w;
+            ChangeSliderValue(column, row);          
         }
 
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -56,6 +55,12 @@ namespace CircuitBoardDiagram
                 }
                 //RemoveRows();                
             }
+        }
+
+        private void ChangeSliderValue(double column, double row)
+        {
+            slider.Value = column;
+            slider_Copy.Value = row;
         }
 
         private void AddColumn()
