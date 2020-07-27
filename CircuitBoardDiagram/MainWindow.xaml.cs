@@ -91,7 +91,7 @@ namespace CircuitBoardDiagram
             Image draggable = sender as Image;
             draggable.ReleaseMouseCapture();            
             SnapToClosestCell(draggable);
-            UpdateLineLocation(draggable);
+            //UpdateLineLocation(draggable);
             IndicateCell(highlighting_rectangle);           
             indicating_rectangle.Visibility = Visibility.Hidden;            
         }
@@ -109,7 +109,7 @@ namespace CircuitBoardDiagram
                 draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);
                 
                 SnapToClosestCell(draggableControl);
-                UpdateLineLocation(draggableControl);
+                //UpdateLineLocation(draggableControl);
             }
             
         }
@@ -171,10 +171,16 @@ namespace CircuitBoardDiagram
 
         private void Line_mouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if(Keyboard.IsKeyDown(Key.X))
-            {
-                Line l = sender as Line;
 
+            Line l = sender as Line;
+
+            originTT = l.RenderTransform as TranslateTransform ?? new TranslateTransform();
+            isDragging = true;
+            clickPosition = e.GetPosition(this);
+            l.CaptureMouse();
+
+            if (Keyboard.IsKeyDown(Key.X))
+            {               
                 foreach (Wire w2 in wList)
                 {
                     if (w2.GetName() == l.Name)
@@ -191,9 +197,7 @@ namespace CircuitBoardDiagram
                 }             
             }
             else if(Keyboard.IsKeyDown(Key.C))
-            {
-                Line l = sender as Line;
-                
+            {                              
                 foreach (Wire w2 in wList)
                 {
                     if (w2.GetName() == l.Name)
@@ -202,6 +206,55 @@ namespace CircuitBoardDiagram
                         break;
                     }
                 }
+            }
+        }
+
+        private void Line_mouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            isDragging = false;
+            Line draggable = sender as Line;
+            draggable.ReleaseMouseCapture();            
+            //UpdateLineLocation2(draggable);           
+        }
+
+
+        private void Line_mouseMove(object sender, MouseEventArgs e)
+        {
+            Line draggableControl = sender as Line;
+
+            if (isDragging && draggableControl != null && isOutOfBounds(e))
+            {
+                Point currentPosition = e.GetPosition(this);
+                
+                foreach(Wire w in wList)
+                {
+                    if(draggableControl.Name==w.GetName())
+                    {
+                        foreach(Line l in w.GetList())
+                        {
+                            if(l != draggableControl)
+                            {
+                                if(l.X1==draggableControl.X2)
+                                {                                   
+                                    draggableControl.Y1 = e.GetPosition(canvas).Y;
+                                }
+                                else
+                                    draggableControl.X1 = e.GetPosition(canvas).X;
+                            }
+                        }
+                    }
+                }
+                if (draggableControl.X1 != draggableControl.X2)
+                {
+                    draggableControl.X2 = e.GetPosition(canvas).X;
+                }
+                
+                /*TranslateTransform transform = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
+                transform.X = originTT.X + (currentPosition.X - clickPosition.X);
+                transform.Y = originTT.Y + (currentPosition.Y - clickPosition.Y);
+                draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);*/
+
+                //UpdateLineLocation2(draggableControl);
             }
         }
 
@@ -506,12 +559,41 @@ namespace CircuitBoardDiagram
             l.MouseLeftButtonDown += new MouseButtonEventHandler(Line_mouseLeftButtonDown);
             l.MouseEnter += new MouseEventHandler(Line_mouseEnter);
             l.MouseLeave += new MouseEventHandler(Line_mouseLeave);
+            l.MouseMove += new MouseEventHandler(Line_mouseMove);
+            l.MouseLeftButtonUp += new MouseButtonEventHandler(Line_mouseLeftButtonUp);
 
             canvas.Children.Add(l);
 
             return l;
         }
 
+        private void UpdateLineLocation2(Line l)
+        {
+            foreach(Wire w in wList)
+            {
+                if(l.Name == w.GetName())
+                {
+                    foreach(Object obj in canvas.Children)
+                    {
+                        if (obj.GetType() == typeof(Image))
+                        {
+                            Image draggableControl = obj as Image;
+                            if (w.elementA == draggableControl.Tag.ToString())
+                            {                               
+                                foreach(Line l2 in w.GetList())
+                                {
+                                    if(l != l2)
+                                    {                                       
+                                        l2.X2 = l.X1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
         private void UpdateLineLocation(Image draggableControl)
         {          
             int i = 0;
