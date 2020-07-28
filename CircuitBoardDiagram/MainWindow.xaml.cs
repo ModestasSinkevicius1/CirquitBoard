@@ -44,7 +44,9 @@ namespace CircuitBoardDiagram
         private int queue = 0;
         private int next = 0;
 
-        private bool isOnImage = false;        
+        private bool isOnImage = false;
+
+        private bool linePosition = false;        
 
         public MainWindow()
         {
@@ -140,6 +142,8 @@ namespace CircuitBoardDiagram
 
                 Panel.SetZIndex(r, 1);
 
+                CreateLinesAroundElement(r);
+
                 queue++;
             }
 
@@ -177,6 +181,14 @@ namespace CircuitBoardDiagram
             originTT = l.RenderTransform as TranslateTransform ?? new TranslateTransform();
             isDragging = true;
             clickPosition = e.GetPosition(this);
+
+            if (l.X1 == l.X2)
+            {
+                linePosition = true;
+            }
+            else
+                linePosition = false;
+
             l.CaptureMouse();
 
             if (Keyboard.IsKeyDown(Key.X))
@@ -234,21 +246,22 @@ namespace CircuitBoardDiagram
                         {
                             if(l != draggableControl)
                             {
-                                if(l.X1==draggableControl.X2)
-                                {                                   
+                                if (!linePosition)
+                                {
                                     draggableControl.Y1 = e.GetPosition(canvas).Y;
                                 }
-                                else
-                                    draggableControl.X1 = e.GetPosition(canvas).X;
+                                else                                                                
+                                    draggableControl.X1 = e.GetPosition(canvas).X;                                
                             }
                         }
                     }
                 }
-                if (draggableControl.X1 != draggableControl.X2)
-                {
+                if(linePosition)
                     draggableControl.X2 = e.GetPosition(canvas).X;
-                }
-                
+                else
+                    draggableControl.Y2 = e.GetPosition(canvas).Y;
+
+
                 /*TranslateTransform transform = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
                 transform.X = originTT.X + (currentPosition.X - clickPosition.X);
                 transform.Y = originTT.Y + (currentPosition.Y - clickPosition.Y);
@@ -312,6 +325,19 @@ namespace CircuitBoardDiagram
 
                 UpdateIndicatorSize();
                 UpdateHighlightorSize();
+            }
+        }       
+
+        private void CreateLinesAroundElement(Image r)
+        {
+            Line l;
+            for (int i = 0; i < 4; i++)
+            {
+                l = CreateLine(false);
+                l.X1 = r.RenderTransform.Value.OffsetX+(r.Width/2);              
+                l.Y1 = r.RenderTransform.Value.OffsetY+(r.Height/2);
+                l.X2 = 100;
+                l.Y2 = 100;
             }
         }
 
@@ -500,7 +526,7 @@ namespace CircuitBoardDiagram
         {
             if (!turn && previousElementName!=draggableControl.Tag.ToString())
             {
-                Line l = CreateLine();
+                Line l = CreateLine(true);
                 l.Name = "line" + draggableControl.Tag.ToString();
 
                 ec.AddConnectionCountToSpecificElement(draggableControl.Tag.ToString());              
@@ -518,7 +544,7 @@ namespace CircuitBoardDiagram
             }
             else if (draggableControl.Tag.ToString() != previousElementName)
             {
-                Line l = CreateLine();               
+                Line l = CreateLine(true);               
 
                 ec.AddConnectionCountToSpecificElement(draggableControl.Tag.ToString());                
 
@@ -547,7 +573,7 @@ namespace CircuitBoardDiagram
             ec.EnableConnectionAvailability(draggableControl.Tag.ToString());
         }
         
-        private Line CreateLine()
+        private Line CreateLine(bool seperateLine)
         {
             Line l = new Line();
             SolidColorBrush bc = new SolidColorBrush();
@@ -556,12 +582,14 @@ namespace CircuitBoardDiagram
             l.StrokeThickness = 2;
             l.Stroke = bc;
 
-            l.MouseLeftButtonDown += new MouseButtonEventHandler(Line_mouseLeftButtonDown);
-            l.MouseEnter += new MouseEventHandler(Line_mouseEnter);
-            l.MouseLeave += new MouseEventHandler(Line_mouseLeave);
-            l.MouseMove += new MouseEventHandler(Line_mouseMove);
-            l.MouseLeftButtonUp += new MouseButtonEventHandler(Line_mouseLeftButtonUp);
-
+            if (seperateLine)
+            {
+                l.MouseLeftButtonDown += new MouseButtonEventHandler(Line_mouseLeftButtonDown);
+                l.MouseEnter += new MouseEventHandler(Line_mouseEnter);
+                l.MouseLeave += new MouseEventHandler(Line_mouseLeave);
+                l.MouseMove += new MouseEventHandler(Line_mouseMove);
+                l.MouseLeftButtonUp += new MouseButtonEventHandler(Line_mouseLeftButtonUp);
+            }
             canvas.Children.Add(l);
 
             return l;

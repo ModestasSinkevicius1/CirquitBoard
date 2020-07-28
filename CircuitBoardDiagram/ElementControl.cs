@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Shapes;
 
 namespace CircuitBoardDiagram
 {
@@ -50,6 +51,18 @@ namespace CircuitBoardDiagram
                 if (se.GetName() == name)
                 {
                     se.RemoveConnection();
+                    break;
+                }
+            }
+        }
+
+        public void AddLineForElement(string name, Line l)
+        {
+            foreach(SpecificElement se in seList)
+            {
+                if(se.GetName() == name)
+                {
+                    se.AddList(l);
                     break;
                 }
             }

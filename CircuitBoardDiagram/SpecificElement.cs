@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Shapes;
 
 namespace CircuitBoardDiagram
 {
@@ -11,6 +12,7 @@ namespace CircuitBoardDiagram
         private string name;
         private bool isConnected=false;
         private int connectionCount = 0;
+        private List<Line> lList = new List<Line>();
 
         public SpecificElement(string name)
         {
@@ -38,6 +40,11 @@ namespace CircuitBoardDiagram
         public bool GetStatus()
         {
             return isConnected;
+        }
+
+        public void AddList(Line l)
+        {
+            lList.Add(l);
         }
 
         public void AddConnection()
