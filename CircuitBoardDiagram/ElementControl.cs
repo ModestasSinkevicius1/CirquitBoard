@@ -68,6 +68,18 @@ namespace CircuitBoardDiagram
             }
         }
 
+        public List<Line> GetLineListFromElement(string name)
+        {
+            foreach(SpecificElement se in seList)
+            {
+                if(se.GetName() == name)
+                {
+                    return se.GetList();
+                }
+            }
+            return null;
+        }
+
         public bool GetConnectionAvailability(string name)
         {
             foreach (SpecificElement se in seList)

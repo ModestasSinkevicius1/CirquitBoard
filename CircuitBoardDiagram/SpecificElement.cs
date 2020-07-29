@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Shapes;
@@ -45,6 +46,11 @@ namespace CircuitBoardDiagram
         public void AddList(Line l)
         {
             lList.Add(l);
+        }
+
+        public List<Line> GetList()
+        {
+            return lList;
         }
 
         public void AddConnection()
