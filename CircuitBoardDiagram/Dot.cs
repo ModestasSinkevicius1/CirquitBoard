@@ -10,10 +10,18 @@ namespace CircuitBoardDiagram
     {
         double length = 10;
         string name;
+
+        string core;
         
-        public Dot(string name)
+        public Dot(string name, string core)
         {
             this.name = name;
+            this.core = core;
+        }
+
+        public string GetCore()
+        {
+            return core;
         }
 
         public string GetName()

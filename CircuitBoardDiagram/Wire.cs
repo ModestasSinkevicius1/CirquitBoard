@@ -13,6 +13,9 @@ namespace CircuitBoardDiagram
         public string elementA { get; set; }
         public string elementB { get; set; }
 
+        public string dotA { get; set; }
+        public string dotB { get; set; }
+
         private List<Line> lList = new List<Line>();
 
         public Wire(string name)
