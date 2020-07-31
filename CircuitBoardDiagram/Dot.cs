@@ -12,11 +12,22 @@ namespace CircuitBoardDiagram
         string name;
 
         string core;
+        string wireName;
         
         public Dot(string name, string core)
         {
             this.name = name;
             this.core = core;
+        }
+
+        public string GetWireName()
+        {
+            return wireName;
+        }
+
+        public void SetWireName(string wireName)
+        {
+            this.wireName = wireName;
         }
 
         public string GetCore()
