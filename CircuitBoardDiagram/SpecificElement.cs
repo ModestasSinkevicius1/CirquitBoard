@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Shapes;
 
 namespace CircuitBoardDiagram
@@ -14,6 +15,7 @@ namespace CircuitBoardDiagram
         private bool isConnected=false;
         private int connectionCount = 0;
         private List<Line> lList = new List<Line>();
+        private List<Dot> dList = new List<Dot>();
 
         public SpecificElement(string name)
         {
@@ -46,6 +48,16 @@ namespace CircuitBoardDiagram
         public void AddList(Line l)
         {
             lList.Add(l);
+        }
+
+        public void AddDot(Dot d)
+        {
+            dList.Add(d);
+        }
+
+        public List<Dot> GetDots()
+        {
+            return dList;
         }
 
         public List<Line> GetList()

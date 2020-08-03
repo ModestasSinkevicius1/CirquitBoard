@@ -97,7 +97,7 @@ namespace CircuitBoardDiagram
             Image draggable = sender as Image;
             draggable.ReleaseMouseCapture();            
             SnapToClosestCell(draggable);
-            UpadateLinesLocationAroundElement(draggable);
+            UpadateDotsLocation(draggable);
             //UpdateLineLocation(draggable);
             IndicateCell(highlighting_rectangle);           
             indicating_rectangle.Visibility = Visibility.Hidden;            
@@ -116,7 +116,7 @@ namespace CircuitBoardDiagram
                 draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);
                 
                 SnapToClosestCell(draggableControl);
-                UpadateLinesLocationAroundElement(draggableControl);
+                UpadateDotsLocation(draggableControl);
                 UpdateLineLocation(draggableControl);
             }
             
@@ -148,7 +148,7 @@ namespace CircuitBoardDiagram
 
                 Panel.SetZIndex(r, 1);
 
-                CreateDots(r.Tag.ToString(), 4);
+                CreateDot(r.Tag.ToString(), 4);
                 
                 queue++;               
             }
@@ -251,56 +251,23 @@ namespace CircuitBoardDiagram
 
             List<Line> lList;
 
+            double length = 10;
+
             int dotX = 0;
             int dotY = 0;
           
 
             if (isDragging && draggableControl != null && isOutOfBounds(e))
             {                             
-                foreach(Dot d in dList)
-                {
-                    if(draggableControl.Name == w.GetName())
-                    {                       
-                        foreach(Line l in ec.GetLineListFromElement(w.elementA))
-                        {
-                            MessageBox.Show(l.Name + " and " + draggableControl.Name);
-                            if (l.Name == draggableControl.Name)
-                            {
-                                MessageBox.Show("Yes");
-                            }
-                        }
-                        foreach(Line l in ec.GetLineListFromElement(w.elementB))
-                        {
-                            if (l.Name == draggableControl.Name)
-                            {
-                                MessageBox.Show("No");
-                            }
-                        }                       
-                    }
-                }
-                /*if(linePosition)
-                    draggableControl.X2 = e.GetPosition(canvas).X;
-                else
-                    draggableControl.Y2 = e.GetPosition(canvas).Y;               
-
-                UpdateLineLocation2(draggableControl);
-                */
+                
+                //UpdateLineLocation2(draggableControl);               
             }
         }
 
         private void Line_mouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
         {
             Line draggableControl = sender as Line;
-            string name = "";
-
-            foreach (Dot d in dList)
-            {
-                if(draggableControl.Name == d.GetName())
-                {
-                    name = d.GetCore();
-                }
-            }           
-            DrawWireBetweenElements(draggableControl, name);
+            string name = "";                           
         }
 
         private void image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -346,6 +313,21 @@ namespace CircuitBoardDiagram
             highlighting_rectangle.Visibility = Visibility.Hidden;
         }
 
+        private void Image_MouseLeftButtonDown_2(object sender, MouseButtonEventArgs e)
+        {
+            Image img = sender as Image;
+            string name = "";
+
+            foreach (Dot d in dList)
+            {
+                if(img.Tag.ToString()==d.GetName())
+                {
+                    name = d.GetCore();
+                    DrawWireBetweenElements(img,name);
+                }
+            }
+        }
+
         private void canvas_MouseLeave(object sender, MouseEventArgs e)
         {
             indicating_rectangle.Visibility = Visibility.Hidden;
@@ -369,60 +351,58 @@ namespace CircuitBoardDiagram
             }
         }       
 
-        private void CreateDots(string name, int count)
+        private void CreateDot(string name, int count)
         {
             for(int i=0;i<count;i++)
-            {                
-                Line l = CreateLine(false);
-                l.Name = name+"_"+i;
-                Dot d = new Dot(l.Name, name);
+            {
+                Image img = new Image();
+                img.Visibility = Visibility.Hidden;
+                img.Width = 15;
+                img.Height = 15;
+                img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
+                img.Tag = name+"_"+i;
+
+                img.MouseLeftButtonDown += new MouseButtonEventHandler(Image_MouseLeftButtonDown_2);
+
+                Panel.SetZIndex(img, 2);
+                canvasGrid.Children.Add(img);
+                Dot d = new Dot(img.Tag.ToString(), name, img);
+                ec.AddDot(name, d);
                 dList.Add(d);
-                ec.AddLineForElement(name, l);
             }           
-        }
+        }       
 
-        private void UpadateLinesLocationAroundElement(Image draggableControl)
+        private void UpadateDotsLocation(Image draggableControl)
         {
-            List<Line> lList = ec.GetLineListFromElement(draggableControl.Tag.ToString());
+            List<Dot> dList = ec.GetDots(draggableControl.Tag.ToString());
 
-            double x = draggableControl.RenderTransform.Value.OffsetX + (draggableControl.Width / 2); ;
-            double y = draggableControl.RenderTransform.Value.OffsetY + (draggableControl.Height / 2); ;
+            double x = draggableControl.RenderTransform.Value.OffsetX;
+            double y = draggableControl.RenderTransform.Value.OffsetY;
 
             double length = 10;
            
-            for (int i = 0; i < lList.Count; i++)
-            {
-                foreach (Dot d in dList)
-                {
-                    if (lList[i].Name == d.GetName())
-                    {
-                        length = d.GetLength();
-                    }
-                }
-                lList[i].X1 = x;
-                lList[i].Y1 = y;
+            for (int i = 0; i < dList.Count; i++)
+            {                                             
                 if (i <= 0)
                 {
-                    lList[i].X2 = x + ((draggableControl.Width / 2) + length);
-                    lList[i].Y2 = y;
+                    dList[i].GetDot().RenderTransform = new TranslateTransform(x+25, y);
                 }
                 else if(i <= 1)
                 {
-                    lList[i].X2 = x;
-                    lList[i].Y2 = y + ((draggableControl.Height / 2) + length);
+                    dList[i].GetDot().RenderTransform = new TranslateTransform(x, y+25);
                 }
                 else if(i <= 2)
                 {
-                    lList[i].X2 = x - ((draggableControl.Width / 2) + length);
-                    lList[i].Y2 = y;
+                    dList[i].GetDot().RenderTransform = new TranslateTransform(x-25, y);
                 }
                 else
                 {
-                    lList[i].X2 = x;
-                    lList[i].Y2 = y - ((draggableControl.Height / 2) + length);
-                }                
+                    dList[i].GetDot().RenderTransform = new TranslateTransform(x, y-25);
+                }               
+                dList[i].GetDot().Visibility = Visibility.Visible;
             }
-        }
+            
+        }      
 
         private void SnapToClosestCell(Image draggableControl)
         {            
@@ -612,17 +592,18 @@ namespace CircuitBoardDiagram
             Grid.SetColumn(draggableControl, 0);
         }
 
-        private void DrawWireBetweenElements(Line draggableControl, string name)
-        {          
+        private void DrawWireBetweenElements(Image draggableControl, string name)
+        {
+            draggableControl.Visibility = Visibility.Hidden;
             if (!turn && previousElementName!=name)
             {
-                Line l = CreateLine(true);
+                Line l = CreateLine(true);               
                 l.Name = "line" + name;
 
                 //ec.AddConnectionCountToSpecificElement(draggableControl.Tag.ToString());              
 
-                l.X1 = draggableControl.X1;
-                l.Y1 = draggableControl.Y1;
+                l.X1 = (draggableControl.RenderTransform.Value.OffsetX + 25);
+                l.Y1 = (draggableControl.RenderTransform.Value.OffsetY + 25);
 
                 l.X2 = l.X1;
                 l.Y2 = l.Y1;                                 
@@ -636,17 +617,17 @@ namespace CircuitBoardDiagram
             }
             else if (name != previousElementName)
             {
-                Line l = CreateLine(true);               
+                Line l = CreateLine(true);
 
                 //ec.AddConnectionCountToSpecificElement(draggableControl.Tag.ToString());                
 
-                previousLine.X2 = draggableControl.X2;                            
+                previousLine.X2 = draggableControl.RenderTransform.Value.OffsetX + 25;
 
                 l.X1 = previousLine.X2;
                 l.Y1 = previousLine.Y2;
 
                 l.X2 = previousLine.X2;
-                l.Y2 = draggableControl.Y2;
+                l.Y2 = draggableControl.RenderTransform.Value.OffsetY + 25;
 
                 previousLine.Name += name;
                 l.Name = previousLine.Name;
@@ -664,15 +645,16 @@ namespace CircuitBoardDiagram
 
                 foreach(Dot d in dList)
                 {
-                    if(d.GetName() == previousDotName)
-                    {
-                        d.SetWireName(previousLine.Name);
+                    if(d.GetName() == w.dotA)
+                    {                        
+                        d.SetWireName(w.elementA);
                     }
-                    if(d.GetName() == draggableControl.Name)
+                    if(d.GetName() == w.dotB)
                     {
-                        d.SetWireName(l.Name);
+                        d.SetWireName(w.elementB);
                     }
                 }
+                
 
                 previousElementName = name;               
 
@@ -790,7 +772,7 @@ namespace CircuitBoardDiagram
                             break;
                         }
                         g++;
-                    }
+                    }                    
                     for (int j=w2.GetList().Count-1;j>=0;j--)
                     {
                         if (i <= 0)

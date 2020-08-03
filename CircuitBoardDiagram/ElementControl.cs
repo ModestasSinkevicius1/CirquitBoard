@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Shapes;
 
 namespace CircuitBoardDiagram
@@ -78,6 +79,30 @@ namespace CircuitBoardDiagram
                 }
             }
             return null;
+        }
+
+        public List<Dot> GetDots(string name)
+        {
+            foreach (SpecificElement se in seList)
+            {
+                if (se.GetName() == name)
+                {
+                    return se.GetDots();
+                }
+            }
+            return null;
+        }
+
+        public void AddDot(string name, Dot d)
+        {
+            foreach (SpecificElement se in seList)
+            {
+                if (se.GetName() == name)
+                {
+                    se.AddDot(d);
+                    break;
+                }
+            }
         }
 
         public bool GetConnectionAvailability(string name)
