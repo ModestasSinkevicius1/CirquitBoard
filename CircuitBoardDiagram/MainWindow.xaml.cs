@@ -54,25 +54,21 @@ namespace CircuitBoardDiagram
 
         public MainWindow()
         {
-            InitializeComponent();
-
+            InitializeComponent();            
             indicating_rectangle.Visibility = Visibility.Hidden;
             highlighting_rectangle.Visibility = Visibility.Hidden;           
 
             LoadImages();
             LoadPopupMessage();
 
-            CheckActivePopupMessage();
+            //CheckActivePopupMessage();
         }   
         
         private void CheckActivePopupMessage()
         {
             Thread th = new Thread(UpdatePopupStatus);
             th.IsBackground = true;
-            th.Start();
-
-            ;
-
+            th.Start();           
         }
 
         private void UpdatePopupStatus()
@@ -105,10 +101,14 @@ namespace CircuitBoardDiagram
                 draggableControl.CaptureMouse();                
             }
             else if (Keyboard.IsKeyDown(Key.X))
-            {
+            {               
                 foreach(Line l in ec.GetLineListFromElement(draggableControl.Tag.ToString()))
                 {
-                    canvas.Children.Remove(l);
+                    DeleteWires(l);
+                }
+                foreach(Dot d in ec.GetDots(draggableControl.Tag.ToString()))
+                {
+                    canvasGrid.Children.Remove(d.GetDot());
                 }
                 ec.RemoveElementFromList(draggableControl.Tag.ToString());
                 canvas.Children.Remove(draggableControl);
@@ -238,21 +238,8 @@ namespace CircuitBoardDiagram
             l.CaptureMouse();
 
             if (Keyboard.IsKeyDown(Key.X))
-            {               
-                foreach (Wire w2 in wList)
-                {
-                    if (w2.GetName() == l.Name)
-                    {
-                        foreach(Line l2 in w2.GetList())
-                        {
-                            canvas.Children.Remove(l2);
-                        }
-                        ec.RemoveConnectionCountFromSpecificElement(w2.elementA);
-                        ec.RemoveConnectionCountFromSpecificElement(w2.elementB);
-                        wList.Remove(w2);                       
-                        break;
-                    }
-                }             
+            {
+                DeleteWires(l);                         
             }
             else if(Keyboard.IsKeyDown(Key.C))
             {                              
@@ -363,7 +350,7 @@ namespace CircuitBoardDiagram
             Image img = sender as Image;
             foreach(Dot d in dList)
             {
-                if(d.GetName()==img.Tag.ToString())
+                if(d.GetName()==img.Tag.ToString()&& img != null)
                 {
                     foreach(Dot d2 in ec.GetDots(d.GetCore()))
                     {
@@ -413,7 +400,7 @@ namespace CircuitBoardDiagram
 
         private void Textbox_MouseLeave(object sender, MouseEventArgs e)
         {            
-            //tb.Visibility = Visibility.Hidden;
+            tb.Visibility = Visibility.Hidden;
         }
         private void CreateDot(string name, int count)
         {
@@ -659,73 +646,84 @@ namespace CircuitBoardDiagram
 
         private void DrawWireBetweenElements(Image draggableControl, string name)
         {
-            draggableControl.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotRed.png"));
-            if (!turn && previousElementName!=name)
+            if (!ec.GetConnectionAvailability(name))
             {
-                Line l = CreateLine(true);               
-                l.Name = "line" + name;
-
-                ec.AddConnectionCountToSpecificElement(name);              
-
-                l.X1 = (draggableControl.RenderTransform.Value.OffsetX + 25);
-                l.Y1 = (draggableControl.RenderTransform.Value.OffsetY + 25);
-
-                l.X2 = l.X1;
-                l.Y2 = l.Y1;                                 
-
-                previousElementName = name;
-                previousDotName = draggableControl.Tag.ToString();
-
-                previousLine = l;
-
-                turn = true;
-            }
-            else if (name != previousElementName)
-            {
-                Line l = CreateLine(true);
-
-                ec.AddConnectionCountToSpecificElement(name);                
-
-                previousLine.X2 = draggableControl.RenderTransform.Value.OffsetX + 25;
-
-                l.X1 = previousLine.X2;
-                l.Y1 = previousLine.Y2;
-
-                l.X2 = previousLine.X2;
-                l.Y2 = draggableControl.RenderTransform.Value.OffsetY + 25;
-
-                previousLine.Name += name;
-                l.Name = previousLine.Name;
-
-                w = new Wire(previousLine.Name);
-                w.elementA = previousElementName;
-                w.elementB = name;
-
-                w.dotA = previousDotName;
-                w.dotB = draggableControl.Tag.ToString();
-
-                w.AddList(previousLine);
-                w.AddList(l);
-                wList.Add(w);
-
-                foreach(Dot d in dList)
+                draggableControl.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotRed.png"));
+                if (!turn && previousElementName != name)
                 {
-                    if(d.GetName() == w.dotA)
-                    {                        
-                        d.SetWireName(w.elementA);
-                    }
-                    if(d.GetName() == w.dotB)
-                    {
-                        d.SetWireName(w.elementB);
-                    }
+                    Line l = CreateLine(true);
+                    l.Name = "line" + name;
+
+                    ec.AddConnectionCountToSpecificElement(name);                   
+
+                    l.X1 = (draggableControl.RenderTransform.Value.OffsetX + 25);
+                    l.Y1 = (draggableControl.RenderTransform.Value.OffsetY + 25);
+
+                    l.X2 = l.X1;
+                    l.Y2 = l.Y1;
+
+                    previousElementName = name;
+                    previousDotName = draggableControl.Tag.ToString();
+
+                    previousLine = l;
+
+                    turn = true;
                 }
-                
+                else if (name != previousElementName)
+                {
+                    Line l = CreateLine(true);
 
-                previousElementName = name;               
+                    ec.AddConnectionCountToSpecificElement(name);
 
-                turn = false;
-            }           
-            ec.EnableConnectionAvailability(name);
+                    previousLine.X2 = draggableControl.RenderTransform.Value.OffsetX + 25;
+
+                    l.X1 = previousLine.X2;
+                    l.Y1 = previousLine.Y2;
+
+                    l.X2 = previousLine.X2;
+                    l.Y2 = draggableControl.RenderTransform.Value.OffsetY + 25;
+
+                    previousLine.Name += name;
+                    l.Name = previousLine.Name;
+
+                    w = new Wire(previousLine.Name);
+                    w.elementA = previousElementName;
+                    w.elementB = name;
+
+                    w.dotA = previousDotName;
+                    w.dotB = draggableControl.Tag.ToString();
+
+                    w.AddList(previousLine);
+                    w.AddList(l);
+                    wList.Add(w);
+
+                    ec.AddLineForElement(previousElementName, previousLine);
+                    ec.AddLineForElement(previousElementName, l);
+
+                    ec.AddLineForElement(name, previousLine);
+                    ec.AddLineForElement(name, l);
+
+                    foreach (Dot d in dList)
+                    {
+                        if (d.GetName() == w.dotA)
+                        {
+                            d.SetWireName(w.elementA);
+                        }
+                        if (d.GetName() == w.dotB)
+                        {
+                            d.SetWireName(w.elementB);
+                        }
+                    }
+
+
+                    previousElementName = name;
+
+                    turn = false;
+                }
+                ec.EnableConnectionAvailability(name);
+            }
+            else
+                MessageBox.Show("This element has max connections used");
         }
         
         private Line CreateLine(bool seperateLine)
@@ -1141,7 +1139,7 @@ namespace CircuitBoardDiagram
             tb.MouseLeave += new MouseEventHandler(Textbox_MouseLeave);
 
             tb.Width = 100;
-            tb.Height = 30;
+            tb.Height = 100;
             tb.Background = scb;
             tb.Opacity = 0.90;            
             Panel.SetZIndex(tb, 2);
@@ -1153,6 +1151,40 @@ namespace CircuitBoardDiagram
             tb.Visibility = Visibility.Visible;
             tb.Text = "Im working!";
             tb.RenderTransform = draggableControl.RenderTransform;
-        }        
+        }
+        
+        private void DeleteWires(Line l)
+        {
+            foreach (Wire w2 in wList)
+            {
+                if (w2.GetName() == l.Name)
+                {
+                    foreach (Dot d in dList)
+                    {
+                        if (w2.dotA == d.GetName())
+                        {
+                            d.GetDot().Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
+                        }
+                        if (w2.dotB == d.GetName())
+                        {
+                            d.GetDot().Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
+                        }
+                    }
+
+                    foreach (Line l2 in w2.GetList())
+                    {
+                        canvas.Children.Remove(l2);
+                    }
+                    ec.RemoveConnectionCountFromSpecificElement(w2.elementA);
+                    ec.RemoveConnectionCountFromSpecificElement(w2.elementB);
+
+                    ec.EnableConnectionAvailability(w2.elementA);
+                    ec.EnableConnectionAvailability(w2.elementB);
+
+                    wList.Remove(w2);
+                    break;
+                }
+            }
+        }
     }
 }

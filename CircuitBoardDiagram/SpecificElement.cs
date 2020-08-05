@@ -34,11 +34,11 @@ namespace CircuitBoardDiagram
 
         public void SetConnection(bool state, int connectionRequiredCount)
         {
-            if (state && connectionRequiredCount<connectionCount)
+            if (state && connectionRequiredCount<=connectionCount)
                 isConnected = true;
             else
                 isConnected = false;
-        }
+        }        
 
         public bool GetStatus()
         {

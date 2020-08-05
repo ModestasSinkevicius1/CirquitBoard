@@ -3,34 +3,34 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CircuitBoardDiagram"
+        xmlns:local="clr-namespace:CircuitBoardDiagram"       
         mc:Ignorable="d"
         Title="MainWindow" Height="587" Width="816">
     <Grid>
-        <Button Style="{StaticResource RoundButtonTemplate}" Content="Check" HorizontalAlignment="Left" Margin="683,38,0,0" VerticalAlignment="Top" Width="104" Height="33" BorderBrush="{x:Null}" Foreground="Black" FontFamily="Arial Black">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="209*"/>
+            <RowDefinition Height="347*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="95*"/>
+            <ColumnDefinition Width="309*"/>
+        </Grid.ColumnDefinitions>
+        <Button Style="{StaticResource RoundButtonTemplate}" Content="Check" Margin="496,32,18,0" BorderBrush="{x:Null}" Foreground="Black" FontFamily="Arial Black" Grid.Column="1" Height="38" VerticalAlignment="Top">
             <Button.Effect>
                 <DropShadowEffect BlurRadius="10" Direction="320"/>
             </Button.Effect>
         </Button>
-        <Canvas HorizontalAlignment="Left" Height="350" Margin="187,81,0,0" VerticalAlignment="Top" Width="600" RenderTransformOrigin="0.5,0.5" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1" MouseMove="canvas_MouseMove_1" MouseEnter="canvas_MouseEnter" MouseLeave="canvas_MouseLeave" >
+        <Canvas Width="auto" Height="350" MinWidth="600" MaxWidth="1200" Margin="1,81,0,0" VerticalAlignment="Top" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1" MouseMove="canvas_MouseMove_1" MouseEnter="canvas_MouseEnter" MouseLeave="canvas_MouseLeave" Grid.Column="1" Grid.RowSpan="2" ClipToBounds="True">
             <Canvas.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FFAEA8A8" Offset="0"/>
                     <GradientStop Color="White" Offset="1"/>
                 </LinearGradientBrush>
             </Canvas.Background>
-            <Grid x:Name="canvasGrid" Height="350" Width="600" RenderTransformOrigin="0.5,0.5">
+            <Grid x:Name="canvasGrid" Width="auto" Height="350">
                 <Grid.Background>
                     <ImageBrush ImageSource="grid.png" Opacity="0.5"/>
                 </Grid.Background>
-                <Grid.LayoutTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform Y="-50"/>
-                    </TransformGroup>
-                </Grid.LayoutTransform>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
@@ -58,7 +58,7 @@
                 <Rectangle Fill="#6609FF36" RadiusY="10" RadiusX="10" x:Name="highlighting_rectangle" Grid.ColumnSpan="2" Margin="-5,-5,45,45" Grid.RowSpan="2"/>
             </Grid>
         </Canvas>
-        <DockPanel HorizontalAlignment="Left" x:Name="dock_bottom" Height="110" LastChildFill="False" Margin="187,436,0,0" VerticalAlignment="Top" Width="600" RenderTransformOrigin="0.6,-0.07" Background="#7FA8A8A8">
+        <DockPanel HorizontalAlignment="Left" x:Name="dock_bottom" Height="110" LastChildFill="False" Margin="1,227,0,0" VerticalAlignment="Top" Width="600" RenderTransformOrigin="0.6,-0.07" Background="#7FA8A8A8" Grid.Column="1" Grid.Row="1">
             <Image x:Name="image" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
             <Image x:Name="image_Copy" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
             <Image x:Name="image_Copy1" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
@@ -66,8 +66,8 @@
             <Image x:Name="image_Copy3" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
             <Image x:Name="image_Copy4" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
         </DockPanel>
-        <DockPanel HorizontalAlignment="Left" Height="465" LastChildFill="False" Margin="10,81,0,0" VerticalAlignment="Top" Width="172" RenderTransformOrigin="0.6,-0.07" Background="#7FA8A8A8"/>
-        <Expander x:Name="expander" Header="Element list" HorizontalAlignment="Left" Height="465" Margin="10,81,0,0" VerticalAlignment="Top" Width="171">
+        <DockPanel HorizontalAlignment="Left" Height="465" LastChildFill="False" Margin="10,81,0,0" VerticalAlignment="Top" Width="172" RenderTransformOrigin="0.6,-0.07" Background="#7FA8A8A8" Grid.RowSpan="2"/>
+        <Expander x:Name="expander" Header="Element list" HorizontalAlignment="Left" Height="465" Margin="10,81,0,0" VerticalAlignment="Top" Width="171" Grid.RowSpan="2">
             <Grid Background="#FFE5E5E5" RenderTransformOrigin="-0.031,-0.312" x:Name="grid_expander">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="24"/>
@@ -101,8 +101,8 @@
                 </Grid.ColumnDefinitions>
             </Grid>
         </Expander>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="350" Margin="186,81,0,0" VerticalAlignment="Top" Width="600"></Border>
-        <Menu x:Name="menu" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="808">
+        <Border BorderBrush="Black" BorderThickness="1" Width="auto" MinWidth="600" Height="350" Margin="0,81,18,0" VerticalAlignment="Top" Grid.Column="1" Grid.RowSpan="2"/>
+        <Menu x:Name="menu" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="808" Grid.ColumnSpan="2">
             <MenuItem Header="File" Height="27" Width="45" Padding="11.5,0,0,0">
                 <MenuItem Header="New"/>
                 <MenuItem Header="Open"/>
