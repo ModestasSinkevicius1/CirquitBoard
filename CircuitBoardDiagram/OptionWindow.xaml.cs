@@ -126,5 +126,10 @@ namespace CircuitBoardDiagram
         {
             return slider_Copy.Value;
         }
+
+        private void image_MouseLeave(object sender, MouseEventArgs e)
+        {
+            MessageBox.Show("I have left");
+        }
     }
 }

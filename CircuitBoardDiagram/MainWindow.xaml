@@ -20,44 +20,46 @@
                 <DropShadowEffect BlurRadius="10" Direction="320"/>
             </Button.Effect>
         </Button>
-        <Canvas Width="auto" MinHeight="350" MinWidth="600" Margin="0,81,28,0" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1" MouseMove="canvas_MouseMove_1" MouseEnter="canvas_MouseEnter" MouseLeave="canvas_MouseLeave" Grid.Column="1" ClipToBounds="True">
-            <Canvas.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FFAEA8A8" Offset="0"/>
-                    <GradientStop Color="White" Offset="1"/>
-                </LinearGradientBrush>
-            </Canvas.Background>
-            <Grid x:Name="canvasGrid" Width="600" Height="350" HorizontalAlignment="Stretch">
-                <Grid.Background>
-                    <ImageBrush ImageSource="grid.png" Opacity="0.5" Stretch="UniformToFill"/>
-                </Grid.Background>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="50"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50"/>
-                </Grid.ColumnDefinitions>
-                <Rectangle Fill="#338EFF07" RadiusY="1" x:Name="indicating_rectangle" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
-                <Rectangle Fill="#6609FF36" RadiusY="10" RadiusX="10" x:Name="highlighting_rectangle" Grid.ColumnSpan="2" Margin="-5,-5,45,45" Grid.RowSpan="2"/>
-            </Grid>
-        </Canvas>
+        <Border BorderBrush="Black" BorderThickness="1" Width="auto" MinWidth="600" MinHeight="350" Margin="0,81,20,0" Grid.Column="1" ClipToBounds="True">
+            <Canvas Width="4800" Height="1750" MinHeight="350" MinWidth="600" Margin="0,0,28,0" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1" MouseMove="canvas_MouseMove_1" MouseEnter="canvas_MouseEnter" MouseLeave="canvas_MouseLeave" Grid.Column="1" ClipToBounds="True" MouseLeftButtonUp="canvas_MouseLeftButtonUp">
+                <Canvas.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFAEA8A8" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Canvas.Background>
+                <Grid x:Name="canvasGrid" Width="600" Height="350" HorizontalAlignment="Stretch" ShowGridLines="True">
+                    <Grid.Background>
+                        <ImageBrush Opacity="0.5" Stretch="UniformToFill"/>
+                    </Grid.Background>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle Fill="#338EFF07" RadiusY="1" x:Name="indicating_rectangle" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
+                    <Rectangle Fill="#6609FF36" RadiusY="10" RadiusX="10" x:Name="highlighting_rectangle" Grid.ColumnSpan="2" Margin="-5,-5,45,45" Grid.RowSpan="2"/>
+                </Grid>
+            </Canvas>
+        </Border>
         <DockPanel x:Name="dock_bottom" LastChildFill="False" Margin="1,10,20,17" RenderTransformOrigin="0.6,-0.07" Background="#7FA8A8A8" Grid.Column="1" Grid.Row="1">
             <Image x:Name="image" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
             <Image x:Name="image_Copy" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
@@ -101,7 +103,6 @@
                 </Grid.ColumnDefinitions>
             </Grid>
         </Expander>
-        <Border BorderBrush="Black" BorderThickness="1" Width="auto" MinWidth="600" MinHeight="350" Margin="0,81,20,0" Grid.Column="1"/>
         <Menu x:Name="menu" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="808" Grid.ColumnSpan="2">
             <MenuItem Header="File" Height="27" Width="45" Padding="11.5,0,0,0">
                 <MenuItem Header="New"/>
