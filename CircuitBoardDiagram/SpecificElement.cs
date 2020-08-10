@@ -14,7 +14,7 @@ namespace CircuitBoardDiagram
         private string name;
         private bool isConnected=false;
         private int connectionCount = 0;
-        private List<Line> lList = new List<Line>();
+        private List<Polyline> plList = new List<Polyline>();
         private List<Dot> dList = new List<Dot>();
 
         public SpecificElement(string name)
@@ -45,9 +45,9 @@ namespace CircuitBoardDiagram
             return isConnected;
         }
 
-        public void AddList(Line l)
+        public void AddList(Polyline l)
         {
-            lList.Add(l);
+            plList.Add(l);
         }
 
         public void AddDot(Dot d)
@@ -60,9 +60,9 @@ namespace CircuitBoardDiagram
             return dList;
         }
 
-        public List<Line> GetList()
+        public List<Polyline> GetList()
         {
-            return lList;
+            return plList;
         }
 
         public void AddConnection()

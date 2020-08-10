@@ -57,7 +57,7 @@ namespace CircuitBoardDiagram
             }
         }
 
-        public void AddLineForElement(string name, Line l)
+        public void AddLineForElement(string name, Polyline l)
         {
             foreach(SpecificElement se in seList)
             {
@@ -69,7 +69,7 @@ namespace CircuitBoardDiagram
             }
         }
 
-        public List<Line> GetLineListFromElement(string name)
+        public List<Polyline> GetLineListFromElement(string name)
         {
             foreach(SpecificElement se in seList)
             {
