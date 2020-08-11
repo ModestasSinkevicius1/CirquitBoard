@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -151,7 +152,13 @@ namespace CircuitBoardDiagram
                 
                 SnapToClosestCell(draggableControl);
                 UpadateDotsLocation(draggableControl);
-                //UpdateLineLocation(draggableControl);
+                foreach(Wire w in wList)
+                {
+                    if(w.elementA==draggableControl.Tag.ToString() || w.elementB==draggableControl.Tag.ToString())
+                    {
+                        UpdateLineLocation(w.dotA, w.dotB, w.GetPolyline());                       
+                    }
+                }                
             }
             
         }
@@ -437,7 +444,7 @@ namespace CircuitBoardDiagram
             indicating_rectangle.Visibility = Visibility.Hidden;
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void MenuItemOption_Click(object sender, RoutedEventArgs e)
         {
             OptionWindow opWindow = new OptionWindow(canvasGrid.ColumnDefinitions[0].Width.Value, canvasGrid.RowDefinitions[0].Height.Value);
             bool? result = opWindow.ShowDialog();
@@ -453,6 +460,30 @@ namespace CircuitBoardDiagram
                 UpdateIndicatorSize();
                 UpdateHighlightorSize();
             }
+        }
+
+        private void MenuItemExport_Click(object sender, RoutedEventArgs e)
+        {                       
+            Transform transform = canvas.LayoutTransform;
+            
+            canvas.LayoutTransform = null;
+            
+            Size size = new Size(canvas_border.ActualWidth, canvas_border.ActualHeight);
+            
+            canvas.Measure(size);
+            canvas.Arrange(new Rect(size));
+                        
+            RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)size.Width, (int)size.Height, 96d, 96d, PixelFormats.Pbgra32);
+            renderBitmap.Render(canvas);            
+            
+            using (FileStream outStream = new FileStream("logo.png", FileMode.Create))
+            {                
+                PngBitmapEncoder encoder = new PngBitmapEncoder();                
+                encoder.Frames.Add(BitmapFrame.Create(renderBitmap));                
+                encoder.Save(outStream);
+            }
+           
+            canvas.LayoutTransform = transform;
         }
 
         private void Textbox_MouseLeave(object sender, MouseEventArgs e)
@@ -481,12 +512,12 @@ namespace CircuitBoardDiagram
                 ec.AddDot(name, d);
                 dList.Add(d);
                 direction = direction == true ? false : true;
-                if (i < 2)
-                {
+                if (i < 1)
+                {                    
                     oposite = 1;
                 }
                 else
-                {
+                {                    
                     oposite = -1;
                 }
             }
@@ -641,11 +672,9 @@ namespace CircuitBoardDiagram
             {
                 if (w2.GetName() == pl.Name)
                 {
-                    foreach (Polyline pl2 in w2.GetList())
-                    {
-                        pl2.Stroke = bc;
-                        pl2.StrokeThickness = thickness;
-                    }
+                   
+                    pl.Stroke = bc;
+                    pl.StrokeThickness = thickness;                   
                     singleLine = false;
                     break;
                 }
@@ -713,15 +742,7 @@ namespace CircuitBoardDiagram
         }
 
         private void DrawWireBetweenElements(Image draggableControl, string name)
-        {
-            Point startLine;
-            Point line1;
-            Point line2;
-            Point line3;
-            Point endLine;
-
-            PointCollection polylinePoints = new PointCollection();
-
+        {           
             bool direction = false;
             int n = 1;
             int n2 = 1;
@@ -731,7 +752,7 @@ namespace CircuitBoardDiagram
                 draggableControl.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotRed.png"));
                 if (!turn && previousElementName != name)
                 {
-                    Polyline pl = CreatePolyline(true);                                                                           
+                    Polyline pl = CreatePolyline(true);
 
                     previousElementName = name;
                     previousDotName = draggableControl.Tag.ToString();
@@ -748,46 +769,7 @@ namespace CircuitBoardDiagram
                     ec.AddConnectionCountToSpecificElement(previousElementName);
                     ec.EnableConnectionAvailability(name);
 
-                    previousLine.Name += name;
-
-                    Image dotA = FindDot(previousDotName);
-                    direction = DetermineDirection(previousDotName);
-                    n = DetermineDirection2(previousDotName);
-
-                    startLine = new Point(dotA.RenderTransform.Value.OffsetX+25, dotA.RenderTransform.Value.OffsetY+25);
-                    
-                    if(!direction)
-                        line1 = new Point(startLine.X+25*n, startLine.Y);
-                    else
-                        line1 = new Point(startLine.X, startLine.Y+25*n);
-
-                    direction = DetermineDirection(draggableControl.Tag.ToString());
-                    n2 = DetermineDirection2(draggableControl.Tag.ToString());
-
-                    if (!direction)
-                    {                      
-                        line2 = new Point(draggableControl.RenderTransform.Value.OffsetX+25+(25*n), line1.Y);
-                        line3 = new Point(line2.X, draggableControl.RenderTransform.Value.OffsetY+25);
-                    }
-                    else
-                    {                      
-                        line2 = new Point(draggableControl.RenderTransform.Value.OffsetX + 25, line1.Y);
-                        line3 = new Point(line2.X, draggableControl.RenderTransform.Value.OffsetY+25+(25*n));
-                    }                    
-
-                    if(!direction)
-                        endLine = new Point(line3.X+25, line3.Y);
-                    else
-                        endLine = new Point(line3.X, line3.Y+25);
-                    polylinePoints.Add(startLine);
-                    polylinePoints.Add(line1);
-                    polylinePoints.Add(line2);
-                    polylinePoints.Add(line3);
-                    //polylinePoints.Add(endLine);
-
-                    previousLine.Points = polylinePoints;
-
-
+                    previousLine.Name += name;                                       
 
                     w = new Wire(previousLine.Name);
                     w.elementA = previousElementName;
@@ -796,7 +778,7 @@ namespace CircuitBoardDiagram
                     w.dotA = previousDotName;
                     w.dotB = draggableControl.Tag.ToString();
 
-                    w.AddList(previousLine);                   
+                    w.AddPolyline(previousLine);                   
                     wList.Add(w);
 
                     ec.AddLineForElement(previousElementName, previousLine);                  
@@ -815,6 +797,7 @@ namespace CircuitBoardDiagram
                         }
                     }
 
+                    UpdateLineLocation(previousDotName, draggableControl.Tag.ToString(), previousLine);
 
                     previousElementName = name;
 
@@ -919,78 +902,74 @@ namespace CircuitBoardDiagram
             }
         }*/
         
-        /*private void UpdateLineLocation(Image draggableControl)
-        {          
-            int i = 0;
-            int g = 0;
+        private void UpdateLineLocation(string dotNameA, string dotNameB, Polyline pl)
+        {
+            Point startLine1;
+            Point startline2;
+            Point line1;
+            Point line2;
+            Point endLine2;
+            Point endLine1;
 
-            int wireNumA = 0;
-            int wireNumB = 0;
+            PointCollection polylinePoints = new PointCollection();
 
-            List<Dot> lList = ec.GetDots(draggableControl.Tag.ToString());
+            Image dotA = FindDot(dotNameA);
+            Image dotB = FindDot(dotNameB);
 
-            foreach(Wire w2 in wList)
-            {               
-                if (w2.elementA == draggableControl.Tag.ToString())
-                {
-                    foreach (Dot d in lList)
-                    {                       
-                        if (w2.dotA == d.GetDot().Tag.ToString())
-                        {                            
-                            wireNumA = g;
-                            break;
-                        }
-                        g++;
-                    }                   
-                    foreach (Polyline l in w2.GetList())
-                    {
-                        if (i <= 0)
-                        {                           
-                            l.X1 = lList[wireNumA].GetDot().RenderTransform.Value.OffsetX+25;
-                            l.Y1 = lList[wireNumA].GetDot().RenderTransform.Value.OffsetY+25;
+            bool direction = DetermineDirection(dotNameA);
+            int n = DetermineDirection2(dotNameA);
 
-                            l.Y2 = l.Y1;                           
-                        }
-                        else
-                        {
-                            l.Y1 = lList[wireNumA].GetDot().RenderTransform.Value.OffsetY+25;
-                        }
-                        i++;
-                    }
-                    i = 0;
-                    g = 0;
-                }              
-                if(w2.elementB == draggableControl.Tag.ToString())
-                {
-                    foreach(Dot d in lList)
-                    {
-                        if (w2.dotB == d.GetDot().Tag.ToString())
-                        {
-                            wireNumB = g;
-                            break;
-                        }
-                        g++;
-                    }                    
-                    for (int j=w2.GetList().Count-1;j>=0;j--)
-                    {
-                        if (i <= 0)
-                        {                           
-                            w2.GetList()[j].X2 = lList[wireNumB].GetDot().RenderTransform.Value.OffsetX + 25;
-                            w2.GetList()[j].Y2 = lList[wireNumB].GetDot().RenderTransform.Value.OffsetY + 25;
+            startLine1 = new Point(dotA.RenderTransform.Value.OffsetX + 25, dotA.RenderTransform.Value.OffsetY + 25);
+            endLine1 = new Point(dotB.RenderTransform.Value.OffsetX + 25, dotB.RenderTransform.Value.OffsetY + 25);
 
-                            w2.GetList()[j].X1 = w2.GetList()[j].X2;
-                        }
-                        else
-                        {                           
-                            w2.GetList()[j].X2 = lList[wireNumB].GetDot().RenderTransform.Value.OffsetX + 25;
-                        }
-                        i++;
-                    }
-                    i = 0;
-                    g = 0;
-                }
+            if (!direction)
+            {
+                startline2 = new Point(startLine1.X + 25 * n, startLine1.Y);
             }
-        }*/
+            else
+            {
+                startline2 = new Point(startLine1.X, startLine1.Y + 25 * n);
+            }
+
+            direction = DetermineDirection(dotNameB);
+            n = DetermineDirection2(dotNameB);
+
+            if (!direction)
+            {
+                endLine2 = new Point(endLine1.X + 25 * n, endLine1.Y);
+            }
+            else
+            {
+                endLine2 = new Point(endLine1.X, endLine1.Y + 25 * n);
+            }
+
+
+            direction = DetermineDirection(dotNameA);
+            //n2 = DetermineDirection2(draggableControl.Tag.ToString());
+
+
+
+            if (!direction)
+            {
+                line1 = new Point(startline2.X, endLine2.Y);
+                line2 = new Point(endLine2.X, endLine2.Y);
+            }
+            else
+            {
+                line1 = new Point(endLine2.X, startline2.Y);
+                line2 = new Point(endLine2.X, endLine2.Y);
+            }
+
+
+            polylinePoints.Add(startLine1);
+            polylinePoints.Add(startline2);
+            polylinePoints.Add(line1);
+            polylinePoints.Add(line2);
+            polylinePoints.Add(endLine2);
+            polylinePoints.Add(endLine1);
+
+            pl.Points = polylinePoints;
+        }
 
         private void LoadImages()
         {
@@ -1321,11 +1300,8 @@ namespace CircuitBoardDiagram
                             d.GetDot().Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
                         }
                     }
-
-                    foreach (Polyline pl2 in w2.GetList())
-                    {
-                        canvas.Children.Remove(pl2);
-                    }
+                   
+                    canvas.Children.Remove(w2.GetPolyline());                    
                     ec.RemoveConnectionCountFromSpecificElement(w2.elementA);
                     ec.RemoveConnectionCountFromSpecificElement(w2.elementB);
 

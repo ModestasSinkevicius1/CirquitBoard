@@ -20,7 +20,7 @@
                 <DropShadowEffect BlurRadius="10" Direction="320"/>
             </Button.Effect>
         </Button>
-        <Border BorderBrush="Black" BorderThickness="1" Width="auto" MinWidth="600" MinHeight="350" Margin="0,81,20,0" Grid.Column="1" ClipToBounds="True">
+        <Border x:Name="canvas_border" BorderBrush="Black" BorderThickness="1" MinWidth="600" MinHeight="350" Margin="0,81,20,0" Grid.Column="1" ClipToBounds="True">
             <Canvas Width="4800" Height="1750" MinHeight="350" MinWidth="600" Margin="0,0,28,0" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1" MouseMove="canvas_MouseMove_1" MouseEnter="canvas_MouseEnter" MouseLeave="canvas_MouseLeave" Grid.Column="1" ClipToBounds="True" MouseLeftButtonUp="canvas_MouseLeftButtonUp">
                 <Canvas.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -109,9 +109,11 @@
                 <MenuItem Header="Open"/>
                 <Separator/>
                 <MenuItem Header="Save"/>
+                <Separator/>
+                <MenuItem Header="Export" Click="MenuItemExport_Click"/>
             </MenuItem>
             <MenuItem Header="Tools" Height="27" Width="45" Padding="6,0,0,0">
-                <MenuItem Header="Options" Click="MenuItem_Click"/>
+                <MenuItem Header="Options" Click="MenuItemOption_Click"/>
             </MenuItem>
         </Menu>
     </Grid>

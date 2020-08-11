@@ -16,7 +16,7 @@ namespace CircuitBoardDiagram
         public string dotA { get; set; }
         public string dotB { get; set; }
 
-        private List<Polyline> plList = new List<Polyline>();
+        private Polyline pl = new Polyline();
 
         public Wire(string name)
         {
@@ -28,14 +28,14 @@ namespace CircuitBoardDiagram
             return name;
         }
 
-        public void AddList(Polyline l)
+        public void AddPolyline(Polyline l)
         {
-            plList.Add(l);
+            pl = l;
         }
 
-        public List<Polyline> GetList()
+        public Polyline GetPolyline()
         {
-            return plList;
+            return pl;
         }
     }
 }
