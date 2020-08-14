@@ -33,6 +33,8 @@ namespace CircuitBoardDiagram
         private Point clickPosition;
         private TranslateTransform originTT;
         private ElementControl ec = new ElementControl();
+        private SaveLoadController slc = new SaveLoadController();
+        private Test t = new Test();
         private TextBlock tb = new TextBlock();
 
         private List<Wire> wList = new List<Wire>();
@@ -54,8 +56,12 @@ namespace CircuitBoardDiagram
         private bool isOnImage = false;
 
         private bool linePosition = false;
-        
 
+        double minX = 99999;
+        double maxX = -99999;
+
+        double minY = 99999;
+        double maxY = -99999;
 
         public MainWindow()
         {
@@ -106,17 +112,8 @@ namespace CircuitBoardDiagram
                 draggableControl.CaptureMouse();                
             }
             else if (Keyboard.IsKeyDown(Key.X))
-            {               
-                foreach(Polyline pl in ec.GetLineListFromElement(draggableControl.Tag.ToString()))
-                {
-                    DeleteWires(pl);
-                }
-                foreach(Dot d in ec.GetDots(draggableControl.Tag.ToString()))
-                {
-                    canvasGrid.Children.Remove(d.GetDot());
-                }
-                ec.RemoveElementFromList(draggableControl.Tag.ToString());
-                canvas.Children.Remove(draggableControl);
+            {
+                DeleteElement(draggableControl);
             }
             else if(Keyboard.IsKeyDown(Key.C))
             {               
@@ -135,7 +132,9 @@ namespace CircuitBoardDiagram
             UpadateDotsLocation(draggable);
             //UpdateLineLocation(draggable);
             IndicateCell(highlighting_rectangle);           
-            indicating_rectangle.Visibility = Visibility.Hidden;            
+            indicating_rectangle.Visibility = Visibility.Hidden;
+
+            ec.UpdatePostitionValues(draggable.Tag.ToString());
         }
 
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
@@ -152,6 +151,7 @@ namespace CircuitBoardDiagram
                 
                 SnapToClosestCell(draggableControl);
                 UpadateDotsLocation(draggableControl);
+                //ec.UpdatePostitionValues(draggableControl.Tag.ToString());
                 foreach(Wire w in wList)
                 {
                     if(w.elementA==draggableControl.Tag.ToString() || w.elementB==draggableControl.Tag.ToString())
@@ -167,31 +167,7 @@ namespace CircuitBoardDiagram
         {
             if (Keyboard.IsKeyDown(Key.E) && currentImageName != null)
             {
-                Image r = new Image();
-                r.Height = 50;
-                r.Width = 50;
-                r.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory+"Circuit element images/"+currentImageName+".png"));
-                r.Tag = currentImageName;
-                AddImageToCommon(r.Tag.ToString());
-                
-                r.Tag = currentImageName + queue;                
-                ec.AddElementToList(r.Tag.ToString());
-
-                r.MouseLeftButtonDown += new MouseButtonEventHandler(Canvas_MouseLeftButtonDown);
-                r.MouseLeftButtonUp += new MouseButtonEventHandler(Canvas_MouseLeftButtonUp);
-                r.MouseMove += new MouseEventHandler(Canvas_MouseMove);
-                r.MouseEnter += new MouseEventHandler(Image_MouseEnter);
-                r.MouseLeave += new MouseEventHandler(Image_MouseLeave);
-
-                canvas.Children.Add(r);
-                Canvas.SetTop(r, Mouse.GetPosition(canvas).Y - r.Width / 2);
-                Canvas.SetLeft(r, Mouse.GetPosition(canvas).X - r.Height / 2);
-
-                Panel.SetZIndex(r, 1);
-
-                CreateDot(r.Tag.ToString(), 4);
-                
-                queue++;               
+                CreateElement();               
             }
 
             if(Keyboard.IsKeyDown(Key.LeftShift))
@@ -222,11 +198,10 @@ namespace CircuitBoardDiagram
                 Point currentPosition = e.GetPosition(this);
                 TranslateTransform transform = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
                 transform.X = originTT.X + (currentPosition.X - clickPosition.X);
-
                 
-                    transform.Y = originTT.Y + (currentPosition.Y - clickPosition.Y);
+                transform.Y = originTT.Y + (currentPosition.Y - clickPosition.Y);
                 
-                    draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);
+                draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);
             }
 
             if(draggableControl.RenderTransform.Value.OffsetY > 50.0f)
@@ -377,8 +352,8 @@ namespace CircuitBoardDiagram
             isOnImage = true;
             Image draggableControl = sender as Image;
             foreach (Dot d in ec.GetDots(draggableControl.Tag.ToString()))
-            {
-                d.GetDot().Visibility = Visibility.Visible;
+            {             
+               // d.GetDot().Visibility = Visibility.Visible;
             }
             Highlight_cell(draggableControl);
         }
@@ -463,33 +438,107 @@ namespace CircuitBoardDiagram
         }
 
         private void MenuItemExport_Click(object sender, RoutedEventArgs e)
-        {                       
+        {           
             Transform transform = canvas.LayoutTransform;
-            
-            canvas.LayoutTransform = null;
-            
-            Size size = new Size(canvas_border.ActualWidth, canvas_border.ActualHeight);
-            
-            canvas.Measure(size);
-            canvas.Arrange(new Rect(size));
-                        
-            RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)size.Width, (int)size.Height, 96d, 96d, PixelFormats.Pbgra32);
-            renderBitmap.Render(canvas);            
-            
-            using (FileStream outStream = new FileStream("logo.png", FileMode.Create))
-            {                
-                PngBitmapEncoder encoder = new PngBitmapEncoder();                
-                encoder.Frames.Add(BitmapFrame.Create(renderBitmap));                
-                encoder.Save(outStream);
+            Transform defaultRender = canvas.RenderTransform;           
+
+            ResizeBasedElementsArangements();
+
+            try
+            {
+                canvas.RenderTransform = new TranslateTransform(-minX + 50, -minY + 50);
+
+                canvas.LayoutTransform = null;
+
+                Size size = new Size(maxX - minX + 200, maxY - minY + 200);
+
+                canvas.Measure(size);
+                canvas.Arrange(new Rect(size));
+
+                RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)size.Width, (int)size.Height, 96d, 96d, PixelFormats.Pbgra32);
+                renderBitmap.Render(canvas);
+
+                using (FileStream outStream = new FileStream("logo.png", FileMode.Create))
+                {
+                    PngBitmapEncoder encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+                    encoder.Save(outStream);
+                }
             }
-           
+            catch(Exception exc)
+            {
+                MessageBox.Show(exc.Message + "There are no elements found!");
+            }
             canvas.LayoutTransform = transform;
+            canvas.RenderTransform = defaultRender;
+        }
+
+        private void MenuItemSave_Click(object sender, RoutedEventArgs e)
+        {            
+            slc.WriteXML(ec);
+            
+            FileStream fs = File.Open("myProject.xaml", FileMode.Create);
+            XamlWriter.Save(canvas, fs);
+            fs.Close();
+        }
+
+        private void MenuItemOpen_Click(object sender, RoutedEventArgs e)
+        {
+            Image img;
+
+            for(int i=0;i<canvas.Children.Count;i++)
+            {
+                if(canvas.Children[i].GetType()==typeof(Image))
+                {
+                    img = canvas.Children[i] as Image;
+                    DeleteElement(img);
+                    i--;
+                }
+            }
+            dList.Clear();           
+
+            ec = slc.ReadXML();            
+            RecreateElementsFromSave();            
         }
 
         private void Textbox_MouseLeave(object sender, MouseEventArgs e)
         {            
             tb.Visibility = Visibility.Hidden;
         }
+
+        private void ResizeBasedElementsArangements()
+        {
+            maxX = -99999;
+            minX = 99999;
+
+            maxY = -99999;
+            minY = 99999;
+
+
+            foreach(SpecificElement se in ec.GetAllElements())
+            {
+                if(minX>se.GetElement().RenderTransform.Value.OffsetX)
+                {
+                    minX = se.GetElement().RenderTransform.Value.OffsetX;
+                }
+
+                if (maxX < se.GetElement().RenderTransform.Value.OffsetX)
+                {
+                    maxX = se.GetElement().RenderTransform.Value.OffsetX;
+                }
+
+                if (minY > se.GetElement().RenderTransform.Value.OffsetY)
+                {
+                    minY = se.GetElement().RenderTransform.Value.OffsetY;
+                }
+
+                if (maxY < se.GetElement().RenderTransform.Value.OffsetY)
+                {
+                    maxY = se.GetElement().RenderTransform.Value.OffsetY;
+                }
+            }           
+        }        
+
         private void CreateDot(string name, int count)
         {
             bool direction = false;
@@ -521,7 +570,40 @@ namespace CircuitBoardDiagram
                     oposite = -1;
                 }
             }
-        }       
+        }
+
+        private void RecreateDot(SpecificElement se, int count)
+        {
+            bool direction = false;
+            int oposite = 1;
+            for (int i = 0; i < count; i++)
+            {
+                Image img = new Image();
+                img.Visibility = Visibility.Hidden;
+                img.Width = 15;
+                img.Height = 15;
+                img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
+                img.Tag = se.GetDots()[i].GetName();
+
+                img.MouseLeftButtonDown += new MouseButtonEventHandler(Image_MouseLeftButtonDown_2);
+                img.MouseLeave += new MouseEventHandler(Image_MouseLeave_2);
+
+                Panel.SetZIndex(img, 2);
+                canvasGrid.Children.Add(img);
+                Dot d = new Dot(img.Tag.ToString(), se.GetName(), img, direction, oposite);
+                se.GetDots()[i].SetDot(img);
+                dList.Add(d);
+                direction = direction == true ? false : true;
+                if (i < 1)
+                {
+                    oposite = 1;
+                }
+                else
+                {
+                    oposite = -1;
+                }
+            }
+        }
 
         private void UpadateDotsLocation(Image draggableControl)
         {
@@ -742,11 +824,7 @@ namespace CircuitBoardDiagram
         }
 
         private void DrawWireBetweenElements(Image draggableControl, string name)
-        {           
-            bool direction = false;
-            int n = 1;
-            int n2 = 1;
-
+        {                       
             if (!ec.GetConnectionAvailability(name))
             {
                 draggableControl.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotRed.png"));
@@ -870,37 +948,7 @@ namespace CircuitBoardDiagram
             canvas.Children.Add(pl);            
 
             return pl;
-        }
-
-        /*private void UpdateLineLocation2(Line l)
-        {
-            foreach(Wire w in wList)
-            {
-                if(l.Name == w.GetName())
-                {
-                    foreach(Object obj in canvas.Children)
-                    {
-                        if (obj.GetType() == typeof(Image))
-                        {
-                            Image draggableControl = obj as Image;
-                            if (w.elementA == draggableControl.Tag.ToString() || w.elementB == draggableControl.Tag.ToString())
-                            {                               
-                                foreach(Polyline l2 in w.GetList())
-                                {
-                                    if(l != l2)
-                                    {
-                                        if(linePosition)
-                                            l2.X2 = l.X1;
-                                        else
-                                            l2.Y1 = l.Y2;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
+        }       
         
         private void UpdateLineLocation(string dotNameA, string dotNameB, Polyline pl)
         {
@@ -1283,6 +1331,79 @@ namespace CircuitBoardDiagram
             tb.RenderTransform = draggableControl.RenderTransform;
         }
         
+        private void DeleteElement(Image draggableControl)
+        {
+            foreach (Polyline pl in ec.GetLineListFromElement(draggableControl.Tag.ToString()))
+            {
+                DeleteWires(pl);
+            }
+            foreach (Dot d in ec.GetDots(draggableControl.Tag.ToString()))
+            {
+                canvasGrid.Children.Remove(d.GetDot());
+            }
+            ec.RemoveElementFromList(draggableControl.Tag.ToString());
+            canvas.Children.Remove(draggableControl);
+        }
+
+        private void CreateElement()
+        {
+            Image r = new Image();
+            r.Height = 50;
+            r.Width = 50;
+            r.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + currentImageName + ".png"));
+            r.Tag = currentImageName;
+            AddImageToCommon(r.Tag.ToString());
+
+            r.Tag = currentImageName + queue;            
+
+            r.MouseLeftButtonDown += new MouseButtonEventHandler(Canvas_MouseLeftButtonDown);
+            r.MouseLeftButtonUp += new MouseButtonEventHandler(Canvas_MouseLeftButtonUp);
+            r.MouseMove += new MouseEventHandler(Canvas_MouseMove);
+            r.MouseEnter += new MouseEventHandler(Image_MouseEnter);
+            r.MouseLeave += new MouseEventHandler(Image_MouseLeave);
+
+            canvas.Children.Add(r);
+          
+            ec.AddElementToList(r.Tag.ToString(), r);
+            Canvas.SetTop(r, Mouse.GetPosition(canvas).Y - r.Width / 2);
+            Canvas.SetLeft(r, Mouse.GetPosition(canvas).X - r.Height / 2);
+
+            Panel.SetZIndex(r, 1);
+
+            CreateDot(r.Tag.ToString(), 4);
+
+            queue++;
+        }
+
+        private void RecreateElementsFromSave()
+        {
+            foreach (SpecificElement se in ec.GetAllElements())
+            {
+                Image r = new Image();
+                r.Height = 50;
+                r.Width = 50;
+                r.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + se.GetName().Remove(se.GetName().Length-1) + ".png"));
+                r.Tag = se.GetName();
+                //AddImageToCommon(r.Tag.ToString());               
+
+                r.MouseLeftButtonDown += new MouseButtonEventHandler(Canvas_MouseLeftButtonDown);
+                r.MouseLeftButtonUp += new MouseButtonEventHandler(Canvas_MouseLeftButtonUp);
+                r.MouseMove += new MouseEventHandler(Canvas_MouseMove);
+                r.MouseEnter += new MouseEventHandler(Image_MouseEnter);
+                r.MouseLeave += new MouseEventHandler(Image_MouseLeave);
+
+                canvas.Children.Add(r);
+
+                se.SetImage(r);
+
+                Canvas.SetTop(r, se.GetPositionX());
+                Canvas.SetLeft(r, se.GetPositionY());
+
+                Panel.SetZIndex(r, 1);
+
+                RecreateDot(se, 4);
+            }
+        }
         private void DeleteWires(Polyline l)
         {
             foreach (Wire w2 in wList)

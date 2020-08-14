@@ -65,6 +65,8 @@
     <Compile Include="OptionWindow.xaml.cs">
       <DependentUpon>OptionWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SaveLoadController.cs" />
+    <Compile Include="Test.cs" />
     <Compile Include="Wire.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

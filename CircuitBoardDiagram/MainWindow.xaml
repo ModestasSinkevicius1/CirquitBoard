@@ -21,7 +21,7 @@
             </Button.Effect>
         </Button>
         <Border x:Name="canvas_border" BorderBrush="Black" BorderThickness="1" MinWidth="600" MinHeight="350" Margin="0,81,20,0" Grid.Column="1" ClipToBounds="True">
-            <Canvas Width="4800" Height="1750" MinHeight="350" MinWidth="600" Margin="0,0,28,0" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1" MouseMove="canvas_MouseMove_1" MouseEnter="canvas_MouseEnter" MouseLeave="canvas_MouseLeave" Grid.Column="1" ClipToBounds="True" MouseLeftButtonUp="canvas_MouseLeftButtonUp">
+            <Canvas Width="4800" Height="1750" MinHeight="350" MinWidth="600" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1" MouseMove="canvas_MouseMove_1" MouseEnter="canvas_MouseEnter" MouseLeave="canvas_MouseLeave" Grid.Column="1" ClipToBounds="True" MouseLeftButtonUp="canvas_MouseLeftButtonUp">
                 <Canvas.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FFAEA8A8" Offset="0"/>
@@ -106,9 +106,9 @@
         <Menu x:Name="menu" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="808" Grid.ColumnSpan="2">
             <MenuItem Header="File" Height="27" Width="45" Padding="11.5,0,0,0">
                 <MenuItem Header="New"/>
-                <MenuItem Header="Open"/>
+                <MenuItem Header="Open" Click="MenuItemOpen_Click"/>
                 <Separator/>
-                <MenuItem Header="Save"/>
+                <MenuItem Header="Save" Click="MenuItemSave_Click"/>
                 <Separator/>
                 <MenuItem Header="Export" Click="MenuItemExport_Click"/>
             </MenuItem>

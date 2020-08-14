@@ -8,18 +8,23 @@ using System.Windows.Shapes;
 
 namespace CircuitBoardDiagram
 {
-    class Dot
+    public class Dot
     {
-        double length = 10;
-        string name;
-        bool direction = false;
-        int oposite = 1;
+        public double length = 10;
+        public string name;
+        public bool direction = false;
+        public int oposite = 1;
 
-        Image d;
+        private Image d;
 
-        string core;
-        string wireName;
+        public string core;
+        public string wireName;
         
+        public Dot()
+        {
+
+        }
+
         public Dot(string name, string core, Image d, bool direction, int oposite)
         {
             this.name = name;
@@ -27,6 +32,11 @@ namespace CircuitBoardDiagram
             this.d = d;
             this.direction = direction;
             this.oposite = oposite;
+        }
+
+        public void SetDot(Image d)
+        {
+            this.d = d;
         }
 
         public Image GetDot()

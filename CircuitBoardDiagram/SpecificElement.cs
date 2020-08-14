@@ -9,19 +9,40 @@ using System.Windows.Shapes;
 
 namespace CircuitBoardDiagram
 {
-    class SpecificElement
+    public class SpecificElement
     {
-        private string name;
-        private bool isConnected=false;
-        private int connectionCount = 0;
+        public string name;
+        public bool isConnected=false;
+        public int connectionCount = 0;
         private List<Polyline> plList = new List<Polyline>();
-        private List<Dot> dList = new List<Dot>();
+        public List<Dot> dList = new List<Dot>();
+        public double offSetX;
+        public double offSetY;
 
-        public SpecificElement(string name)
+        private Image img;        
+
+        public SpecificElement()
         {
-            this.name = name;
+
         }
 
+
+        public SpecificElement(string name, Image img)
+        {
+            this.name = name;
+            this.img = img;            
+        }
+
+        public void SetImage(Image img)
+        {
+            this.img = img; 
+        }
+
+        public Image GetElement()
+        {
+            return img;
+        }
+        
         public string GetName()
         {
             return name;
@@ -32,6 +53,16 @@ namespace CircuitBoardDiagram
             return connectionCount;
         }
 
+        public double GetPositionX()
+        {
+            return offSetX;
+        }
+
+        public double GetPositionY()
+        {
+            return offSetY;
+        }
+
         public void SetConnection(bool state, int connectionRequiredCount)
         {
             if (state && connectionRequiredCount<=connectionCount)
@@ -39,6 +70,12 @@ namespace CircuitBoardDiagram
             else
                 isConnected = false;
         }        
+
+        public void SetPostitions()
+        {
+            offSetX = img.RenderTransform.Value.OffsetX;
+            offSetY = img.RenderTransform.Value.OffsetY;
+        }
 
         public bool GetStatus()
         {

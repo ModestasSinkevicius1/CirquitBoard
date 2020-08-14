@@ -8,14 +8,25 @@ using System.Windows.Shapes;
 
 namespace CircuitBoardDiagram
 {
-    class ElementControl
+    public class ElementControl
     {
-        private List<SpecificElement> seList = new List<SpecificElement>();
-        public void AddElementToList(string name)
+        public List<SpecificElement> seList = new List<SpecificElement>();
+        
+        public ElementControl()
         {
-            SpecificElement se = new SpecificElement(name);
+
+        }
+        
+        public void AddElementToList(string name, Image img)
+        {
+            SpecificElement se = new SpecificElement(name, img);
             seList.Add(se);
         }
+
+        public List<SpecificElement> GetAllElements()
+        {
+            return seList;
+        }       
 
         public void RemoveElementFromList(string name)
         {
@@ -129,6 +140,30 @@ namespace CircuitBoardDiagram
             return 0;
         }
 
+        public double GetElementPositionX(string name)
+        {
+            foreach (SpecificElement se in seList)
+            {
+                if (se.GetName() == name)
+                {
+                    return se.GetPositionX();
+                }
+            }
+            return 0;
+        }
+
+        public double GetElementPositionY(string name)
+        {
+            foreach (SpecificElement se in seList)
+            {
+                if (se.GetName() == name)
+                {
+                    return se.GetPositionY();
+                }
+            }
+            return 0;
+        }
+
         public void EnableConnectionAvailability(string name)
         {
             DatabaseControl dc = new DatabaseControl();
@@ -148,6 +183,17 @@ namespace CircuitBoardDiagram
                     break;
                 }
             }
-        }              
+        } 
+        
+        public void UpdatePostitionValues(string name)
+        {
+            foreach(SpecificElement se in seList)
+            {
+                if(name==se.GetName())
+                {
+                    se.SetPostitions();
+                }
+            }
+        }
     }
 }
