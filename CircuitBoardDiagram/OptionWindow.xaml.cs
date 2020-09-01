@@ -23,7 +23,8 @@ namespace CircuitBoardDiagram
         private List<ColumnDefinition> cList = new List<ColumnDefinition>();
         private Window w;
 
-        public bool isPressedOk = false;       
+        public bool isPressedOk = false;
+        private string elementBehaviour = "alwaysGrid";
 
         public OptionWindow(double column, double row)
         {            
@@ -127,9 +128,33 @@ namespace CircuitBoardDiagram
             return slider_Copy.Value;
         }
 
-        private void image_MouseLeave(object sender, MouseEventArgs e)
+        public string GetElementBehaviour()
         {
-            MessageBox.Show("I have left");
+            return elementBehaviour;
+        }
+
+        private void radioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if(radioButton.IsChecked==true)
+            {
+                elementBehaviour = "alwaysGrid";               
+            }
+        }
+
+        private void radioButton_Copy_Checked(object sender, RoutedEventArgs e)
+        {
+            if (radioButton_Copy.IsChecked == true)
+            {
+                elementBehaviour = "endGrid";
+            }
+        }
+
+        private void radioButton_Copy1_Checked(object sender, RoutedEventArgs e)
+        {
+            if (radioButton_Copy1.IsChecked == true)
+            {
+                elementBehaviour = "neverGrid";
+            }
         }
     }
 }

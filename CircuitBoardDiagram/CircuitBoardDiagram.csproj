@@ -62,6 +62,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Dot.cs" />
+    <Compile Include="GUIControls\CanvasGUIControl.cs" />
+    <Compile Include="GUIControls\DotGUIControl.cs" />
+    <Compile Include="GUIControls\HighlighterGUIControl.cs" />
+    <Compile Include="GUIControls\ImageGUIControl.cs" />
+    <Compile Include="GUIControls\ListImageGUIControl.cs" />
+    <Compile Include="GUIControls\MessageGUIControl.cs" />
+    <Compile Include="GUIControls\WireGUIControl.cs" />
     <Compile Include="OptionWindow.xaml.cs">
       <DependentUpon>OptionWindow.xaml</DependentUpon>
     </Compile>

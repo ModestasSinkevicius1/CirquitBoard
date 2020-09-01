@@ -23,10 +23,8 @@ namespace CircuitBoardDiagram
         }
 
         public ElementControl ReadXML()
-        {           
-            // Now we can read the serialized book ...  
-            System.Xml.Serialization.XmlSerializer reader =
-                new System.Xml.Serialization.XmlSerializer(typeof(ElementControl));
+        {                       
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(ElementControl));
             System.IO.FileStream file = System.IO.File.Open("SavedProperties/Serialization.xml",FileMode.Open);
             ElementControl ec = (ElementControl)reader.Deserialize(file);
             file.Close();

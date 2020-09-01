@@ -21,7 +21,7 @@
             </Button.Effect>
         </Button>
         <Border x:Name="canvas_border" BorderBrush="Black" BorderThickness="1" MinWidth="600" MinHeight="350" Margin="0,81,20,0" Grid.Column="1" ClipToBounds="True">
-            <Canvas Width="4800" Height="1750" MinHeight="350" MinWidth="600" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1" MouseMove="canvas_MouseMove_1" MouseEnter="canvas_MouseEnter" MouseLeave="canvas_MouseLeave" Grid.Column="1" ClipToBounds="True" MouseLeftButtonUp="canvas_MouseLeftButtonUp">
+            <Canvas Width="4800" Height="1750" MinHeight="350" MinWidth="600" Name="canvas" MouseLeftButtonDown="canvas_MouseLeftButtonDown_1" MouseMove="canvas_MouseMove_1" MouseLeave="canvas_MouseLeave" Grid.Column="1" ClipToBounds="True" MouseLeftButtonUp="canvas_MouseLeftButtonUp">
                 <Canvas.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FFAEA8A8" Offset="0"/>
@@ -30,7 +30,7 @@
                 </Canvas.Background>
                 <Grid x:Name="canvasGrid" Width="600" Height="350" HorizontalAlignment="Stretch" ShowGridLines="True">
                     <Grid.Background>
-                        <ImageBrush Opacity="0.5" Stretch="UniformToFill"/>
+                        <ImageBrush Opacity="0.5" ImageSource="grid.png" Stretch="None"/>
                     </Grid.Background>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="50"/>
@@ -61,12 +61,12 @@
             </Canvas>
         </Border>
         <DockPanel x:Name="dock_bottom" LastChildFill="False" Margin="1,10,20,17" RenderTransformOrigin="0.6,-0.07" Background="#7FA8A8A8" Grid.Column="1" Grid.Row="1">
-            <Image x:Name="image" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
-            <Image x:Name="image_Copy" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
-            <Image x:Name="image_Copy1" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
-            <Image x:Name="image_Copy2" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
-            <Image x:Name="image_Copy3" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
-            <Image x:Name="image_Copy4" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill" MouseLeftButtonDown="image_MouseLeftButtonDown"/>
+            <Image x:Name="image" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
+            <Image x:Name="image_Copy" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
+            <Image x:Name="image_Copy1" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
+            <Image x:Name="image_Copy2" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
+            <Image x:Name="image_Copy3" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
+            <Image x:Name="image_Copy4" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
         </DockPanel>
         <DockPanel HorizontalAlignment="Left" MinHeight="476" Margin="10,81,0,17" Width="172" Background="#7FA8A8A8" Grid.RowSpan="2"/>
         <Expander x:Name="expander" Header="Element list" MinHeight="476" MinWidth="172" Margin="10,81,11,17" Grid.RowSpan="2">
