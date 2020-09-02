@@ -64,12 +64,12 @@ namespace CircuitBoardDiagram
         double minY = 99999;
         double maxY = -99999;        
 
-        private ImageGUIControl igc = new ImageGUIControl(this);
+        private ImageGUIControl igc;
         private CanvasGUIControl cgc = new CanvasGUIControl();
         private WireGUIControl wgc = new WireGUIControl();
         private MessageGUIControl mgc = new MessageGUIControl();
         private ListImageGUIControl lgc = new ListImageGUIControl();
-        private DotGUIControl dgc = new DotGUIControl();
+        private DotGUIControl dgc;
         private HighlighterGUIControl hgc = new HighlighterGUIControl();        
 
         public MainWindow()
@@ -77,9 +77,11 @@ namespace CircuitBoardDiagram
             InitializeComponent();           
 
             indicating_rectangle.Visibility = Visibility.Hidden;
-            highlighting_rectangle.Visibility = Visibility.Hidden;           
-
-            lgc.LoadImages(grid_expander);
+            highlighting_rectangle.Visibility = Visibility.Hidden;
+            
+            dgc = new DotGUIControl(canvas, canvasGrid);
+            igc = new ImageGUIControl(this, canvas, canvasGrid, dgc, ec);
+            lgc.LoadImages(grid_expander);            
             //mgc.LoadPopupMessage();
             //cgc.LoadGrids();
             //CheckActivePopupMessage();
@@ -110,7 +112,9 @@ namespace CircuitBoardDiagram
         {
             if (Keyboard.IsKeyDown(Key.E) && lgc.currentImageName != null)
             {               
-                igc.CreateElement(lgc.currentImageName, canvas);               
+                igc.CreateElement(lgc.currentImageName);
+                dgc.CreateDot(lgc.currentImageName, ec, 4);
+                lgc.AddImageToCommon(lgc.currentImageName, dock_bottom);                
             }
 
             if(Keyboard.IsKeyDown(Key.LeftShift))
@@ -248,37 +252,7 @@ namespace CircuitBoardDiagram
         {
             Line draggableControl = sender as Line;
             string name = "";                           
-        }                     
-
-        private void Image_MouseLeftButtonDown_2(object sender, MouseButtonEventArgs e)
-        {
-            Image img = sender as Image;
-            string name = "";
-
-            foreach (Dot d in dList)
-            {
-                if(img.Tag.ToString()==d.GetName())
-                {
-                    name = d.GetCore();
-                    //wgc.DrawWireBetweenElements();
-                }
-            }
-        }
-
-        private void Image_MouseLeave_2(object sender, MouseEventArgs e)
-        {
-            Image img = sender as Image;
-            foreach(Dot d in dList)
-            {
-                if(d.GetName()==img.Tag.ToString()&& img != null)
-                {
-                    foreach(Dot d2 in ec.GetDots(d.GetCore()))
-                    {
-                        d2.GetDot().Visibility = Visibility.Hidden;
-                    }
-                }
-            }
-        }
+        }                             
 
         private void Image_MouseEnter_2(object sender, MouseEventArgs e)
         {

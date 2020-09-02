@@ -13,6 +13,7 @@ namespace CircuitBoardDiagram.GUIControls
 {
     class ListImageGUIControl
     {
+        private int next = 0;
         public string currentImageName { get; set; }
 
         private void image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -52,8 +53,8 @@ namespace CircuitBoardDiagram.GUIControls
                 i++;
             }
         }
-        /*
-        public void AddImageToCommon(string imageName)
+        
+        public void AddImageToCommon(string imageName, Panel dock_bottom)
         {
             int i = 0;
             bool allowAdd = true;
@@ -90,6 +91,6 @@ namespace CircuitBoardDiagram.GUIControls
                     i++;
                 }
             }
-        }*/
+        }
     }
 }
