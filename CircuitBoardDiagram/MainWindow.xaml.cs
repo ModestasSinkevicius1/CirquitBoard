@@ -70,7 +70,7 @@ namespace CircuitBoardDiagram
         private MessageGUIControl mgc = new MessageGUIControl();
         private ListImageGUIControl lgc = new ListImageGUIControl();
         private DotGUIControl dgc;
-        private HighlighterGUIControl hgc = new HighlighterGUIControl();        
+        private HighlighterGUIControl hgc;        
 
         public MainWindow()
         {
@@ -78,9 +78,10 @@ namespace CircuitBoardDiagram
 
             indicating_rectangle.Visibility = Visibility.Hidden;
             highlighting_rectangle.Visibility = Visibility.Hidden;
-            
-            dgc = new DotGUIControl(canvas, canvasGrid);
-            igc = new ImageGUIControl(this, canvas, canvasGrid, dgc, ec);
+
+            hgc = new HighlighterGUIControl(canvas, canvasGrid, highlighting_rectangle, indicating_rectangle);
+            dgc = new DotGUIControl(canvas, canvasGrid, wgc);
+            igc = new ImageGUIControl(this, canvas, canvasGrid, dgc, hgc, ec);
             lgc.LoadImages(grid_expander);            
             //mgc.LoadPopupMessage();
             //cgc.LoadGrids();
@@ -113,7 +114,7 @@ namespace CircuitBoardDiagram
             if (Keyboard.IsKeyDown(Key.E) && lgc.currentImageName != null)
             {               
                 igc.CreateElement(lgc.currentImageName);
-                dgc.CreateDot(lgc.currentImageName, ec, 4);
+                dgc.CreateDot(igc.elementName, igc.ec, 4);
                 lgc.AddImageToCommon(lgc.currentImageName, dock_bottom);                
             }
 
@@ -172,8 +173,8 @@ namespace CircuitBoardDiagram
                 draggableControl.RenderTransform = new TranslateTransform(-4250f, draggableControl.RenderTransform.Value.OffsetY);
             }
 
-            //if (!isOnImage || !IsMouseCaptured)
-                //hgc.IndicateCell(indicating_rectangle);
+            if (!isOnImage || !IsMouseCaptured)
+                hgc.IndicateCell();
             else
             {
                 indicating_rectangle.Visibility = Visibility.Hidden;

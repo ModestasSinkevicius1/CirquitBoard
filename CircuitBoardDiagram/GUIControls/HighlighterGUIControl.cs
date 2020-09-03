@@ -14,10 +14,22 @@ namespace CircuitBoardDiagram.GUIControls
 {
     class HighlighterGUIControl
     {
-        /*
-        public void IndicateCell(Rectangle draggableControl, Canvas canvas, Grid canvasGrid)
+        public Rectangle highlighter { get; set; }
+        public Rectangle indicator { get; set; }
+
+        private Canvas canvas;
+        private Grid grid;
+
+        public HighlighterGUIControl(Canvas canvas, Grid grid, Rectangle highlighter, Rectangle indicator)
         {
-            draggableControl.Visibility = Visibility.Visible;
+            this.highlighter = highlighter;
+            this.indicator = indicator;
+            this.canvas = canvas;
+            this.grid = grid;
+        }
+        public void IndicateCell()
+        {
+            indicator.Visibility = Visibility.Visible;
 
             double distanceX;
             double distanceY;
@@ -32,7 +44,7 @@ namespace CircuitBoardDiagram.GUIControls
             double cellWidth;
             double cellHeight;
 
-            foreach (ColumnDefinition column in canvasGrid.ColumnDefinitions)
+            foreach (ColumnDefinition column in grid.ColumnDefinitions)
             {
                 distanceX = Math.Abs((Mouse.GetPosition(canvas).X - (column.Width.Value / 2)) - (column.Width.Value * i));
 
@@ -46,7 +58,7 @@ namespace CircuitBoardDiagram.GUIControls
 
             i = 0;
 
-            foreach (RowDefinition row in canvasGrid.RowDefinitions)
+            foreach (RowDefinition row in grid.RowDefinitions)
             {
                 distanceY = Math.Abs((Mouse.GetPosition(canvas).Y - (row.Height.Value / 2)) - (row.Height.Value * i));
 
@@ -58,17 +70,18 @@ namespace CircuitBoardDiagram.GUIControls
                 i++;
             }
 
-            cellWidth = canvasGrid.ColumnDefinitions[(int)cellX].Width.Value;
-            cellHeight = canvasGrid.RowDefinitions[(int)cellY].Height.Value;
+            cellWidth = grid.ColumnDefinitions[(int)cellX].Width.Value;
+            cellHeight = grid.RowDefinitions[(int)cellY].Height.Value;
 
-            Canvas.SetLeft(draggableControl, 0);
-            Canvas.SetTop(draggableControl, 0);
+            Canvas.SetLeft(indicator, 0);
+            Canvas.SetTop(indicator, 0);
 
-            draggableControl.RenderTransform = new TranslateTransform(cellWidth * cellX, cellHeight * cellY);
+            indicator.RenderTransform = new TranslateTransform(cellWidth * cellX, cellHeight * cellY);
 
-            Grid.SetRow(draggableControl, 0);
-            Grid.SetColumn(draggableControl, 0);
+            Grid.SetRow(indicator, 0);
+            Grid.SetColumn(indicator, 0);
         }
+        /*
         public void UpdateIndicatorSize(Rectangle indicating_rectangle, Grid canvasGrid)
         {
             double lengthX = canvasGrid.ColumnDefinitions[0].Width.Value;
@@ -171,11 +184,11 @@ namespace CircuitBoardDiagram.GUIControls
             highlighting_rectangle.SetValue(Grid.ColumnSpanProperty, spanX);
             highlighting_rectangle.SetValue(Grid.RowSpanProperty, spanY);
         }
-        public void Highlight_cell(Image draggableControl, Rectangle highlighting_rectangle)
-        {
-            highlighting_rectangle.Visibility = Visibility.Visible;
-            highlighting_rectangle.RenderTransform = draggableControl.RenderTransform;
-        }
         */
+        public void Highlight_cell(Image draggableControl)
+        {
+            highlighter.Visibility = Visibility.Visible;
+            highlighter.RenderTransform = draggableControl.RenderTransform;
+        }              
     }
 }

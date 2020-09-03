@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 
@@ -97,7 +98,7 @@ namespace CircuitBoardDiagram
             foreach (SpecificElement se in seList)
             {
                 if (se.GetName() == name)
-                {
+                {                    
                     return se.GetDots();
                 }
             }
@@ -107,9 +108,9 @@ namespace CircuitBoardDiagram
         public void AddDot(string name, Dot d)
         {
             foreach (SpecificElement se in seList)
-            {
+            {               
                 if (se.GetName() == name)
-                {
+                {                   
                     se.AddDot(d);
                     break;
                 }

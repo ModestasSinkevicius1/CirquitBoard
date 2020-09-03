@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CircuitBoardDiagram.GUIControls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,31 +18,33 @@ namespace CircuitBoardDiagram
         private Grid grid;
 
         private List<Dot> dList = new List<Dot>();
-        //private ElementControl ec { get; set}
-        public DotGUIControl(Canvas canvas, Grid grid)
+        private ElementControl ec;
+
+        private WireGUIControl wgc;
+        public DotGUIControl(Canvas canvas, Grid grid, WireGUIControl wgc)
         {
             this.canvas = canvas;
             this.grid = grid;
+            this.wgc = wgc;
         }
         private void Dot_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Image img = sender as Image;
-            string name = "";
-
+            string name = "";            
+            
             foreach (Dot d in dList)
-            {
+            {               
                 if (img.Tag.ToString() == d.GetName())
                 {
-                    name = d.GetCore();
-                    MessageBox.Show(name);
-                    //wgc.DrawWireBetweenElements();
+                    name = d.GetCore();                   
+                    wgc.DrawWireBetweenElements();
                 }
             }            
         }
 
         private void Dot_MouseLeave(object sender, MouseEventArgs e)
         {
-            /*Image img = sender as Image;
+            Image img = sender as Image;
             foreach (Dot d in dList)
             {
                 if (d.GetName() == img.Tag.ToString() && img != null)
@@ -51,13 +54,14 @@ namespace CircuitBoardDiagram
                         d2.GetDot().Visibility = Visibility.Hidden;
                     }
                 }
-            }*/
+            }
         }
 
         public void CreateDot(string name, ElementControl ec, int count)
-        {
+        {           
             bool direction = false;
             int oposite = 1;
+            
             for (int i = 0; i < count; i++)
             {
                 Image img = new Image();
@@ -76,6 +80,8 @@ namespace CircuitBoardDiagram
 
                 ec.AddDot(name, d);
                 dList.Add(d);
+
+                this.ec = ec;
 
                 direction = direction == true ? false : true;
                 if (i < 1)
@@ -165,13 +171,15 @@ namespace CircuitBoardDiagram
         */
         public void UpadateDotsLocation(Image draggableControl, ElementControl ec)
         {
-            //List<Dot> dList = ec.GetDots(draggableControl.Tag.ToString());            
+            List<Dot> dList = ec.GetDots(draggableControl.Tag.ToString());
+
+            //MessageBox.Show(dList.Count.ToString());
 
             double x = draggableControl.RenderTransform.Value.OffsetX+17;
             double y = draggableControl.RenderTransform.Value.OffsetY+17;           
 
             double distanceX = draggableControl.Width / 2;
-            double distanceY = draggableControl.Height / 2;
+            double distanceY = draggableControl.Height / 2;           
 
             for (int i = 0; i < dList.Count; i++)
             {

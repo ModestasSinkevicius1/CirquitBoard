@@ -32,28 +32,32 @@ namespace CircuitBoardDiagram.GUIControls
         protected bool isDragging;
 
         private string elementBehaviour = "alwaysGrid";
+        public string elementName { get; set; } = "";
 
         private Point clickPosition;
         private TranslateTransform originTT;
         private Canvas canvas;
         private Grid grid;
         private MainWindow form;
+        private Rectangle highlighter;
 
         private DotGUIControl dgc;
+        private HighlighterGUIControl hgc;
 
-        private ElementControl ec;
+        public ElementControl ec { get; set; }
 
-        public ImageGUIControl(MainWindow form, Canvas canvas, Grid grid, DotGUIControl dgc, ElementControl ec)
+        public ImageGUIControl(MainWindow form, Canvas canvas, Grid grid, DotGUIControl dgc, HighlighterGUIControl hgc, ElementControl ec)
         {            
             this.form = form;
             this.canvas = canvas;
             this.grid = grid;
             this.dgc = dgc;
-            this.ec = ec;
+            this.hgc = hgc;
+            this.ec = ec;            
         }
 
 
-        private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Image draggableControl = sender as Image;
             if (!Keyboard.IsKeyDown(Key.W) && !Keyboard.IsKeyDown(Key.C) && !Keyboard.IsKeyDown(Key.X))
@@ -77,21 +81,21 @@ namespace CircuitBoardDiagram.GUIControls
 
         }
 
-        private void Canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void Image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             isDragging = false;
             Image draggable = sender as Image;
             draggable.ReleaseMouseCapture();
             //if(elementBehaviour!="neverGrid")
             SnapToClosestCell(draggable);
-            //dgc.UpadateDotsLocation(draggable);           
+            hgc.Highlight_cell(draggable);                      
             //hgc.IndicateCell(highlighting_rectangle);           
             //indicating_rectangle.Visibility = Visibility.Hidden;
 
             //ec.UpdatePostitionValues(draggable.Tag.ToString());
         }
 
-        private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        private void Image_MouseMove(object sender, MouseEventArgs e)
         {
             Image draggableControl = sender as Image;
 
@@ -105,6 +109,7 @@ namespace CircuitBoardDiagram.GUIControls
                 //if(elementBehaviour=="alwaysGrid")
                 SnapToClosestCell(draggableControl);
                 dgc.UpadateDotsLocation(draggableControl, ec);
+                hgc.Highlight_cell(draggableControl);
                 //ec.UpdatePostitionValues(draggableControl.Tag.ToString());
                 /*foreach(Wire w in wList)
                 {
@@ -121,14 +126,12 @@ namespace CircuitBoardDiagram.GUIControls
         {
             //isOnImage = true;
             Image draggableControl = sender as Image;
-            // hgc.Highlight_cell(draggableControl);
+            hgc.Highlight_cell(draggableControl);
         }
 
         private void Image_MouseLeave(object sender, MouseEventArgs e)
         {
-            //isOnImage = false;
-            Image draggableControl = sender as Image;
-            //highlighting_rectangle.Visibility = Visibility.Hidden;
+            hgc.highlighter.Visibility = Visibility.Hidden;
         }
 
         public void CreateElement(string currentImageName)
@@ -141,9 +144,11 @@ namespace CircuitBoardDiagram.GUIControls
 
             r.Tag = currentImageName + queue;
 
-            r.MouseLeftButtonDown += new MouseButtonEventHandler(Canvas_MouseLeftButtonDown);
-            r.MouseLeftButtonUp += new MouseButtonEventHandler(Canvas_MouseLeftButtonUp);
-            r.MouseMove += new MouseEventHandler(Canvas_MouseMove);
+            elementName = r.Tag.ToString();
+
+            r.MouseLeftButtonDown += new MouseButtonEventHandler(Image_MouseLeftButtonDown);
+            r.MouseLeftButtonUp += new MouseButtonEventHandler(Image_MouseLeftButtonUp);
+            r.MouseMove += new MouseEventHandler(Image_MouseMove);
             r.MouseEnter += new MouseEventHandler(Image_MouseEnter);
             r.MouseLeave += new MouseEventHandler(Image_MouseLeave);
 
@@ -154,8 +159,7 @@ namespace CircuitBoardDiagram.GUIControls
             Canvas.SetTop(r, Mouse.GetPosition(canvas).Y - r.Width / 2);
             Canvas.SetLeft(r, Mouse.GetPosition(canvas).X - r.Height / 2);
 
-            Panel.SetZIndex(r, 1);          
-
+            Panel.SetZIndex(r, 1);            
             queue++;
         }
         /*

@@ -151,11 +151,69 @@ namespace CircuitBoardDiagram.GUIControls
                 pl.StrokeThickness = thickness;
             }
         }
-
+        */
         public void DrawWireBetweenElements()
         {
+            if (!ec.GetConnectionAvailability(name))
+            {
+                draggableControl.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotRed.png"));
+                if (!turn && previousElementName != name)
+                {
+                    Polyline pl = CreatePolyline(true);
 
+                    previousElementName = name;
+                    previousDotName = draggableControl.Tag.ToString();
+
+                    previousLine = pl;
+
+                    turn = true;
+                }
+                else if (name != previousElementName)
+                {
+                    ec.AddConnectionCountToSpecificElement(previousElementName);
+                    ec.AddConnectionCountToSpecificElement(name);
+
+                    ec.AddConnectionCountToSpecificElement(previousElementName);
+                    ec.EnableConnectionAvailability(name);
+
+                    previousLine.Name += name;
+
+                    w = new Wire(previousLine.Name);
+                    w.elementA = previousElementName;
+                    w.elementB = name;
+
+                    w.dotA = previousDotName;
+                    w.dotB = draggableControl.Tag.ToString();
+
+                    w.AddPolyline(previousLine);
+                    wList.Add(w);
+
+                    ec.AddLineForElement(previousElementName, previousLine);
+
+                    ec.AddLineForElement(name, previousLine);
+
+                    foreach (Dot d in dList)
+                    {
+                        if (d.GetName() == w.dotA)
+                        {
+                            d.SetWireName(w.elementA);
+                        }
+                        if (d.GetName() == w.dotB)
+                        {
+                            d.SetWireName(w.elementB);
+                        }
+                    }
+
+                    UpdateLineLocation(previousDotName, draggableControl.Tag.ToString(), previousLine);
+
+                    previousElementName = name;
+
+                    turn = false;
+                }
+            }
+            else
+                MessageBox.Show("This element has max connections used");
         }
-        */
+        
     }
 }
