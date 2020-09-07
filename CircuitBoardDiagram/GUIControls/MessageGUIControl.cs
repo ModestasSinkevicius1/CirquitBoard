@@ -13,7 +13,21 @@ namespace CircuitBoardDiagram.GUIControls
 {
     class MessageGUIControl
     {
-        /*public void LoadPopupMessage()
+        private TextBlock tb = new TextBlock();
+        private Canvas canvas;
+        private ListContainer lc;
+        public MessageGUIControl(Canvas canvas, ListContainer lc)
+        {
+            this.canvas = canvas;
+            this.lc = lc;
+
+            LoadPopupMessage();
+        }
+        private void Textbox_MouseLeave(object sender, MouseEventArgs e)
+        {
+            tb.Visibility = Visibility.Hidden;
+        }
+        public void LoadPopupMessage()
         {
             tb.Visibility = Visibility.Hidden;
             SolidColorBrush scb = Brushes.LightBlue;
@@ -27,14 +41,14 @@ namespace CircuitBoardDiagram.GUIControls
             Panel.SetZIndex(tb, 2);
             canvas.Children.Add(tb);
         }
+
         public void ShowPopupMessage(Image draggableControl)
         {
             tb.Visibility = Visibility.Visible;
             tb.Text = draggableControl.Tag.ToString() + "\n";
-            tb.Text += "Connections: " + ec.GetConnectionCount(draggableControl.Tag.ToString()) + "\n";
-            tb.Text += "Connection state: " + ec.GetConnectionAvailability(draggableControl.Tag.ToString()) + "\n";
+            tb.Text += "Connections: " + lc.ec.GetConnectionCount(draggableControl.Tag.ToString()) + "\n";
+            tb.Text += "Connection state: " + lc.ec.GetConnectionAvailability(draggableControl.Tag.ToString()) + "\n";
             tb.RenderTransform = draggableControl.RenderTransform;
-        }
-        */
+        }        
     }
 }

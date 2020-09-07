@@ -67,8 +67,10 @@
     <Compile Include="GUIControls\HighlighterGUIControl.cs" />
     <Compile Include="GUIControls\ImageGUIControl.cs" />
     <Compile Include="GUIControls\ListImageGUIControl.cs" />
+    <Compile Include="GUIControls\MenuGUIControl.cs" />
     <Compile Include="GUIControls\MessageGUIControl.cs" />
     <Compile Include="GUIControls\WireGUIControl.cs" />
+    <Compile Include="ListContainer.cs" />
     <Compile Include="OptionWindow.xaml.cs">
       <DependentUpon>OptionWindow.xaml</DependentUpon>
     </Compile>

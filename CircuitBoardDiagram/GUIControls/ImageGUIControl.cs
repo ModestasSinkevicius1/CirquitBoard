@@ -26,7 +26,6 @@ namespace CircuitBoardDiagram.GUIControls
 {
     class ImageGUIControl
     {
-
         private int queue = 0;
 
         protected bool isDragging;
@@ -43,17 +42,19 @@ namespace CircuitBoardDiagram.GUIControls
 
         private DotGUIControl dgc;
         private HighlighterGUIControl hgc;
-
-        public ElementControl ec { get; set; }
-
-        public ImageGUIControl(MainWindow form, Canvas canvas, Grid grid, DotGUIControl dgc, HighlighterGUIControl hgc, ElementControl ec)
+        private WireGUIControl wgc;
+        private MessageGUIControl mgc;
+        private ListContainer lc;
+        public ImageGUIControl(MainWindow form, Canvas canvas, Grid grid, DotGUIControl dgc, HighlighterGUIControl hgc, WireGUIControl wgc, MessageGUIControl mgc, ListContainer lc)
         {            
             this.form = form;
             this.canvas = canvas;
             this.grid = grid;
             this.dgc = dgc;
             this.hgc = hgc;
-            this.ec = ec;            
+            this.wgc = wgc;
+            this.mgc = mgc;
+            this.lc = lc;            
         }
 
 
@@ -62,7 +63,7 @@ namespace CircuitBoardDiagram.GUIControls
             Image draggableControl = sender as Image;
             if (!Keyboard.IsKeyDown(Key.W) && !Keyboard.IsKeyDown(Key.C) && !Keyboard.IsKeyDown(Key.X))
             {
-                dgc.UpadateDotsLocation(draggableControl, ec);
+                dgc.UpadateDotsLocation(draggableControl, lc.ec);
                 //highlighting_rectangle.Visibility = Visibility.Hidden;
                 originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
                 isDragging = true;
@@ -71,11 +72,11 @@ namespace CircuitBoardDiagram.GUIControls
             }
             else if (Keyboard.IsKeyDown(Key.X))
             {
-                //igc.DeleteElement(draggableControl);
+                DeleteElement(draggableControl);
             }
             else if (Keyboard.IsKeyDown(Key.C))
             {
-                //mgc.ShowPopupMessage(draggableControl);
+                mgc.ShowPopupMessage(draggableControl);
             }
 
 
@@ -108,17 +109,10 @@ namespace CircuitBoardDiagram.GUIControls
                 draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);
                 //if(elementBehaviour=="alwaysGrid")
                 SnapToClosestCell(draggableControl);
-                dgc.UpadateDotsLocation(draggableControl, ec);
+                dgc.UpadateDotsLocation(draggableControl, lc.ec);
                 hgc.Highlight_cell(draggableControl);
                 //ec.UpdatePostitionValues(draggableControl.Tag.ToString());
-                /*foreach(Wire w in wList)
-                {
-                    if(w.elementA==draggableControl.Tag.ToString() || w.elementB==draggableControl.Tag.ToString())
-                    {
-                       // wgc.UpdateWireLocation(w.dotA, w.dotB, w.GetPolyline());                       
-                    }
-                }
-                */
+                wgc.FindWireConnectedDots(draggableControl.Tag.ToString());
             }
 
         }
@@ -154,7 +148,7 @@ namespace CircuitBoardDiagram.GUIControls
 
             canvas.Children.Add(r);
 
-            ec.AddElementToList(r.Tag.ToString(), r);
+            lc.ec.AddElementToList(r.Tag.ToString(), r);
 
             Canvas.SetTop(r, Mouse.GetPosition(canvas).Y - r.Width / 2);
             Canvas.SetLeft(r, Mouse.GetPosition(canvas).X - r.Height / 2);
@@ -162,21 +156,22 @@ namespace CircuitBoardDiagram.GUIControls
             Panel.SetZIndex(r, 1);            
             queue++;
         }
-        /*
+        
         public void DeleteElement(Image draggableControl)
         {
-            foreach (Polyline pl in ec.GetLineListFromElement(draggableControl.Tag.ToString()))
+            foreach (Polyline pl in lc.ec.GetLineListFromElement(draggableControl.Tag.ToString()))
             {
-                DeleteWires(pl);
+                wgc.DeleteWires(pl);
             }
-            foreach (Dot d in ec.GetDots(draggableControl.Tag.ToString()))
+            foreach (Dot d in lc.ec.GetDots(draggableControl.Tag.ToString()))
             {
-                canvasGrid.Children.Remove(d.GetDot());
+                grid.Children.Remove(d.GetDot());
             }
-            ec.RemoveElementFromList(draggableControl.Tag.ToString());
+            lc.ec.RemoveElementFromList(draggableControl.Tag.ToString());
             canvas.Children.Remove(draggableControl);
         }
 
+        /*
         public void ResizeBasedElementsArangements()
         {
             maxX = -99999;

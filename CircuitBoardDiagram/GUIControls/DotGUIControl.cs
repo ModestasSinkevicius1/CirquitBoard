@@ -16,28 +16,28 @@ namespace CircuitBoardDiagram
     {
         private Canvas canvas;
         private Grid grid;
-
-        private List<Dot> dList = new List<Dot>();
-        private ElementControl ec;
+        
+        private ListContainer lc;
 
         private WireGUIControl wgc;
-        public DotGUIControl(Canvas canvas, Grid grid, WireGUIControl wgc)
+        public DotGUIControl(Canvas canvas, Grid grid, WireGUIControl wgc, ListContainer lc)
         {
             this.canvas = canvas;
             this.grid = grid;
             this.wgc = wgc;
+            this.lc = lc;
         }
         private void Dot_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Image img = sender as Image;
             string name = "";            
             
-            foreach (Dot d in dList)
+            foreach (Dot d in lc.dList)
             {               
                 if (img.Tag.ToString() == d.GetName())
                 {
                     name = d.GetCore();                   
-                    wgc.DrawWireBetweenElements();
+                    wgc.DrawWireBetweenElements(img, name, lc.ec, lc.dList);
                 }
             }            
         }
@@ -45,11 +45,11 @@ namespace CircuitBoardDiagram
         private void Dot_MouseLeave(object sender, MouseEventArgs e)
         {
             Image img = sender as Image;
-            foreach (Dot d in dList)
+            foreach (Dot d in lc.dList)
             {
                 if (d.GetName() == img.Tag.ToString() && img != null)
                 {
-                    foreach (Dot d2 in ec.GetDots(d.GetCore()))
+                    foreach (Dot d2 in lc.ec.GetDots(d.GetCore()))
                     {
                         d2.GetDot().Visibility = Visibility.Hidden;
                     }
@@ -57,7 +57,7 @@ namespace CircuitBoardDiagram
             }
         }
 
-        public void CreateDot(string name, ElementControl ec, int count)
+        public void CreateDot(string name, int count)
         {           
             bool direction = false;
             int oposite = 1;
@@ -78,10 +78,8 @@ namespace CircuitBoardDiagram
                 canvas.Children.Add(img);
                 Dot d = new Dot(img.Tag.ToString(), name, img, direction, oposite);               
 
-                ec.AddDot(name, d);
-                dList.Add(d);
-
-                this.ec = ec;
+                lc.ec.AddDot(name, d);
+                lc.dList.Add(d);                
 
                 direction = direction == true ? false : true;
                 if (i < 1)
@@ -127,47 +125,7 @@ namespace CircuitBoardDiagram
                     oposite = -1;
                 }
             }
-        }
-
-        public Image FindDot(string dotName)
-        {
-            Image d = null;
-            foreach (Dot d2 in dList)
-            {
-                if (d2.GetName() == dotName)
-                {
-                    d = d2.GetDot();
-                }
-            }
-            return d;
-        }
-        public bool DetermineDirection(string dotName)
-        {
-            bool direction = false;
-            foreach (Dot d in dList)
-            {
-                if (d.GetName() == dotName)
-                {
-                    direction = d.GetDirection();
-                    break;
-                }
-            }
-            return direction;
-        }
-
-        public int DetermineDirection2(string dotName)
-        {
-            int n = 0;
-            foreach (Dot d in dList)
-            {
-                if (d.GetName() == dotName)
-                {
-                    n = d.GetOposite();
-
-                }
-            }
-            return n;
-        }
+        }                     
         */
         public void UpadateDotsLocation(Image draggableControl, ElementControl ec)
         {
