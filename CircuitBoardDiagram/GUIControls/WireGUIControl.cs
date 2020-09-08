@@ -310,25 +310,25 @@ namespace CircuitBoardDiagram.GUIControls
 
                     ec.EnableConnectionAvailability(previousElementName);
                     ec.EnableConnectionAvailability(name);
+                    
+                    previousLine.Name = previousElementName + name;
 
-                    previousLine.Name += name;
-
-                    w = new Wire(previousLine.Name);
+                    w = new Wire(previousLine.Name);                   
                     w.elementA = previousElementName;
-                    w.elementB = name;
+                    w.elementB = name;                  
 
                     w.dotA = previousDotName;
                     w.dotB = dot.Tag.ToString();
 
                     w.AddPolyline(previousLine);
-                    lc.wList.Add(w);
+                    lc.wList.Add(w);                                        
 
                     ec.AddLineForElement(previousElementName, previousLine);
 
                     ec.AddLineForElement(name, previousLine);
 
                     foreach (Dot d in dList)
-                    {
+                    {                        
                         if (d.GetName() == w.dotA)
                         {
                             d.SetWireName(w.elementA);

@@ -35,13 +35,15 @@ namespace CircuitBoardDiagram.GUIControls
         private double minY = 99999;
         private double maxY = -99999;
 
+        public string elementBehaviour { get; set; } = "alwaysGrid";
+
         private Canvas canvas;
         private Grid grid;
         private ListContainer lc;
         private Menu menu;
 
-        private ItemCollection item;
-        private MenuItem item1;
+        private MenuItem baseItem;
+        private MenuItem[] item = new MenuItem[4];
 
         public MenuGUIControl(Canvas canvas, Grid grid, ListContainer lc, Menu menu)
         {
@@ -55,9 +57,23 @@ namespace CircuitBoardDiagram.GUIControls
 
         private void LoadEvents()
         {
-           object name = menu.FindName("Option");
-            MessageBox.Show(name.ToString());
-           //item1.Click += new RoutedEventHandler(MenuItemOption_Click);
+            baseItem = menu.FindName("File") as MenuItem;
+
+            item[0] = baseItem.FindName("File_New") as MenuItem;
+            item[1] = baseItem.FindName("File_Open") as MenuItem;
+            item[2] = baseItem.FindName("File_Save") as MenuItem;
+            item[3] = baseItem.FindName("File_Export") as MenuItem;
+
+            //item[0].Click += new RoutedEventHandler(MenuItemNew_Click);
+            item[1].Click += new RoutedEventHandler(MenuItemOpen_Click);
+            item[2].Click += new RoutedEventHandler(MenuItemSave_Click);
+            item[3].Click += new RoutedEventHandler(MenuItemExport_Click);
+
+            //item = menu.Items[0];
+            baseItem = menu.FindName("Tools") as MenuItem;
+
+            item[0] = baseItem.FindName("Tools_Options") as MenuItem;                                    
+            item[0].Click += new RoutedEventHandler(MenuItemOption_Click);
         }
 
         private void MenuItemOption_Click(object sender, RoutedEventArgs e)
@@ -76,7 +92,7 @@ namespace CircuitBoardDiagram.GUIControls
                 //hgc.UpdateIndicatorSize();
                 //hgc.UpdateHighlightorSize();
 
-                //elementBehaviour=opWindow.GetElementBehaviour();
+                elementBehaviour=opWindow.GetElementBehaviour();
             }
         }
 
@@ -85,7 +101,7 @@ namespace CircuitBoardDiagram.GUIControls
             Transform transform = canvas.LayoutTransform;
             Transform defaultRender = canvas.RenderTransform;
 
-            //igc.ResizeBasedElementsArangements();
+            ResizeBasedElementsArangements();
 
             try
             {
@@ -142,6 +158,38 @@ namespace CircuitBoardDiagram.GUIControls
 
             lc.ec = slc.ReadXML();
             //igc.RecreateElementsFromSave();            
+        }
+        public void ResizeBasedElementsArangements()
+        {
+            maxX = -99999;
+            minX = 99999;
+
+            maxY = -99999;
+            minY = 99999;
+
+
+            foreach (SpecificElement se in lc.ec.GetAllElements())
+            {
+                if (minX > se.GetElement().RenderTransform.Value.OffsetX)
+                {
+                    minX = se.GetElement().RenderTransform.Value.OffsetX;
+                }
+
+                if (maxX < se.GetElement().RenderTransform.Value.OffsetX)
+                {
+                    maxX = se.GetElement().RenderTransform.Value.OffsetX;
+                }
+
+                if (minY > se.GetElement().RenderTransform.Value.OffsetY)
+                {
+                    minY = se.GetElement().RenderTransform.Value.OffsetY;
+                }
+
+                if (maxY < se.GetElement().RenderTransform.Value.OffsetY)
+                {
+                    maxY = se.GetElement().RenderTransform.Value.OffsetY;
+                }
+            }
         }
     }
 }

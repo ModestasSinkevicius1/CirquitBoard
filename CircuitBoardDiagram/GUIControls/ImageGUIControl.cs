@@ -44,8 +44,9 @@ namespace CircuitBoardDiagram.GUIControls
         private HighlighterGUIControl hgc;
         private WireGUIControl wgc;
         private MessageGUIControl mgc;
+        private MenuGUIControl mngc;
         private ListContainer lc;
-        public ImageGUIControl(MainWindow form, Canvas canvas, Grid grid, DotGUIControl dgc, HighlighterGUIControl hgc, WireGUIControl wgc, MessageGUIControl mgc, ListContainer lc)
+        public ImageGUIControl(MainWindow form, Canvas canvas, Grid grid, DotGUIControl dgc, HighlighterGUIControl hgc, WireGUIControl wgc, MessageGUIControl mgc, MenuGUIControl mngc, ListContainer lc)
         {            
             this.form = form;
             this.canvas = canvas;
@@ -54,6 +55,7 @@ namespace CircuitBoardDiagram.GUIControls
             this.hgc = hgc;
             this.wgc = wgc;
             this.mgc = mgc;
+            this.mngc = mngc;
             this.lc = lc;            
         }
 
@@ -107,8 +109,8 @@ namespace CircuitBoardDiagram.GUIControls
                 transform.X = originTT.X + (currentPosition.X - clickPosition.X);
                 transform.Y = originTT.Y + (currentPosition.Y - clickPosition.Y);
                 draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);
-                //if(elementBehaviour=="alwaysGrid")
-                SnapToClosestCell(draggableControl);
+                if(mngc.elementBehaviour=="alwaysGrid")
+                    SnapToClosestCell(draggableControl);
                 dgc.UpadateDotsLocation(draggableControl, lc.ec);
                 hgc.Highlight_cell(draggableControl);
                 //ec.UpdatePostitionValues(draggableControl.Tag.ToString());
@@ -164,47 +166,13 @@ namespace CircuitBoardDiagram.GUIControls
                 wgc.DeleteWires(pl);
             }
             foreach (Dot d in lc.ec.GetDots(draggableControl.Tag.ToString()))
-            {
-                grid.Children.Remove(d.GetDot());
+            {                
+                canvas.Children.Remove(d.GetDot());
             }
             lc.ec.RemoveElementFromList(draggableControl.Tag.ToString());
             canvas.Children.Remove(draggableControl);
         }
-
-        /*
-        public void ResizeBasedElementsArangements()
-        {
-            maxX = -99999;
-            minX = 99999;
-
-            maxY = -99999;
-            minY = 99999;
-
-
-            foreach (SpecificElement se in ec.GetAllElements())
-            {
-                if (minX > se.GetElement().RenderTransform.Value.OffsetX)
-                {
-                    minX = se.GetElement().RenderTransform.Value.OffsetX;
-                }
-
-                if (maxX < se.GetElement().RenderTransform.Value.OffsetX)
-                {
-                    maxX = se.GetElement().RenderTransform.Value.OffsetX;
-                }
-
-                if (minY > se.GetElement().RenderTransform.Value.OffsetY)
-                {
-                    minY = se.GetElement().RenderTransform.Value.OffsetY;
-                }
-
-                if (maxY < se.GetElement().RenderTransform.Value.OffsetY)
-                {
-                    maxY = se.GetElement().RenderTransform.Value.OffsetY;
-                }
-            }
-        }
-        */
+        
         public void SnapToClosestCell(Image draggableControl)
         {
             double distanceX;

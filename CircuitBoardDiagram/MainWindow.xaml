@@ -104,16 +104,16 @@
             </Grid>
         </Expander>
         <Menu x:Name="menu" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="808" Grid.ColumnSpan="2">
-            <MenuItem Header="File" Height="27" Width="45" Padding="11.5,0,0,0">
-                <MenuItem Header="New"/>
-                <MenuItem Header="Open"/>
+            <MenuItem x:Name="File" Header="File" Height="27" Width="45" Padding="11.5,0,0,0">
+                <MenuItem x:Name="File_New" Header="New"/>
+                <MenuItem x:Name="File_Open" Header="Open"/>
                 <Separator/>
-                <MenuItem Header="Save"/>
+                <MenuItem x:Name="File_Save" Header="Save"/>
                 <Separator/>
-                <MenuItem Header="Export"/>
+                <MenuItem x:Name="File_Export" Header="Export"/>
             </MenuItem>
-            <MenuItem Header="Tools" Height="27" Width="45" Padding="6,0,0,0">
-                <MenuItem Header="Options"/>
+            <MenuItem x:Name="Tools" Header="Tools" Height="27" Width="45" Padding="6,0,0,0">
+                <MenuItem x:Name="Tools_Options" Header="Options"/>
             </MenuItem>
         </Menu>
     </Grid>

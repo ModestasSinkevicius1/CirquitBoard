@@ -69,7 +69,7 @@ namespace CircuitBoardDiagram
             hgc = new HighlighterGUIControl(canvas, canvasGrid, highlighting_rectangle, indicating_rectangle);
             wgc = new WireGUIControl(canvas, lc);
             dgc = new DotGUIControl(canvas, canvasGrid, wgc, lc);
-            igc = new ImageGUIControl(this, canvas, canvasGrid, dgc, hgc, wgc, mgc, lc);
+            igc = new ImageGUIControl(this, canvas, canvasGrid, dgc, hgc, wgc, mgc, mngc, lc);
             cgc = new CanvasGUIControl(this, canvas, canvasGrid, lc, dock_bottom, highlighting_rectangle, indicating_rectangle, igc, dgc, lgc, hgc);            
             lgc.LoadImages(grid_expander);                       
         }   
