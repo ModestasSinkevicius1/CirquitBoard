@@ -28,24 +28,7 @@ namespace CircuitBoardDiagram
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
-    {                 
-        private ElementControl ec = new ElementControl();               
-
-        private List<Wire> wList = new List<Wire>();
-        private List<Dot> dList = new List<Dot>();
-        private Wire w;
-
-        private bool turn = false;       
-        
-        private string currentImageName;
-       
-        private int queue = 0;
-        private int next = 0;
-       
-        private bool linePosition = false;
-
-           
-
+    {                         
         private ImageGUIControl igc;
         private CanvasGUIControl cgc;
         private WireGUIControl wgc;
@@ -68,33 +51,37 @@ namespace CircuitBoardDiagram
             mgc = new MessageGUIControl(canvas, lc);
             hgc = new HighlighterGUIControl(canvas, canvasGrid, highlighting_rectangle, indicating_rectangle);
             wgc = new WireGUIControl(canvas, lc);
-            dgc = new DotGUIControl(canvas, canvasGrid, wgc, lc);
+            dgc = new DotGUIControl(this, canvas, canvasGrid, wgc, lc);
             igc = new ImageGUIControl(this, canvas, canvasGrid, dgc, hgc, wgc, mgc, mngc, lc);
-            cgc = new CanvasGUIControl(this, canvas, canvasGrid, lc, dock_bottom, highlighting_rectangle, indicating_rectangle, igc, dgc, lgc, hgc);            
+            cgc = new CanvasGUIControl(this, canvas, canvasGrid, lc, dock_bottom, highlighting_rectangle, indicating_rectangle, igc, dgc, lgc, hgc);
+            
+            mngc.cgc = cgc;
+            mngc.hgc = hgc;
+
             lgc.LoadImages(grid_expander);                       
-        }   
-        
-        /*
-        private void CheckActivePopupMessage()
-        {
-            Thread th = new Thread(UpdatePopupStatus);
-            th.IsBackground = true;
-            th.Start();           
         }
 
-        private void UpdatePopupStatus()
-        {                      
+        /*private void BeginHide()
+        {
+            Thread th = new Thread(UpdateCurrentDotVisibilityStatus);
+            th.IsBackground = true;
+            th.Start();
+        }
+        private void UpdateCurrentDotVisibilityStatus()
+        {
+            double maxWait = 10;
+            t1 = new System.Timers.Timer();
+            t1.Interval = 1000;
+
             while (true)
             {
                 Thread.Sleep(50);
-                this.Dispatcher.BeginInvoke(new Action(() =>
+                form.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    if (!tb.IsMouseOver)
-                        tb.Visibility = Visibility.Hidden;                 
 
                 }));
             }
-        }                                                             
-        */                                                                                                                                          
+        }
+        */
     }
 }

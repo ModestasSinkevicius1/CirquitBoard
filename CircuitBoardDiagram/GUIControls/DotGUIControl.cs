@@ -1,32 +1,75 @@
 ﻿using CircuitBoardDiagram.GUIControls;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Ink;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace CircuitBoardDiagram
 {
     class DotGUIControl
     {
+        private MainWindow form;
+        
         private Canvas canvas;
         private Grid grid;
         
         private ListContainer lc;
 
         private WireGUIControl wgc;
-        public DotGUIControl(Canvas canvas, Grid grid, WireGUIControl wgc, ListContainer lc)
+
+        private DispatcherTimer t1;
+        private int timer=5;
+        public DotGUIControl(MainWindow form, Canvas canvas, Grid grid, WireGUIControl wgc, ListContainer lc)
         {
+            this.form = form;
             this.canvas = canvas;
             this.grid = grid;
             this.wgc = wgc;
             this.lc = lc;
         }
+        private void BeginHide(List<Dot> d)
+        {
+            t1 = new DispatcherTimer();
+            t1.Interval = new TimeSpan(0, 0, 1);
+            t1.Tick += (sender, e) => UpdateCurrentDotVisibilityStatus(sender, e, d);
+            t1.Start();
+        }
+        private void UpdateCurrentDotVisibilityStatus(object sender, EventArgs e, List<Dot> d)
+        {
+            if(timer > 0)
+            {
+                timer--;
+            }
+            else
+            {
+                t1.Stop();
+                timer = 10;
+                foreach (Dot d2 in d)
+                {
+                    d2.GetDot().Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
         private void Dot_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Image img = sender as Image;
@@ -48,11 +91,9 @@ namespace CircuitBoardDiagram
             foreach (Dot d in lc.dList)
             {
                 if (d.GetName() == img.Tag.ToString() && img != null)
-                {
-                    foreach (Dot d2 in lc.ec.GetDots(d.GetCore()))
-                    {
-                        d2.GetDot().Visibility = Visibility.Hidden;
-                    }
+                {                                          
+                    BeginHide(lc.ec.GetDots(d.GetCore()));
+                    //d2.GetDot().Visibility = Visibility.Hidden;                    
                 }
             }
         }
@@ -79,7 +120,7 @@ namespace CircuitBoardDiagram
                 Dot d = new Dot(img.Tag.ToString(), name, img, direction, oposite);               
 
                 lc.ec.AddDot(name, d);
-                lc.dList.Add(d);                
+                lc.dList.Add(d);
 
                 direction = direction == true ? false : true;
                 if (i < 1)

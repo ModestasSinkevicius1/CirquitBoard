@@ -81,11 +81,11 @@ namespace CircuitBoardDiagram.GUIControls
             Grid.SetRow(indicator, 0);
             Grid.SetColumn(indicator, 0);
         }
-        /*
-        public void UpdateIndicatorSize(Rectangle indicating_rectangle, Grid canvasGrid)
+        
+        public void UpdateIndicatorSize()
         {
-            double lengthX = canvasGrid.ColumnDefinitions[0].Width.Value;
-            double lengthY = canvasGrid.RowDefinitions[0].Height.Value;
+            double lengthX = grid.ColumnDefinitions[0].Width.Value;
+            double lengthY = grid.RowDefinitions[0].Height.Value;
 
             int spanX = 1;
             int spanY = 1;
@@ -130,13 +130,13 @@ namespace CircuitBoardDiagram.GUIControls
                     spanY = 2;
             }
 
-            indicating_rectangle.SetValue(Grid.ColumnSpanProperty, spanX);
-            indicating_rectangle.SetValue(Grid.RowSpanProperty, spanY);
+            indicator.SetValue(Grid.ColumnSpanProperty, spanX);
+            indicator.SetValue(Grid.RowSpanProperty, spanY);
         }
-        public void UpdateHighlightorSize(Rectangle highlighting_rectangle,Grid canvasGrid)
+        public void UpdateHighlightorSize()
         {
-            double lengthX = canvasGrid.ColumnDefinitions[0].Width.Value;
-            double lengthY = canvasGrid.RowDefinitions[0].Height.Value;
+            double lengthX = grid.ColumnDefinitions[0].Width.Value;
+            double lengthY = grid.RowDefinitions[0].Height.Value;
 
             int spanX = 2;
             int spanY = 2;
@@ -181,10 +181,9 @@ namespace CircuitBoardDiagram.GUIControls
                     spanY = 4;
             }
 
-            highlighting_rectangle.SetValue(Grid.ColumnSpanProperty, spanX);
-            highlighting_rectangle.SetValue(Grid.RowSpanProperty, spanY);
-        }
-        */
+            highlighter.SetValue(Grid.ColumnSpanProperty, spanX);
+            highlighter.SetValue(Grid.RowSpanProperty, spanY);
+        }       
         public void Highlight_cell(Image draggableControl)
         {
             highlighter.Visibility = Visibility.Visible;

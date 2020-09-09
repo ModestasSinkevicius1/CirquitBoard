@@ -39,6 +39,8 @@ namespace CircuitBoardDiagram.GUIControls
 
         private Canvas canvas;
         private Grid grid;
+        public CanvasGUIControl cgc { get; set; }
+        public HighlighterGUIControl hgc { get; set; }
         private ListContainer lc;
         private Menu menu;
 
@@ -48,7 +50,7 @@ namespace CircuitBoardDiagram.GUIControls
         public MenuGUIControl(Canvas canvas, Grid grid, ListContainer lc, Menu menu)
         {
             this.canvas = canvas;
-            this.grid = grid;
+            this.grid = grid;            
             this.lc = lc;
             this.menu = menu;
 
@@ -75,7 +77,6 @@ namespace CircuitBoardDiagram.GUIControls
             item[0] = baseItem.FindName("Tools_Options") as MenuItem;                                    
             item[0].Click += new RoutedEventHandler(MenuItemOption_Click);
         }
-
         private void MenuItemOption_Click(object sender, RoutedEventArgs e)
         {
             OptionWindow opWindow = new OptionWindow(grid.ColumnDefinitions[0].Width.Value, grid.RowDefinitions[0].Height.Value);
@@ -83,14 +84,14 @@ namespace CircuitBoardDiagram.GUIControls
 
             if (opWindow.isPressedOk == true)
             {
-                //cgc.ResetColumn();
-                //cgc.ResetRow();
+                cgc.ResetColumn();
+                cgc.ResetRow();
 
-                //cgc.AddColumn(opWindow.slider.Value, 12 * 8);
-                //cgc.AddRow(opWindow.slider_Copy.Value, 7 * 5);
+                cgc.AddColumn(opWindow.slider.Value, 12 * 8);
+                cgc.AddRow(opWindow.slider_Copy.Value, 7 * 5);
 
-                //hgc.UpdateIndicatorSize();
-                //hgc.UpdateHighlightorSize();
+                hgc.UpdateIndicatorSize();
+                hgc.UpdateHighlightorSize();
 
                 elementBehaviour=opWindow.GetElementBehaviour();
             }

@@ -15,7 +15,7 @@
                     <Separator HorizontalAlignment="Left" Height="391" Margin="0" VerticalAlignment="Top" Width="596"/>
                     <RadioButton x:Name="radioButton" Content="Always let element position itself by grids" HorizontalAlignment="Left" Margin="10,87,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" IsChecked="True" Checked="radioButton_Checked"/>
                     <RadioButton x:Name="radioButton_Copy" Content="Only let element position itself by grids when done moving" HorizontalAlignment="Left" Margin="10,107,0,0" VerticalAlignment="Top" Checked="radioButton_Copy_Checked"/>
-                    <RadioButton x:Name="radioButton_Copy1" Content="Never let element position itself" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" Checked="radioButton_Copy1_Checked" IsEnabled="False"/>
+                    <RadioButton x:Name="radioButton_Copy1" Content="Never let element position itself" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" Checked="radioButton_Copy1_Checked" IsEnabled="True"/>
                     <StackPanel Margin="445,52,51,243"/>
                 </Grid>
             </TabItem>

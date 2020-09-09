@@ -291,7 +291,7 @@ namespace CircuitBoardDiagram.GUIControls
             if (!ec.GetConnectionAvailability(name))
             {
                 dot.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotRed.png"));
-                if (!turn && previousElementName != name)
+                if (!turn && previousElementName != name && previousDotName != dot.Tag.ToString())
                 {
                     Polyline pl = CreatePolyline();
 
@@ -303,7 +303,7 @@ namespace CircuitBoardDiagram.GUIControls
 
                     turn = true;
                 }
-                else if (name != previousElementName)
+                else if (previousElementName != name && previousDotName != dot.Tag.ToString())
                 {
                     ec.AddConnectionCountToSpecificElement(previousElementName);
                     ec.AddConnectionCountToSpecificElement(name);
@@ -345,6 +345,20 @@ namespace CircuitBoardDiagram.GUIControls
 
                     turn = false;
                 }
+                else
+                {                  
+                    dot.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
+                    if (dot.Tag.ToString() != previousDotName)
+                    {                       
+                        previousDot.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
+                    }
+                    previousLine = null;
+                    previousDot = null;
+                    previousElementName = "";
+                    previousDotName = "";
+                    
+                    turn = false;
+                }               
             }
             else
             {

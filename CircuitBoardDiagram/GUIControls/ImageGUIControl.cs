@@ -29,8 +29,7 @@ namespace CircuitBoardDiagram.GUIControls
         private int queue = 0;
 
         protected bool isDragging;
-
-        private string elementBehaviour = "alwaysGrid";
+        
         public string elementName { get; set; } = "";
 
         private Point clickPosition;
@@ -89,9 +88,17 @@ namespace CircuitBoardDiagram.GUIControls
             isDragging = false;
             Image draggable = sender as Image;
             draggable.ReleaseMouseCapture();
-            //if(elementBehaviour!="neverGrid")
-            SnapToClosestCell(draggable);
-            hgc.Highlight_cell(draggable);                      
+            if(mngc.elementBehaviour!="neverGrid")
+                SnapToClosestCell(draggable);
+            else
+            {                
+                Canvas.SetLeft(draggable, 0);
+                Canvas.SetTop(draggable, 0);
+                draggable.RenderTransform = new TranslateTransform(Mouse.GetPosition(canvas).X-25, Mouse.GetPosition(canvas).Y-25);
+            }
+            hgc.Highlight_cell(draggable);
+            dgc.UpadateDotsLocation(draggable, lc.ec);
+            wgc.FindWireConnectedDots(draggable.Tag.ToString());
             //hgc.IndicateCell(highlighting_rectangle);           
             //indicating_rectangle.Visibility = Visibility.Hidden;
 
@@ -153,7 +160,7 @@ namespace CircuitBoardDiagram.GUIControls
             lc.ec.AddElementToList(r.Tag.ToString(), r);
 
             Canvas.SetTop(r, Mouse.GetPosition(canvas).Y - r.Width / 2);
-            Canvas.SetLeft(r, Mouse.GetPosition(canvas).X - r.Height / 2);
+            Canvas.SetLeft(r, Mouse.GetPosition(canvas).X - r.Height / 2);            
 
             Panel.SetZIndex(r, 1);            
             queue++;
