@@ -45,6 +45,8 @@ namespace CircuitBoardDiagram.GUIControls
         private MessageGUIControl mgc;
         private MenuGUIControl mngc;
         private ListContainer lc;
+
+        private Point startPosition;
         public ImageGUIControl(MainWindow form, Canvas canvas, Grid grid, DotGUIControl dgc, HighlighterGUIControl hgc, WireGUIControl wgc, MessageGUIControl mgc, MenuGUIControl mngc, ListContainer lc)
         {            
             this.form = form;
@@ -69,7 +71,10 @@ namespace CircuitBoardDiagram.GUIControls
                 originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
                 isDragging = true;
                 clickPosition = e.GetPosition(form);
-                draggableControl.CaptureMouse();               
+                draggableControl.CaptureMouse();
+                                
+                startPosition = Mouse.GetPosition(form);
+                dgc.BeginHide(startPosition, lc.ec.GetDots(draggableControl.Tag.ToString()));
             }
             else if (Keyboard.IsKeyDown(Key.X))
             {
@@ -134,7 +139,10 @@ namespace CircuitBoardDiagram.GUIControls
 
         private void Image_MouseLeave(object sender, MouseEventArgs e)
         {
+            Image img = sender as Image;
             hgc.highlighter.Visibility = Visibility.Hidden;
+            startPosition = Mouse.GetPosition(form);
+            dgc.BeginHide(startPosition, lc.ec.GetDots(img.Tag.ToString()));
         }
 
         public void CreateElement(string currentImageName)

@@ -135,6 +135,7 @@ namespace CircuitBoardDiagram.GUIControls
 
         private void MenuItemSave_Click(object sender, RoutedEventArgs e)
         {
+            MessageBox.Show("Yes");
             slc.WriteXML(lc.ec);
 
             FileStream fs = File.Open("myProject.xaml", FileMode.Create);

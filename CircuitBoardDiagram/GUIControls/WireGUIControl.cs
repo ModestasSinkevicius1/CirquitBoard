@@ -26,11 +26,14 @@ namespace CircuitBoardDiagram.GUIControls
 
         private Polyline previousLine;
 
+        private MessageGUIControl mgc;
+
         private Canvas canvas;        
 
-        public WireGUIControl(Canvas canvas, ListContainer lc)
+        public WireGUIControl(Canvas canvas, MessageGUIControl mgc, ListContainer lc)
         {
             this.canvas = canvas;
+            this.mgc = mgc;
             this.lc = lc;
         }
 
@@ -362,7 +365,14 @@ namespace CircuitBoardDiagram.GUIControls
             }
             else
             {
-                MessageBox.Show("This element has max connections used");
+                foreach (SpecificElement se in lc.ec.GetAllElements())
+                {
+                    if (se.GetName() == name)
+                    {
+                        mgc.ShowWarningMessage(se.GetElement(), "This element has max connections used");
+                    }
+                }
+                //MessageBox.Show("This element has max connections used");
                 previousDot.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
             }
         }

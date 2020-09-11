@@ -50,7 +50,7 @@ namespace CircuitBoardDiagram
             mngc = new MenuGUIControl(canvas, canvasGrid, lc, menu);
             mgc = new MessageGUIControl(canvas, lc);
             hgc = new HighlighterGUIControl(canvas, canvasGrid, highlighting_rectangle, indicating_rectangle);
-            wgc = new WireGUIControl(canvas, lc);
+            wgc = new WireGUIControl(canvas, mgc, lc);
             dgc = new DotGUIControl(this, canvas, canvasGrid, wgc, lc);
             igc = new ImageGUIControl(this, canvas, canvasGrid, dgc, hgc, wgc, mgc, mngc, lc);
             cgc = new CanvasGUIControl(this, canvas, canvasGrid, lc, dock_bottom, highlighting_rectangle, indicating_rectangle, igc, dgc, lgc, hgc);

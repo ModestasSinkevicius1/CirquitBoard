@@ -38,6 +38,8 @@ namespace CircuitBoardDiagram
 
         private DispatcherTimer t1;
         private int timer=5;
+
+        private List<Dot> tmpList;        
         public DotGUIControl(MainWindow form, Canvas canvas, Grid grid, WireGUIControl wgc, ListContainer lc)
         {
             this.form = form;
@@ -46,28 +48,54 @@ namespace CircuitBoardDiagram
             this.wgc = wgc;
             this.lc = lc;
         }
-        private void BeginHide(List<Dot> d)
+
+        public void BeginHide(Point startPosition, List<Dot> tmpList)
         {
-            t1 = new DispatcherTimer();
-            t1.Interval = new TimeSpan(0, 0, 1);
-            t1.Tick += (sender, e) => UpdateCurrentDotVisibilityStatus(sender, e, d);
-            t1.Start();
+            this.tmpList = tmpList;
+
+            Thread th = new Thread(new ParameterizedThreadStart(UpdateCurrentDotVisibilityStatus));           
+            th.IsBackground = true;
+            th.Start(startPosition);           
+            
+            /*foreach(Dot d in tmpList)
+            {
+                d.GetDot().Visibility = Visibility.Hidden;
+            }
+            */
         }
-        private void UpdateCurrentDotVisibilityStatus(object sender, EventArgs e, List<Dot> d)
+        public void UpdateCurrentDotVisibilityStatus(object obj)
         {
-            if(timer > 0)
+            Point startPostition = (Point)obj;
+            
+            double distance = 50;
+            while (distance<100)
             {
-                timer--;
-            }
-            else
-            {
-                t1.Stop();
-                timer = 10;
-                foreach (Dot d2 in d)
+                Thread.Sleep(50);
+                form.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    d2.GetDot().Visibility = Visibility.Hidden;
-                }
+                    distance = CalculateDistance(startPostition,Mouse.GetPosition(form));                    
+                }));
             }
+            form.Dispatcher.Invoke(() =>
+            {
+                if (tmpList != null)
+                {
+                    foreach (Dot d in tmpList)
+                    {
+                        d.GetDot().Visibility = Visibility.Hidden;
+                    }
+                }
+            });
+            
+        }
+
+        private double CalculateDistance(Point a, Point b)
+        {
+            double result;           
+
+            result = Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
+
+            return result;
         }
 
         private void Dot_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -87,15 +115,7 @@ namespace CircuitBoardDiagram
 
         private void Dot_MouseLeave(object sender, MouseEventArgs e)
         {
-            Image img = sender as Image;
-            foreach (Dot d in lc.dList)
-            {
-                if (d.GetName() == img.Tag.ToString() && img != null)
-                {                                          
-                    BeginHide(lc.ec.GetDots(d.GetCore()));
-                    //d2.GetDot().Visibility = Visibility.Hidden;                    
-                }
-            }
+            
         }
 
         public void CreateDot(string name, int count)
