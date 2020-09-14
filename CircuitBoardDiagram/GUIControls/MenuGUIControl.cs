@@ -41,6 +41,8 @@ namespace CircuitBoardDiagram.GUIControls
         private Grid grid;
         public CanvasGUIControl cgc { get; set; }
         public HighlighterGUIControl hgc { get; set; }
+        public ImageGUIControl igc { get; set; }
+
         private ListContainer lc;
         private Menu menu;
 
@@ -50,7 +52,7 @@ namespace CircuitBoardDiagram.GUIControls
         public MenuGUIControl(Canvas canvas, Grid grid, ListContainer lc, Menu menu)
         {
             this.canvas = canvas;
-            this.grid = grid;            
+            this.grid = grid;           
             this.lc = lc;
             this.menu = menu;
 
@@ -134,17 +136,18 @@ namespace CircuitBoardDiagram.GUIControls
         }
 
         private void MenuItemSave_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Yes");
-            slc.WriteXML(lc.ec);
+        {            
+            slc.WriteXML(lc);
 
+            /*
             FileStream fs = File.Open("myProject.xaml", FileMode.Create);
             XamlWriter.Save(canvas, fs);
             fs.Close();
+            */
         }
 
         private void MenuItemOpen_Click(object sender, RoutedEventArgs e)
-        {
+        {              
             Image img;
 
             for (int i = 0; i < canvas.Children.Count; i++)
@@ -152,14 +155,14 @@ namespace CircuitBoardDiagram.GUIControls
                 if (canvas.Children[i].GetType() == typeof(Image))
                 {
                     img = canvas.Children[i] as Image;
-                    //igc.DeleteElement(img);
+                    igc.DeleteElement(img);
                     i--;
                 }
             }
             lc.dList.Clear();
-
-            lc.ec = slc.ReadXML();
-            //igc.RecreateElementsFromSave();            
+            
+            lc = slc.ReadXML();           
+            igc.RecreateElementsFromSave(lc);            
         }
         public void ResizeBasedElementsArangements()
         {

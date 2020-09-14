@@ -7,7 +7,7 @@ using System.Windows.Shapes;
 
 namespace CircuitBoardDiagram
 {
-    class Wire
+    public class Wire
     {
         private string name;
         public string elementA { get; set; }
@@ -17,6 +17,11 @@ namespace CircuitBoardDiagram
         public string dotB { get; set; }
 
         private Polyline pl = new Polyline();
+
+        public Wire()
+        {
+
+        }
 
         public Wire(string name)
         {

@@ -152,9 +152,7 @@ namespace CircuitBoardDiagram
                     oposite = -1;
                 }
             }
-        }
-
-        /*
+        }       
         public void RecreateDot(SpecificElement se, int count)
         {
             bool direction = false;
@@ -168,14 +166,14 @@ namespace CircuitBoardDiagram
                 img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
                 img.Tag = se.GetDots()[i].GetName();
 
-                img.MouseLeftButtonDown += new MouseButtonEventHandler(Image_MouseLeftButtonDown_2);
-                img.MouseLeave += new MouseEventHandler(Image_MouseLeave_2);
+                img.MouseLeftButtonDown += new MouseButtonEventHandler(Dot_MouseLeftButtonDown);
+                img.MouseLeave += new MouseEventHandler(Dot_MouseLeave);
 
                 Panel.SetZIndex(img, 2);
-                canvasGrid.Children.Add(img);
+                grid.Children.Add(img);
                 Dot d = new Dot(img.Tag.ToString(), se.GetName(), img, direction, oposite);
                 se.GetDots()[i].SetDot(img);
-                dList.Add(d);
+                lc.dList.Add(d);
                 direction = direction == true ? false : true;
                 if (i < 1)
                 {
@@ -186,8 +184,8 @@ namespace CircuitBoardDiagram
                     oposite = -1;
                 }
             }
-        }                     
-        */
+        }
+        
         public void UpadateDotsLocation(Image draggableControl, ElementControl ec)
         {
             List<Dot> dList = ec.GetDots(draggableControl.Tag.ToString());

@@ -111,7 +111,7 @@ namespace CircuitBoardDiagram.GUIControls
         }
 
         private void Image_MouseMove(object sender, MouseEventArgs e)
-        {
+        {            
             Image draggableControl = sender as Image;
 
             if (isDragging && draggableControl != null)
@@ -125,7 +125,9 @@ namespace CircuitBoardDiagram.GUIControls
                     SnapToClosestCell(draggableControl);
                 dgc.UpadateDotsLocation(draggableControl, lc.ec);
                 hgc.Highlight_cell(draggableControl);
-                //ec.UpdatePostitionValues(draggableControl.Tag.ToString());
+
+                lc.ec.UpdatePostitionValues(draggableControl.Tag.ToString());
+
                 wgc.FindWireConnectedDots(draggableControl.Tag.ToString());
             }
 
@@ -295,21 +297,21 @@ namespace CircuitBoardDiagram.GUIControls
             //Grid.SetRow(draggableControl, 0);
             //Grid.SetColumn(draggableControl, 0);
         }
-        /*
-        public void RecreateElementsFromSave()
+        public void RecreateElementsFromSave(ListContainer lc)
         {
-            foreach (SpecificElement se in ec.GetAllElements())
-            {
+            this.lc = lc;
+            
+            foreach (SpecificElement se in lc.ec.GetAllElements())
+            {                
                 Image r = new Image();
                 r.Height = 50;
                 r.Width = 50;
                 r.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + se.GetName().Remove(se.GetName().Length - 1) + ".png"));
                 r.Tag = se.GetName();
-                //AddImageToCommon(r.Tag.ToString());               
-
-                r.MouseLeftButtonDown += new MouseButtonEventHandler(Canvas_MouseLeftButtonDown);
-                r.MouseLeftButtonUp += new MouseButtonEventHandler(Canvas_MouseLeftButtonUp);
-                r.MouseMove += new MouseEventHandler(Canvas_MouseMove);
+                                           
+                r.MouseLeftButtonDown += new MouseButtonEventHandler(Image_MouseLeftButtonDown);
+                r.MouseLeftButtonUp += new MouseButtonEventHandler(Image_MouseLeftButtonUp);
+                r.MouseMove += new MouseEventHandler(Image_MouseMove);
                 r.MouseEnter += new MouseEventHandler(Image_MouseEnter);
                 r.MouseLeave += new MouseEventHandler(Image_MouseLeave);
 
@@ -317,14 +319,15 @@ namespace CircuitBoardDiagram.GUIControls
 
                 se.SetImage(r);
 
-                Canvas.SetTop(r, se.GetPositionX());
-                Canvas.SetLeft(r, se.GetPositionY());
+                Canvas.SetTop(r, 0);
+                Canvas.SetLeft(r, 0);                
+
+                r.RenderTransform = new TranslateTransform(se.GetPositionX(), se.GetPositionY());
 
                 Panel.SetZIndex(r, 1);
 
-                RecreateDot(se, 4);
+                dgc.RecreateDot(se, 4);
             }
-        }
-        */
+        }        
     }
 }
