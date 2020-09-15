@@ -160,8 +160,13 @@ namespace CircuitBoardDiagram.GUIControls
                 }
             }
             lc.dList.Clear();
-            
-            lc = slc.ReadXML();           
+                       
+            lc = slc.ReadXML();
+
+            foreach (SpecificElement se in lc.ec.GetAllElements())
+            {               
+                se.ClearDotList();
+            }           
             igc.RecreateElementsFromSave(lc);            
         }
         public void ResizeBasedElementsArangements()

@@ -92,6 +92,11 @@ namespace CircuitBoardDiagram
             dList.Add(d);
         }
 
+        public void ClearDotList()
+        {
+            dList.Clear();
+        }
+
         public List<Dot> GetDots()
         {
             return dList;

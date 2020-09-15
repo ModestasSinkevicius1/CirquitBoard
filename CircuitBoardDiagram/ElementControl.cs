@@ -96,9 +96,9 @@ namespace CircuitBoardDiagram
         public List<Dot> GetDots(string name)
         {
             foreach (SpecificElement se in seList)
-            {
+            {               
                 if (se.GetName() == name)
-                {                    
+                {                   
                     return se.GetDots();
                 }
             }
@@ -108,7 +108,7 @@ namespace CircuitBoardDiagram
         public void AddDot(string name, Dot d)
         {
             foreach (SpecificElement se in seList)
-            {               
+            {              
                 if (se.GetName() == name)
                 {                   
                     se.AddDot(d);

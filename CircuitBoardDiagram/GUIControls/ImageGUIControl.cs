@@ -300,7 +300,7 @@ namespace CircuitBoardDiagram.GUIControls
         public void RecreateElementsFromSave(ListContainer lc)
         {
             this.lc = lc;
-            
+            this.lc.dList.Clear();            
             foreach (SpecificElement se in lc.ec.GetAllElements())
             {                
                 Image r = new Image();
@@ -325,8 +325,8 @@ namespace CircuitBoardDiagram.GUIControls
                 r.RenderTransform = new TranslateTransform(se.GetPositionX(), se.GetPositionY());
 
                 Panel.SetZIndex(r, 1);
-
-                dgc.RecreateDot(se, 4);
+                
+                dgc.RecreateDot(se.GetName(), 4, this.lc);
             }
         }        
     }
