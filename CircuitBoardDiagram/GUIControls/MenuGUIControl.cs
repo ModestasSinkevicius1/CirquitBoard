@@ -42,6 +42,7 @@ namespace CircuitBoardDiagram.GUIControls
         public CanvasGUIControl cgc { get; set; }
         public HighlighterGUIControl hgc { get; set; }
         public ImageGUIControl igc { get; set; }
+        public WireGUIControl wgc { get; set; }
 
         private ListContainer lc;
         private Menu menu;
@@ -159,15 +160,20 @@ namespace CircuitBoardDiagram.GUIControls
                     i--;
                 }
             }
+
             lc.dList.Clear();
-                       
+                   
             lc = slc.ReadXML();
 
             foreach (SpecificElement se in lc.ec.GetAllElements())
             {               
                 se.ClearDotList();
-            }           
-            igc.RecreateElementsFromSave(lc);            
+            }
+            
+            igc.RecreateElementsFromSave(lc);
+
+            wgc.UpdateListContainer(lc);
+            wgc.RecreateWires();
         }
         public void ResizeBasedElementsArangements()
         {

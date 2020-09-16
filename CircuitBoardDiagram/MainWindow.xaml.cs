@@ -58,6 +58,7 @@ namespace CircuitBoardDiagram
             mngc.cgc = cgc;
             mngc.hgc = hgc;
             mngc.igc = igc;
+            mngc.wgc = wgc;
 
             lgc.LoadImages(grid_expander);                       
         }

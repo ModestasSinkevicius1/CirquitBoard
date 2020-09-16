@@ -37,6 +37,11 @@ namespace CircuitBoardDiagram.GUIControls
             this.lc = lc;
         }
 
+        public void UpdateListContainer(ListContainer lc)
+        {
+            this.lc = lc;
+        }
+
         private void Polyline_mouseEnter(object sender, MouseEventArgs e)
         {
             Polyline pl = sender as Polyline;
@@ -73,7 +78,7 @@ namespace CircuitBoardDiagram.GUIControls
             else if (Keyboard.IsKeyDown(Key.C))
             {
                 foreach (Wire w2 in lc.wList)
-                {
+                {                   
                     if (w2.GetName() == pl.Name)
                     {
                         MessageBox.Show(w2.elementA + " connected with " + w2.elementB);
@@ -134,6 +139,7 @@ namespace CircuitBoardDiagram.GUIControls
 
             Image dotA = FindDot(dotNameA);
             Image dotB = FindDot(dotNameB);
+           
 
             bool direction = DetermineDirection(dotNameA);
             int n = DetermineDirection2(dotNameA);
@@ -238,9 +244,9 @@ namespace CircuitBoardDiagram.GUIControls
              }
         }      
         public void DeleteWires(Polyline l)
-        {
+        {            
             foreach (Wire w2 in lc.wList)
-            {
+            {                
                 if (w2.GetName() == l.Name)
                 {
                     foreach (Dot d in lc.dList)
@@ -255,7 +261,8 @@ namespace CircuitBoardDiagram.GUIControls
                         }
                     }
 
-                    canvas.Children.Remove(w2.GetPolyline());
+                    canvas.Children.Remove(w2.GetPolyline());                    
+
                     lc.ec.RemoveConnectionCountFromSpecificElement(w2.elementA);
                     lc.ec.RemoveConnectionCountFromSpecificElement(w2.elementB);
 
@@ -375,6 +382,17 @@ namespace CircuitBoardDiagram.GUIControls
                 //MessageBox.Show("This element has max connections used");
                 previousDot.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
             }
+        }
+
+        public void RecreateWires()
+        {
+            Polyline pl = CreatePolyline();
+            pl.Name = lc.wList[0].GetName();
+            
+            lc.wList[0].AddPolyline(pl);
+            
+            lc.ec.AddLineForElement(lc.ec.GetAllElements()[0].GetName(), pl);
+            lc.ec.AddLineForElement(lc.ec.GetAllElements()[1].GetName(), pl);
         }
         
     }

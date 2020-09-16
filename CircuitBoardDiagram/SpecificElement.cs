@@ -82,7 +82,7 @@ namespace CircuitBoardDiagram
             return isConnected;
         }
 
-        public void AddList(Polyline l)
+        public void AddPolyline(Polyline l)
         {
             plList.Add(l);
         }
@@ -102,7 +102,7 @@ namespace CircuitBoardDiagram
             return dList;
         }
 
-        public List<Polyline> GetList()
+        public List<Polyline> GetPolylineList()
         {
             return plList;
         }

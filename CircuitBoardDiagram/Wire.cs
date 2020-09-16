@@ -9,7 +9,7 @@ namespace CircuitBoardDiagram
 {
     public class Wire
     {
-        private string name;
+        public string name;
         public string elementA { get; set; }
         public string elementB { get; set; }
 

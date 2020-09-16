@@ -75,7 +75,7 @@ namespace CircuitBoardDiagram
             {
                 if(se.GetName() == name)
                 {
-                    se.AddList(l);
+                    se.AddPolyline(l);
                     break;
                 }
             }
@@ -87,7 +87,7 @@ namespace CircuitBoardDiagram
             {
                 if(se.GetName() == name)
                 {
-                    return se.GetList();
+                    return se.GetPolylineList();
                 }
             }
             return null;

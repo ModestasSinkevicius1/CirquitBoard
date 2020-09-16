@@ -189,7 +189,7 @@ namespace CircuitBoardDiagram
                 {
                     oposite = -1;
                 }
-            }
+            }                                    
         }
 
         public void UpadateDotsLocation(Image draggableControl, ElementControl ec)
