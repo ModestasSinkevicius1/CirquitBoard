@@ -28,7 +28,9 @@ namespace CircuitBoardDiagram.GUIControls
 
         private MessageGUIControl mgc;
 
-        private Canvas canvas;        
+        private Canvas canvas;
+
+        private int row = 0;
 
         public WireGUIControl(Canvas canvas, MessageGUIControl mgc, ListContainer lc)
         {
@@ -142,7 +144,7 @@ namespace CircuitBoardDiagram.GUIControls
            
 
             bool direction = DetermineDirection(dotNameA);
-            int n = DetermineDirection2(dotNameA);
+            int n = DetermineDirection2(dotNameA);           
 
             startLine1 = new Point(dotA.RenderTransform.Value.OffsetX+5, dotA.RenderTransform.Value.OffsetY+10);
             endLine1 = new Point(dotB.RenderTransform.Value.OffsetX+10, dotB.RenderTransform.Value.OffsetY+10);
@@ -199,7 +201,7 @@ namespace CircuitBoardDiagram.GUIControls
             {
                 if (d2.GetName() == dotName)
                 {
-                    d = d2.GetDot();
+                    d = d2.GetDot();                   
                 }
             }
             return d;
@@ -238,7 +240,7 @@ namespace CircuitBoardDiagram.GUIControls
             foreach(Wire w in lc.wList)
             {
                 if(w.elementA==name || w.elementB==name)
-                {
+                {                    
                     UpdateWireLocation(w.dotA, w.dotB, w.GetPolyline());                       
                 }
              }
@@ -334,7 +336,6 @@ namespace CircuitBoardDiagram.GUIControls
                     lc.wList.Add(w);                                        
 
                     ec.AddLineForElement(previousElementName, previousLine);
-
                     ec.AddLineForElement(name, previousLine);
 
                     foreach (Dot d in dList)
@@ -385,14 +386,30 @@ namespace CircuitBoardDiagram.GUIControls
         }
 
         public void RecreateWires()
-        {
-            Polyline pl = CreatePolyline();
-            pl.Name = lc.wList[0].GetName();
-            
-            lc.wList[0].AddPolyline(pl);
-            
-            lc.ec.AddLineForElement(lc.ec.GetAllElements()[0].GetName(), pl);
-            lc.ec.AddLineForElement(lc.ec.GetAllElements()[1].GetName(), pl);
+        {           
+            foreach (Wire w2 in lc.wList)
+            {
+                Polyline pl = CreatePolyline();
+                pl.Name = w2.GetName();
+                w2.AddPolyline(pl);
+
+                foreach(SpecificElement se in lc.ec.GetAllElements())
+                {
+                    if(w2.elementA == se.GetName()||w2.elementB == se.GetName())
+                    {
+                        se.AddPolyline(pl);
+                        foreach(Dot d in se.GetDots())
+                        {
+                            if(w2.dotA == d.GetName() || w2.dotB == d.GetName())
+                            {
+                                d.GetDot().Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotRed.png"));
+                            }
+                        }
+                        UpdateWireLocation(w2.dotA, w2.dotB, w2.GetPolyline());
+                    }                   
+                }              
+            }
+            mgc.UpdateContainer(lc);
         }
         
     }

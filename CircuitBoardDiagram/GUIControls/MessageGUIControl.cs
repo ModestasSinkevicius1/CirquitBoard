@@ -26,6 +26,12 @@ namespace CircuitBoardDiagram.GUIControls
             LoadPopupMessage();
             LoadWarningMessage();
         }
+
+        public void UpdateContainer(ListContainer lc)
+        {
+            this.lc = lc;
+        }
+
         private void Textbox_MouseLeave(object sender, MouseEventArgs e)
         {
             TextBlock t = sender as TextBlock;

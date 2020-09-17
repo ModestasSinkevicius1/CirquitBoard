@@ -103,6 +103,7 @@ namespace CircuitBoardDiagram.GUIControls
             }
             hgc.Highlight_cell(draggable);
             dgc.UpadateDotsLocation(draggable, lc.ec);
+            lc.ec.UpdatePostitionValues(draggable.Tag.ToString());
             wgc.FindWireConnectedDots(draggable.Tag.ToString());
             //hgc.IndicateCell(highlighting_rectangle);           
             //indicating_rectangle.Visibility = Visibility.Hidden;
@@ -124,9 +125,7 @@ namespace CircuitBoardDiagram.GUIControls
                 if(mngc.elementBehaviour=="alwaysGrid")
                     SnapToClosestCell(draggableControl);
                 dgc.UpadateDotsLocation(draggableControl, lc.ec);
-                hgc.Highlight_cell(draggableControl);
-
-                lc.ec.UpdatePostitionValues(draggableControl.Tag.ToString());
+                hgc.Highlight_cell(draggableControl);                
 
                 wgc.FindWireConnectedDots(draggableControl.Tag.ToString());
             }
@@ -324,6 +323,8 @@ namespace CircuitBoardDiagram.GUIControls
                 Canvas.SetLeft(r, 0);                
 
                 r.RenderTransform = new TranslateTransform(se.GetPositionX(), se.GetPositionY());
+
+                queue++;
 
                 Panel.SetZIndex(r, 1);
                 

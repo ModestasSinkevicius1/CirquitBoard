@@ -69,7 +69,7 @@ namespace CircuitBoardDiagram.GUIControls
             item[2] = baseItem.FindName("File_Save") as MenuItem;
             item[3] = baseItem.FindName("File_Export") as MenuItem;
 
-            //item[0].Click += new RoutedEventHandler(MenuItemNew_Click);
+            item[0].Click += new RoutedEventHandler(MenuItemNew_Click);
             item[1].Click += new RoutedEventHandler(MenuItemOpen_Click);
             item[2].Click += new RoutedEventHandler(MenuItemSave_Click);
             item[3].Click += new RoutedEventHandler(MenuItemExport_Click);
@@ -98,6 +98,11 @@ namespace CircuitBoardDiagram.GUIControls
 
                 elementBehaviour=opWindow.GetElementBehaviour();
             }
+        }
+
+        private void MenuItemNew_Click(object sender, RoutedEventArgs e)
+        {
+            
         }
 
         private void MenuItemExport_Click(object sender, RoutedEventArgs e)
@@ -174,6 +179,12 @@ namespace CircuitBoardDiagram.GUIControls
 
             wgc.UpdateListContainer(lc);
             wgc.RecreateWires();
+
+            /*foreach (SpecificElement se in lc.ec.GetAllElements())
+            {
+                wgc.FindWireConnectedDots(se.GetName());
+            }
+            */
         }
         public void ResizeBasedElementsArangements()
         {
