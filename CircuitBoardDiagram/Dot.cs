@@ -14,6 +14,7 @@ namespace CircuitBoardDiagram
         public string name;
         public bool direction = false;
         public int oposite = 1;
+        public bool occupied { get; set; } = false;
 
         private Image d;
 
@@ -81,6 +82,6 @@ namespace CircuitBoardDiagram
         public double GetLength()
         {
             return length;
-        }
+        }        
     }
 }

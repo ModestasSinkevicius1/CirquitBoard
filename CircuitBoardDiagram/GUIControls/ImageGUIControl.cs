@@ -303,10 +303,11 @@ namespace CircuitBoardDiagram.GUIControls
             
             foreach (SpecificElement se in lc.ec.GetAllElements())
             {                
-                Image r = new Image();
+                Image r = new Image();               
+
                 r.Height = 50;
                 r.Width = 50;
-                r.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + se.GetName().Remove(se.GetName().Length - 1) + ".png"));
+                r.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + RemoveNumbers(se.GetName()) + ".png"));
                 r.Tag = se.GetName();
                                            
                 r.MouseLeftButtonDown += new MouseButtonEventHandler(Image_MouseLeftButtonDown);
@@ -328,8 +329,27 @@ namespace CircuitBoardDiagram.GUIControls
 
                 Panel.SetZIndex(r, 1);
                 
-                dgc.RecreateDot(se.GetName(), 4, this.lc);                
+                dgc.RecreateDot(se.GetName(), 4, this.lc);
+                dgc.UpadateDotsLocation(se.GetElement(), this.lc.ec);
+                
+                foreach(Dot d in this.lc.dList)
+                {
+                    d.GetDot().Visibility = Visibility.Hidden;
+                }
             }
-        }        
+        }
+        
+        private string RemoveNumbers(string name)
+        {            
+            foreach(char w in name)
+            {
+                if(Char.IsNumber(w))
+                {                    
+                    name = name.Remove(name.Length - 1);
+                }               
+            }
+
+            return name;
+        }
     }
 }

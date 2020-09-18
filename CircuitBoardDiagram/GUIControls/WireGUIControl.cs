@@ -256,10 +256,12 @@ namespace CircuitBoardDiagram.GUIControls
                         if (w2.dotA == d.GetName())
                         {
                             d.GetDot().Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
+                            d.occupied = false;
                         }
                         if (w2.dotB == d.GetName())
                         {
                             d.GetDot().Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
+                            d.occupied = false;
                         }
                     }
 
@@ -300,7 +302,7 @@ namespace CircuitBoardDiagram.GUIControls
         
         public void DrawWireBetweenElements(Image dot, string name, ElementControl ec, List<Dot> dList)
         {
-            if (!ec.GetConnectionAvailability(name))
+            if (!ec.GetConnectionAvailability(name) && !isDotOccupied(dot, dList))
             {
                 dot.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotRed.png"));
                 if (!turn && previousElementName != name && previousDotName != dot.Tag.ToString())
@@ -331,6 +333,14 @@ namespace CircuitBoardDiagram.GUIControls
 
                     w.dotA = previousDotName;
                     w.dotB = dot.Tag.ToString();
+
+                    foreach(Dot d in dList)
+                    {
+                        if(d.GetName() == previousDot.Tag.ToString() || d.GetName() == dot.Tag.ToString())
+                        {
+                            d.occupied = true;
+                        }
+                    }
 
                     w.AddPolyline(previousLine);
                     lc.wList.Add(w);                                        
@@ -377,12 +387,30 @@ namespace CircuitBoardDiagram.GUIControls
                 {
                     if (se.GetName() == name)
                     {
-                        mgc.ShowWarningMessage(se.GetElement(), "This element has max connections used");
+                        if(ec.GetConnectionAvailability(name))
+                            mgc.ShowWarningMessage(se.GetElement(), "This element has max connections used");
+                        else if(isDotOccupied(dot,dList))
+                        {
+                            mgc.ShowWarningMessage(se.GetElement(), "This dot is being used by another wire");
+                        }
                     }
                 }
                 //MessageBox.Show("This element has max connections used");
-                previousDot.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
+                if (ec.GetConnectionAvailability(name))
+                    previousDot.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
             }
+        }
+
+        public bool isDotOccupied(Image dot, List<Dot> dList)
+        {
+            foreach(Dot d in dList)
+            {
+                if (d.GetName() == dot.Tag.ToString())
+                {
+                    return d.occupied;
+                }
+            }
+            return false;
         }
 
         public void RecreateWires()

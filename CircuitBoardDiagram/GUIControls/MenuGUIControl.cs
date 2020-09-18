@@ -180,11 +180,11 @@ namespace CircuitBoardDiagram.GUIControls
             wgc.UpdateListContainer(lc);
             wgc.RecreateWires();
 
-            /*foreach (SpecificElement se in lc.ec.GetAllElements())
+
+            foreach (SpecificElement se in lc.ec.GetAllElements())
             {
                 wgc.FindWireConnectedDots(se.GetName());
-            }
-            */
+            }           
         }
         public void ResizeBasedElementsArangements()
         {
