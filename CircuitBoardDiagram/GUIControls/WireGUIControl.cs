@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,15 +29,43 @@ namespace CircuitBoardDiagram.GUIControls
 
         private MessageGUIControl mgc;
 
+        private MainWindow form;
         private Canvas canvas;
 
         private int row = 0;
 
-        public WireGUIControl(Canvas canvas, MessageGUIControl mgc, ListContainer lc)
+        public WireGUIControl(MainWindow form, Canvas canvas, MessageGUIControl mgc, ListContainer lc)
         {
+            this.form = form;
             this.canvas = canvas;
             this.mgc = mgc;
             this.lc = lc;
+        }
+
+        public void BeginDrawing()
+        {           
+            Thread th = new Thread(UpdateWirePosition);
+            th.IsBackground = true;
+            th.Start();
+
+            /*foreach(Dot d in tmpList)
+            {
+                d.GetDot().Visibility = Visibility.Hidden;
+            }
+            */
+        }
+        public void UpdateWirePosition()
+        {
+            //Point startPostition = (Point)obj;
+            
+            while (turn)
+            {
+                Thread.Sleep(50);
+                form.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    UpdateWireLocation(previousDotName, "mouse", previousLine);
+                }));
+            }          
         }
 
         public void UpdateListContainer(ListContainer lc)
@@ -130,6 +159,9 @@ namespace CircuitBoardDiagram.GUIControls
         
         public void UpdateWireLocation(string dotNameA, string dotNameB, Polyline pl)
         {
+            bool direction=false;
+            int n = -1;
+
             Point startLine1;
             Point startline2;
             Point line1;
@@ -139,59 +171,68 @@ namespace CircuitBoardDiagram.GUIControls
 
             PointCollection polylinePoints = new PointCollection();
 
-            Image dotA = FindDot(dotNameA);
-            Image dotB = FindDot(dotNameB);
-           
-
-            bool direction = DetermineDirection(dotNameA);
-            int n = DetermineDirection2(dotNameA);           
-
-            startLine1 = new Point(dotA.RenderTransform.Value.OffsetX+5, dotA.RenderTransform.Value.OffsetY+10);
-            endLine1 = new Point(dotB.RenderTransform.Value.OffsetX+10, dotB.RenderTransform.Value.OffsetY+10);
-
-            if (!direction)
-            {
-                startline2 = new Point(startLine1.X + 25 * n, startLine1.Y);
-            }
-            else
-            {
-                startline2 = new Point(startLine1.X, startLine1.Y + 25 * n);
-            }
-
-            direction = DetermineDirection(dotNameB);
-            n = DetermineDirection2(dotNameB);
-
-            if (!direction)
-            {
-                endLine2 = new Point(endLine1.X + 25 * n, endLine1.Y);
-            }
-            else
-            {
-                endLine2 = new Point(endLine1.X, endLine1.Y + 25 * n);
-            }
+            Image dotA = FindDot(dotNameA);                                     
 
             direction = DetermineDirection(dotNameA);
+            n = DetermineDirection2(dotNameA);
 
-            if (!direction)
+            if (dotA != null)
             {
-                line1 = new Point(startline2.X, endLine2.Y);
-                line2 = new Point(endLine2.X, endLine2.Y);
+                startLine1 = new Point(dotA.RenderTransform.Value.OffsetX + 5, dotA.RenderTransform.Value.OffsetY + 10);
+
+                if (dotNameB == "mouse")
+                    endLine1 = new Point(Mouse.GetPosition(canvas).X, Mouse.GetPosition(canvas).Y);
+                else
+                {
+                    Image dotB = FindDot(dotNameB);
+
+                    endLine1 = new Point(dotB.RenderTransform.Value.OffsetX + 10, dotB.RenderTransform.Value.OffsetY + 10);
+                }
+
+                if (!direction)
+                {
+                    startline2 = new Point(startLine1.X + 25 * n, startLine1.Y);
+                }
+                else
+                {
+                    startline2 = new Point(startLine1.X, startLine1.Y + 25 * n);
+                }
+
+                direction = DetermineDirection(dotNameB);
+                n = DetermineDirection2(dotNameB);
+
+                if (!direction)
+                {
+                    endLine2 = new Point(endLine1.X + 25 * n, endLine1.Y);
+                }
+                else
+                {
+                    endLine2 = new Point(endLine1.X, endLine1.Y + 25 * n);
+                }
+
+                direction = DetermineDirection(dotNameA);
+
+                if (!direction)
+                {
+                    line1 = new Point(startline2.X, endLine2.Y);
+                    line2 = new Point(endLine2.X, endLine2.Y);
+                }
+                else
+                {
+                    line1 = new Point(endLine2.X, startline2.Y);
+                    line2 = new Point(endLine2.X, endLine2.Y);
+                }
+
+
+                polylinePoints.Add(startLine1);
+                polylinePoints.Add(startline2);
+                polylinePoints.Add(line1);
+                polylinePoints.Add(line2);
+                polylinePoints.Add(endLine2);
+                polylinePoints.Add(endLine1);
+
+                pl.Points = polylinePoints;
             }
-            else
-            {
-                line1 = new Point(endLine2.X, startline2.Y);
-                line2 = new Point(endLine2.X, endLine2.Y);
-            }
-
-
-            polylinePoints.Add(startLine1);
-            polylinePoints.Add(startline2);
-            polylinePoints.Add(line1);
-            polylinePoints.Add(line2);
-            polylinePoints.Add(endLine2);
-            polylinePoints.Add(endLine1);
-
-            pl.Points = polylinePoints;
         }
 
         public Image FindDot(string dotName)
@@ -316,6 +357,8 @@ namespace CircuitBoardDiagram.GUIControls
                     previousDot = dot;
 
                     turn = true;
+
+                    BeginDrawing();
                 }
                 else if (previousElementName != name && previousDotName != dot.Tag.ToString())
                 {
@@ -367,18 +410,21 @@ namespace CircuitBoardDiagram.GUIControls
                     turn = false;
                 }
                 else
-                {                  
+                {
+                    turn = false;
                     dot.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
                     if (dot.Tag.ToString() != previousDotName)
                     {                       
                         previousDot.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
                     }
+                    canvas.Children.Remove(previousLine);
+
                     previousLine = null;
                     previousDot = null;
                     previousElementName = "";
                     previousDotName = "";
                     
-                    turn = false;
+                    
                 }               
             }
             else
@@ -397,7 +443,9 @@ namespace CircuitBoardDiagram.GUIControls
                 }
                 //MessageBox.Show("This element has max connections used");
                 if (ec.GetConnectionAvailability(name))
+                {                    
                     previousDot.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
+                }
             }
         }
 
