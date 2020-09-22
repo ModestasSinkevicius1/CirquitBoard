@@ -30,14 +30,25 @@ namespace CircuitBoardDiagram.GUIControls
         private MessageGUIControl mgc;
 
         private MainWindow form;
+
         private Canvas canvas;
+        private Grid grid;
 
         private int row = 0;
 
-        public WireGUIControl(MainWindow form, Canvas canvas, MessageGUIControl mgc, ListContainer lc)
+        private Ellipse el;
+
+        private Point clickPosition;
+
+        protected bool isDragging;       
+       
+        private TranslateTransform originTT;
+
+        public WireGUIControl(MainWindow form, Canvas canvas, Grid grid, MessageGUIControl mgc, ListContainer lc)
         {
             this.form = form;
             this.canvas = canvas;
+            this.grid = grid;
             this.mgc = mgc;
             this.lc = lc;
         }
@@ -60,7 +71,7 @@ namespace CircuitBoardDiagram.GUIControls
             
             while (turn)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(30);
                 form.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     UpdateWireLocation(previousDotName, "mouse", previousLine);
@@ -78,23 +89,229 @@ namespace CircuitBoardDiagram.GUIControls
             Polyline pl = sender as Polyline;
             SolidColorBrush bc = new SolidColorBrush();
 
-            if (Keyboard.IsKeyDown(Key.X))
-            {
-                bc.Color = Colors.Red;
-            }
-            else
-                bc.Color = Colors.Green;
+            if (!turn)
+            {                                
+                if (Keyboard.IsKeyDown(Key.X))
+                {
+                    bc.Color = Colors.Red;
+                }
+                else
+                    bc.Color = Colors.Green;
 
-            ChangeLineStyle(pl, bc, 4);
+                ChangeLineStyle(pl, bc, 4);
+            }
+            else if(pl != previousLine)
+            {
+                bc.Color = Colors.Gold;
+                ChangeLineStyle(pl, bc, 4);                
+                /*el = new Ellipse();
+                el.Stroke = Brushes.Black;
+                el.Fill = Brushes.AliceBlue;
+                el.Width = 50;
+                el.Height = 50;
+                canvas.Children.Add(el);
+                */
+            }
         }        
+
+        private void ConnectWireToWire(Polyline pl)
+        {
+            turn = false;
+            previousLine.Name = pl.Name.ToString();
+
+            Ellipse el = CreateConnector();
+            SnapToClosestCell(el);
+            canvas.Children.Add(el);
+
+            DeleteWires(pl);
+            canvas.Children.Remove(previousLine);                        
+
+            previousElementName = "";          
+        }
+
+        public void SnapToClosestCell(Ellipse draggableControl)
+        {
+            double distanceX;
+            double distanceY;
+
+            double oldDistanceX = 9999;
+            double oldDistanceY = 9999;
+
+            double i = 0;
+            double cellY = 0;
+            double cellX = 0;
+
+            double cellWidth;
+            double cellHeight;
+
+            int offCell = 0;
+
+            double length = 50;
+
+            double widthLength = grid.ColumnDefinitions[0].Width.Value;
+            double heightLength = grid.RowDefinitions[0].Height.Value;
+
+            if (widthLength < length)
+            {
+                if (widthLength < 25)
+                {
+                    if (widthLength < 12.5)
+                    {
+                        if (widthLength < 6.25)
+                            if (widthLength < 3.125)
+                            {
+                                offCell = 7;
+                            }
+                            else
+                                offCell = 15;
+                        else
+                            offCell = 7;
+                    }
+                    else
+                        offCell = 3;
+                }
+                else
+                    offCell = 1;
+            }
+
+            foreach (ColumnDefinition column in grid.ColumnDefinitions)
+            {
+                distanceX = (Math.Abs((Mouse.GetPosition(canvas).X - (column.Width.Value / 2)) - (column.Width.Value * i))) - column.Width.Value / 2;
+
+                if (oldDistanceX > distanceX && i < grid.ColumnDefinitions.Count - offCell)
+                {
+                    oldDistanceX = distanceX;
+                    cellX = i;
+                }
+                i++;
+            }
+
+            i = 0;
+            length = 50;
+            offCell = 0;
+
+            if (heightLength < length)
+            {
+                if (heightLength < 25)
+                {
+                    if (heightLength < 12.5)
+                    {
+                        if (heightLength < 6.25)
+                            if (heightLength < 3.125)
+                            {
+                                offCell = 7;
+                            }
+                            else
+                                offCell = 15;
+                        else
+                            offCell = 7;
+                    }
+                    else
+                        offCell = 3;
+                }
+                else
+                    offCell = 1;
+            }
+
+            foreach (RowDefinition row in grid.RowDefinitions)
+            {
+                distanceY = (Math.Abs((Mouse.GetPosition(canvas).Y - (row.Height.Value / 2)) - (row.Height.Value * i))) - row.Height.Value / 2;
+
+                if (oldDistanceY > distanceY && i < grid.RowDefinitions.Count - offCell)
+                {
+                    oldDistanceY = distanceY;
+                    cellY = i;
+                }
+                i++;
+            }
+
+            cellWidth = grid.ColumnDefinitions[(int)cellX].Width.Value;
+            cellHeight = grid.RowDefinitions[(int)cellY].Height.Value;
+
+            Canvas.SetLeft(draggableControl, 0);
+            Canvas.SetTop(draggableControl, 0);
+
+            draggableControl.RenderTransform = new TranslateTransform((cellWidth * cellX)+19, (cellHeight * cellY) + 19);
+
+            //Grid.SetRow(draggableControl, 0);
+            //Grid.SetColumn(draggableControl, 0);
+        }
+
+        private Ellipse CreateConnector()
+        {
+            Ellipse el = new Ellipse();
+
+            el.Stroke = Brushes.Black;
+            el.Fill = Brushes.Black;            
+            el.Width = 10;
+            el.Height = 10;
+
+            el.MouseLeftButtonDown += new MouseButtonEventHandler(Ellipse_MouseLeftButtonDown);
+            el.MouseLeftButtonUp += new MouseButtonEventHandler(Ellipse_MouseLeftButtonUp);
+            el.MouseMove += new MouseEventHandler(Ellipse_MouseMove);
+
+            return el;
+        }
+
+        private void Ellipse_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Ellipse draggableControl = sender as Ellipse;
+                        
+            originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
+            isDragging = true;
+            clickPosition = e.GetPosition(form);
+            draggableControl.CaptureMouse();                               
+                       
+        }
+
+        private void Ellipse_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            isDragging = false;
+            Ellipse draggable = sender as Ellipse;
+            draggable.ReleaseMouseCapture();            
+            SnapToClosestCell(draggable);   
+            
+            //lc.ec.UpdatePostitionValues(draggable.Tag.ToString());
+            //wgc.FindWireConnectedDots(draggable.Tag.ToString());
+            //hgc.IndicateCell(highlighting_rectangle);           
+            //indicating_rectangle.Visibility = Visibility.Hidden;
+
+            //ec.UpdatePostitionValues(draggable.Tag.ToString());
+        }
+
+        private void Ellipse_MouseMove(object sender, MouseEventArgs e)
+        {
+            Ellipse draggableControl = sender as Ellipse;
+
+            if (isDragging && draggableControl != null)
+            {
+                Point currentPosition = e.GetPosition(form);
+                TranslateTransform transform = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
+                transform.X = originTT.X + (currentPosition.X - clickPosition.X);
+                transform.Y = originTT.Y + (currentPosition.Y - clickPosition.Y);
+                draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);          
+                SnapToClosestCell(draggableControl);
+                //dgc.UpadateDotsLocation(draggableControl, lc.ec);
+                //hgc.Highlight_cell(draggableControl);
+
+                //wgc.FindWireConnectedDots(draggableControl.Tag.ToString());
+            }
+
+        }
 
         private void Polyline_mouseLeave(object sender, MouseEventArgs e)
         {
             Polyline pl = sender as Polyline;
             SolidColorBrush bc = new SolidColorBrush();
-            bc.Color = Colors.Black;
 
-            ChangeLineStyle(pl, bc, 1);    
+            bc.Color = Colors.Black;
+            ChangeLineStyle(pl, bc, 1);
+           
+            if (pl != previousLine)
+            {                
+                canvas.Children.Remove(el);
+                el = null;                
+            }
         }
 
         private void Polyline_mouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -116,6 +333,10 @@ namespace CircuitBoardDiagram.GUIControls
                         break;
                     }
                 }
+            }
+            else if(pl != previousLine)
+            {
+                ConnectWireToWire(pl);
             }
         }
 
@@ -167,7 +388,7 @@ namespace CircuitBoardDiagram.GUIControls
             Point line1;
             Point line2;
             Point endLine2;
-            Point endLine1;
+            Point endLine1;            
 
             PointCollection polylinePoints = new PointCollection();
 
@@ -186,7 +407,12 @@ namespace CircuitBoardDiagram.GUIControls
                 {
                     Image dotB = FindDot(dotNameB);
 
-                    endLine1 = new Point(dotB.RenderTransform.Value.OffsetX + 10, dotB.RenderTransform.Value.OffsetY + 10);
+                    if (dotB != null)
+                    {
+                        endLine1 = new Point(dotB.RenderTransform.Value.OffsetX + 10, dotB.RenderTransform.Value.OffsetY + 10);                                              
+                    }
+                    else
+                        endLine1 = pl.Points[5];
                 }
 
                 if (!direction)
@@ -350,6 +576,8 @@ namespace CircuitBoardDiagram.GUIControls
                 {
                     Polyline pl = CreatePolyline();
 
+                    Panel.SetZIndex(pl, 0);
+
                     previousElementName = name;
                     previousDotName = dot.Tag.ToString();
 
@@ -362,6 +590,8 @@ namespace CircuitBoardDiagram.GUIControls
                 }
                 else if (previousElementName != name && previousDotName != dot.Tag.ToString())
                 {
+                    Panel.SetZIndex(previousLine, 2);
+
                     ec.AddConnectionCountToSpecificElement(previousElementName);
                     ec.AddConnectionCountToSpecificElement(name);
 
