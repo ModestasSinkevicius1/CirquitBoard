@@ -44,6 +44,8 @@ namespace CircuitBoardDiagram.GUIControls
        
         private TranslateTransform originTT;
 
+        private int queue = 0;
+
         public WireGUIControl(MainWindow form, Canvas canvas, Grid grid, MessageGUIControl mgc, ListContainer lc)
         {
             this.form = form;
@@ -114,22 +116,68 @@ namespace CircuitBoardDiagram.GUIControls
             }
         }        
 
-        private void ConnectWireToWire(Polyline pl)
-        {
+        private void ConnectWireToConnector(Polyline pl)
+        {            
+            string[] nameABC = new string[3];
+            string[] dotABC = new string[3];
+
+            string name;
+            string dot;
+
             turn = false;
+            
             previousLine.Name = pl.Name.ToString();
 
-            Ellipse el = CreateConnector();
-            SnapToClosestCell(el);
-            canvas.Children.Add(el);
+            foreach(Wire w in lc.wList)
+            {
+                if(pl.Name == w.GetName())
+                {
+                    nameABC[0] = w.elementA;
+                    dotABC[0] = w.dotA;
+
+                    nameABC[1] = w.elementB;
+                    dotABC[1] = w.dotB;
+                }
+            }
+
+            nameABC[2] = previousElementName;
+            dotABC[2] = previousDotName;
+
+            Image img = CreateConnector();
+            SnapToClosestCell(img);
+            canvas.Children.Add(img);
 
             DeleteWires(pl);
-            canvas.Children.Remove(previousLine);                        
+            canvas.Children.Remove(previousLine);
 
-            previousElementName = "";          
-        }
+            for (int i = 0; i < 3; i++)
+            {                
+                name = nameABC[i];
+                dot = dotABC[i];
+                
+                Polyline newPl = CreatePolyline();
 
-        public void SnapToClosestCell(Ellipse draggableControl)
+                w = new Wire(previousLine.Name + dot);
+
+                w.elementA = name;
+                w.elementB = img.Tag.ToString();
+
+                w.dotA = dot;
+                w.dotB = img.Tag.ToString();
+
+                w.AddPolyline(newPl);
+                lc.wList.Add(w);
+
+                lc.ec.AddLineForElement(name, newPl);
+                lc.ec.AddLineForElement(img.Tag.ToString(), newPl);
+
+                previousElementName = "";                
+
+                UpdateWireLocation(w.dotA, w.dotB, newPl);
+            }
+        }        
+
+        public void SnapToClosestCell(Image draggableControl)
         {
             double distanceX;
             double distanceY;
@@ -237,37 +285,51 @@ namespace CircuitBoardDiagram.GUIControls
             //Grid.SetColumn(draggableControl, 0);
         }
 
-        private Ellipse CreateConnector()
+        private Image CreateConnector()
         {
-            Ellipse el = new Ellipse();
+            Image img = new Image();
 
-            el.Stroke = Brushes.Black;
-            el.Fill = Brushes.Black;            
-            el.Width = 10;
-            el.Height = 10;
+            img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireConnectors/wire_connector.png"));
+            img.Width = 10;
+            img.Height = 10;
+            img.Tag = "wire_connector" + queue;
 
-            el.MouseLeftButtonDown += new MouseButtonEventHandler(Ellipse_MouseLeftButtonDown);
-            el.MouseLeftButtonUp += new MouseButtonEventHandler(Ellipse_MouseLeftButtonUp);
-            el.MouseMove += new MouseEventHandler(Ellipse_MouseMove);
+            img.MouseLeftButtonDown += new MouseButtonEventHandler(Image_MouseLeftButtonDown);
+            img.MouseLeftButtonUp += new MouseButtonEventHandler(Image_MouseLeftButtonUp);
+            img.MouseMove += new MouseEventHandler(Image_MouseMove);
 
-            return el;
+            Panel.SetZIndex(img, 2);
+
+            lc.ec.AddElementToList(img.Tag.ToString(), img);
+
+            queue++;
+
+            return img;
         }
 
-        private void Ellipse_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Ellipse draggableControl = sender as Ellipse;
-                        
-            originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
-            isDragging = true;
-            clickPosition = e.GetPosition(form);
-            draggableControl.CaptureMouse();                               
+            Image draggableControl = sender as Image;
+
+            if (!Keyboard.IsKeyDown(Key.W))
+            {                
+                originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
+                isDragging = true;
+                clickPosition = e.GetPosition(form);
+                draggableControl.CaptureMouse();
+            }
+            else
+            {
+                DrawWireBetweenElements(draggableControl, draggableControl.Tag.ToString(), lc.ec, lc.dList);
+            }
+                
                        
         }
 
-        private void Ellipse_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void Image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             isDragging = false;
-            Ellipse draggable = sender as Ellipse;
+            Image draggable = sender as Image;
             draggable.ReleaseMouseCapture();            
             SnapToClosestCell(draggable);   
             
@@ -279,9 +341,9 @@ namespace CircuitBoardDiagram.GUIControls
             //ec.UpdatePostitionValues(draggable.Tag.ToString());
         }
 
-        private void Ellipse_MouseMove(object sender, MouseEventArgs e)
+        private void Image_MouseMove(object sender, MouseEventArgs e)
         {
-            Ellipse draggableControl = sender as Ellipse;
+            Image draggableControl = sender as Image;
 
             if (isDragging && draggableControl != null)
             {
@@ -290,7 +352,8 @@ namespace CircuitBoardDiagram.GUIControls
                 transform.X = originTT.X + (currentPosition.X - clickPosition.X);
                 transform.Y = originTT.Y + (currentPosition.Y - clickPosition.Y);
                 draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);          
-                SnapToClosestCell(draggableControl);
+                SnapToClosestCell(draggableControl);                
+                FindWireConnectedDots(draggableControl.Tag.ToString());
                 //dgc.UpadateDotsLocation(draggableControl, lc.ec);
                 //hgc.Highlight_cell(draggableControl);
 
@@ -334,9 +397,9 @@ namespace CircuitBoardDiagram.GUIControls
                     }
                 }
             }
-            else if(pl != previousLine)
-            {
-                ConnectWireToWire(pl);
+            else if(pl != previousLine && previousElementName != "")
+            {                
+                ConnectWireToConnector(pl);
             }
         }
 
@@ -351,13 +414,7 @@ namespace CircuitBoardDiagram.GUIControls
             int dotX = 0;
             int dotY = 0;
         }
-
-        private void Polyline_mouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
-        {
-            Line draggableControl = sender as Line;
-            string name = "";
-        }
-
+       
         public Polyline CreatePolyline()
         {
             Polyline pl = new Polyline();
@@ -390,16 +447,16 @@ namespace CircuitBoardDiagram.GUIControls
             Point endLine2;
             Point endLine1;            
 
-            PointCollection polylinePoints = new PointCollection();
+            PointCollection polylinePoints = new PointCollection();                     
 
-            Image dotA = FindDot(dotNameA);                                     
-
-            direction = DetermineDirection(dotNameA);
-            n = DetermineDirection2(dotNameA);
+            Image dotA = FindDot(dotNameA);
 
             if (dotA != null)
             {
-                startLine1 = new Point(dotA.RenderTransform.Value.OffsetX + 5, dotA.RenderTransform.Value.OffsetY + 10);
+                direction = DetermineDirection(dotNameA);
+                n = DetermineDirection2(dotNameA);
+
+                startLine1 = new Point(dotA.RenderTransform.Value.OffsetX + 7, dotA.RenderTransform.Value.OffsetY + 9);
 
                 if (dotNameB == "mouse")
                     endLine1 = new Point(Mouse.GetPosition(canvas).X, Mouse.GetPosition(canvas).Y);
@@ -409,10 +466,19 @@ namespace CircuitBoardDiagram.GUIControls
 
                     if (dotB != null)
                     {
-                        endLine1 = new Point(dotB.RenderTransform.Value.OffsetX + 10, dotB.RenderTransform.Value.OffsetY + 10);                                              
+                        endLine1 = new Point(dotB.RenderTransform.Value.OffsetX + 7, dotB.RenderTransform.Value.OffsetY + 5);
                     }
                     else
-                        endLine1 = pl.Points[5];
+                    {
+                        foreach (SpecificElement se in lc.ec.GetAllElements())
+                        {
+                            if (se.GetName() == dotNameB)
+                            {
+                                dotB = se.GetElement();
+                            }
+                        }
+                        endLine1 = new Point(dotB.RenderTransform.Value.OffsetX + 5, dotB.RenderTransform.Value.OffsetY + 7);
+                    }
                 }
 
                 if (!direction)
@@ -578,6 +644,8 @@ namespace CircuitBoardDiagram.GUIControls
 
                     Panel.SetZIndex(pl, 0);
 
+                    //MessageBox.Show(Panel.GetZIndex(pl).ToString());
+
                     previousElementName = name;
                     previousDotName = dot.Tag.ToString();
 
@@ -631,8 +699,7 @@ namespace CircuitBoardDiagram.GUIControls
                         {
                             d.SetWireName(w.elementB);
                         }
-                    }                  
-
+                    }                    
                     UpdateWireLocation(previousDotName, dot.Tag.ToString(), previousLine);
 
                     previousElementName = "";
