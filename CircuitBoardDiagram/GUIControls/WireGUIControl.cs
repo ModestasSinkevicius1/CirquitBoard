@@ -147,6 +147,8 @@ namespace CircuitBoardDiagram.GUIControls
             SnapToClosestCell(img);
             canvas.Children.Add(img);
 
+            lc.ec.UpdatePostitionValues(img.Tag.ToString());
+
             DeleteWires(pl);
             canvas.Children.Remove(previousLine);
 
@@ -155,12 +157,14 @@ namespace CircuitBoardDiagram.GUIControls
                 name = nameABC[i];
                 dot = dotABC[i];
                 
-                Polyline newPl = CreatePolyline();
+                Polyline newPl = CreatePolyline();                
 
-                w = new Wire(previousLine.Name + dot);
+                w = new Wire(dot + img.Tag.ToString());
 
                 w.elementA = name;
                 w.elementB = img.Tag.ToString();
+
+                newPl.Name = dot + img.Tag.ToString();
 
                 w.dotA = dot;
                 w.dotB = img.Tag.ToString();
@@ -170,6 +174,9 @@ namespace CircuitBoardDiagram.GUIControls
 
                 lc.ec.AddLineForElement(name, newPl);
                 lc.ec.AddLineForElement(img.Tag.ToString(), newPl);
+
+                lc.ec.AddConnectionCountToSpecificElement(name);
+                lc.ec.AddConnectionCountToSpecificElement(img.Tag.ToString());
 
                 previousElementName = "";                
 
@@ -306,17 +313,34 @@ namespace CircuitBoardDiagram.GUIControls
 
             return img;
         }
+        public void DeleteElement(Image draggableControl)
+        {
+            foreach (Polyline pl in lc.ec.GetLineListFromElement(draggableControl.Tag.ToString()))
+            {
+                DeleteWires(pl);
+            }
+            foreach (Dot d in lc.ec.GetDots(draggableControl.Tag.ToString()))
+            {
+                canvas.Children.Remove(d.GetDot());
+            }
+            lc.ec.RemoveElementFromList(draggableControl.Tag.ToString());
+            canvas.Children.Remove(draggableControl);
+        }
 
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Image draggableControl = sender as Image;
 
-            if (!Keyboard.IsKeyDown(Key.W))
+            if (!Keyboard.IsKeyDown(Key.W) && !Keyboard.IsKeyDown(Key.X))
             {                
                 originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
                 isDragging = true;
                 clickPosition = e.GetPosition(form);
                 draggableControl.CaptureMouse();
+            }
+            else if (Keyboard.IsKeyDown(Key.X))
+            {
+                DeleteElement(draggableControl);
             }
             else
             {
@@ -379,12 +403,32 @@ namespace CircuitBoardDiagram.GUIControls
 
         private void Polyline_mouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            bool toLow = false;
+
+            Image img = new Image();
 
             Polyline pl = sender as Polyline;
 
             if (Keyboard.IsKeyDown(Key.X))
             {
-                DeleteWires(pl);                         
+                foreach(SpecificElement se in lc.ec.GetAllElements())
+                {
+                    if (se.GetName().Length > 13)
+                    {
+                        if (se.GetName().Substring(0, 14) == "wire_connector")
+                        {
+                            if (se.GetConnectionCount() < 3)
+                            {
+                                img = se.GetElement();
+                                toLow = true;
+                            }
+                        }
+                    }
+                }
+                if (!toLow)
+                    DeleteWires(pl);
+                else
+                    DeleteElement(img);
             }
             else if (Keyboard.IsKeyDown(Key.C))
             {
@@ -450,6 +494,17 @@ namespace CircuitBoardDiagram.GUIControls
             PointCollection polylinePoints = new PointCollection();                     
 
             Image dotA = FindDot(dotNameA);
+           
+            if(dotA == null)
+            {
+                foreach (SpecificElement se in lc.ec.GetAllElements())
+                {
+                    if (se.GetName() == dotNameA)
+                    {
+                        dotA = se.GetElement();
+                    }
+                }
+            }
 
             if (dotA != null)
             {
@@ -583,7 +638,7 @@ namespace CircuitBoardDiagram.GUIControls
             foreach (Wire w2 in lc.wList)
             {                
                 if (w2.GetName() == l.Name)
-                {
+                {                    
                     foreach (Dot d in lc.dList)
                     {
                         if (w2.dotA == d.GetName())

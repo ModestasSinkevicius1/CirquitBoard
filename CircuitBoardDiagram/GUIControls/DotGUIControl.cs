@@ -85,8 +85,7 @@ namespace CircuitBoardDiagram
                         d.GetDot().Visibility = Visibility.Hidden;
                     }
                 }
-            });
-            
+            });            
         }
 
         private double CalculateDistance(Point a, Point b)

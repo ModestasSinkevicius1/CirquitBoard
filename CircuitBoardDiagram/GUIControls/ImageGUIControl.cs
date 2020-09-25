@@ -303,11 +303,20 @@ namespace CircuitBoardDiagram.GUIControls
             
             foreach (SpecificElement se in lc.ec.GetAllElements())
             {                
-                Image r = new Image();               
+                Image r = new Image();
 
-                r.Height = 50;
-                r.Width = 50;
-                r.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + RemoveNumbers(se.GetName()) + ".png"));
+                if (RemoveNumbers(se.GetName()) != "wire_connector")
+                {
+                    r.Height = 50;
+                    r.Width = 50;
+                    r.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + RemoveNumbers(se.GetName()) + ".png"));
+                }
+                else
+                {
+                    r.Height = 10;
+                    r.Width = 10;
+                    r.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireConnectors/" + RemoveNumbers(se.GetName()) + ".png"));
+                }
                 r.Tag = se.GetName();
                                            
                 r.MouseLeftButtonDown += new MouseButtonEventHandler(Image_MouseLeftButtonDown);
@@ -328,13 +337,15 @@ namespace CircuitBoardDiagram.GUIControls
                 queue++;
 
                 Panel.SetZIndex(r, 1);
-                
-                dgc.RecreateDot(se.GetName(), 4, this.lc);
-                dgc.UpadateDotsLocation(se.GetElement(), this.lc.ec);
-                
-                foreach(Dot d in this.lc.dList)
+                if (RemoveNumbers(se.GetName()) != "wire_connector")
                 {
-                    d.GetDot().Visibility = Visibility.Hidden;
+                    dgc.RecreateDot(se.GetName(), 4, this.lc);
+                    dgc.UpadateDotsLocation(se.GetElement(), this.lc.ec);
+
+                    foreach (Dot d in this.lc.dList)
+                    {
+                        d.GetDot().Visibility = Visibility.Hidden;
+                    }
                 }
             }
         }
