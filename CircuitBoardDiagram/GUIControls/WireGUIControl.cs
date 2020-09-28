@@ -16,18 +16,20 @@ namespace CircuitBoardDiagram.GUIControls
 {
     class WireGUIControl
     {
-        private bool turn = false;       
-        private string previousElementName = "";
-        private string previousDotName = "";
+        public bool turn = false;       
+        public string previousElementName = "";
+        public string previousDotName = "";
+
+        public Polyline previousLine;
 
         private ListContainer lc;
 
         private Wire w;
         private Image previousDot;
 
-        private Polyline previousLine;
 
         private MessageGUIControl mgc;
+        public ConnectorGUIControl cogc { get; set; }
 
         private MainWindow form;
 
@@ -36,22 +38,14 @@ namespace CircuitBoardDiagram.GUIControls
 
         private int row = 0;
 
-        private Ellipse el;
-
-        private Point clickPosition;
-
-        protected bool isDragging;       
-       
-        private TranslateTransform originTT;
-
-        private int queue = 0;
+        private Ellipse el;                                         
 
         public WireGUIControl(MainWindow form, Canvas canvas, Grid grid, MessageGUIControl mgc, ListContainer lc)
         {
             this.form = form;
             this.canvas = canvas;
             this.grid = grid;
-            this.mgc = mgc;
+            this.mgc = mgc;           
             this.lc = lc;
         }
 
@@ -114,278 +108,8 @@ namespace CircuitBoardDiagram.GUIControls
                 canvas.Children.Add(el);
                 */
             }
-        }        
-
-        private void ConnectWireToConnector(Polyline pl)
-        {            
-            string[] nameABC = new string[3];
-            string[] dotABC = new string[3];
-
-            string name;
-            string dot;
-
-            turn = false;
-            
-            previousLine.Name = pl.Name.ToString();
-
-            foreach(Wire w in lc.wList)
-            {
-                if(pl.Name == w.GetName())
-                {
-                    nameABC[0] = w.elementA;
-                    dotABC[0] = w.dotA;
-
-                    nameABC[1] = w.elementB;
-                    dotABC[1] = w.dotB;
-                }
-            }
-
-            nameABC[2] = previousElementName;
-            dotABC[2] = previousDotName;
-
-            Image img = CreateConnector();
-            SnapToClosestCell(img);
-            canvas.Children.Add(img);
-
-            lc.ec.UpdatePostitionValues(img.Tag.ToString());
-
-            DeleteWires(pl);
-            canvas.Children.Remove(previousLine);
-
-            for (int i = 0; i < 3; i++)
-            {                
-                name = nameABC[i];
-                dot = dotABC[i];
-                
-                Polyline newPl = CreatePolyline();                
-
-                w = new Wire(dot + img.Tag.ToString());
-
-                w.elementA = name;
-                w.elementB = img.Tag.ToString();
-
-                newPl.Name = dot + img.Tag.ToString();
-
-                w.dotA = dot;
-                w.dotB = img.Tag.ToString();
-
-                w.AddPolyline(newPl);
-                lc.wList.Add(w);
-
-                lc.ec.AddLineForElement(name, newPl);
-                lc.ec.AddLineForElement(img.Tag.ToString(), newPl);
-
-                lc.ec.AddConnectionCountToSpecificElement(name);
-                lc.ec.AddConnectionCountToSpecificElement(img.Tag.ToString());
-
-                previousElementName = "";                
-
-                UpdateWireLocation(w.dotA, w.dotB, newPl);
-            }
-        }        
-
-        public void SnapToClosestCell(Image draggableControl)
-        {
-            double distanceX;
-            double distanceY;
-
-            double oldDistanceX = 9999;
-            double oldDistanceY = 9999;
-
-            double i = 0;
-            double cellY = 0;
-            double cellX = 0;
-
-            double cellWidth;
-            double cellHeight;
-
-            int offCell = 0;
-
-            double length = 50;
-
-            double widthLength = grid.ColumnDefinitions[0].Width.Value;
-            double heightLength = grid.RowDefinitions[0].Height.Value;
-
-            if (widthLength < length)
-            {
-                if (widthLength < 25)
-                {
-                    if (widthLength < 12.5)
-                    {
-                        if (widthLength < 6.25)
-                            if (widthLength < 3.125)
-                            {
-                                offCell = 7;
-                            }
-                            else
-                                offCell = 15;
-                        else
-                            offCell = 7;
-                    }
-                    else
-                        offCell = 3;
-                }
-                else
-                    offCell = 1;
-            }
-
-            foreach (ColumnDefinition column in grid.ColumnDefinitions)
-            {
-                distanceX = (Math.Abs((Mouse.GetPosition(canvas).X - (column.Width.Value / 2)) - (column.Width.Value * i))) - column.Width.Value / 2;
-
-                if (oldDistanceX > distanceX && i < grid.ColumnDefinitions.Count - offCell)
-                {
-                    oldDistanceX = distanceX;
-                    cellX = i;
-                }
-                i++;
-            }
-
-            i = 0;
-            length = 50;
-            offCell = 0;
-
-            if (heightLength < length)
-            {
-                if (heightLength < 25)
-                {
-                    if (heightLength < 12.5)
-                    {
-                        if (heightLength < 6.25)
-                            if (heightLength < 3.125)
-                            {
-                                offCell = 7;
-                            }
-                            else
-                                offCell = 15;
-                        else
-                            offCell = 7;
-                    }
-                    else
-                        offCell = 3;
-                }
-                else
-                    offCell = 1;
-            }
-
-            foreach (RowDefinition row in grid.RowDefinitions)
-            {
-                distanceY = (Math.Abs((Mouse.GetPosition(canvas).Y - (row.Height.Value / 2)) - (row.Height.Value * i))) - row.Height.Value / 2;
-
-                if (oldDistanceY > distanceY && i < grid.RowDefinitions.Count - offCell)
-                {
-                    oldDistanceY = distanceY;
-                    cellY = i;
-                }
-                i++;
-            }
-
-            cellWidth = grid.ColumnDefinitions[(int)cellX].Width.Value;
-            cellHeight = grid.RowDefinitions[(int)cellY].Height.Value;
-
-            Canvas.SetLeft(draggableControl, 0);
-            Canvas.SetTop(draggableControl, 0);
-
-            draggableControl.RenderTransform = new TranslateTransform((cellWidth * cellX)+19, (cellHeight * cellY) + 19);
-
-            //Grid.SetRow(draggableControl, 0);
-            //Grid.SetColumn(draggableControl, 0);
-        }
-
-        private Image CreateConnector()
-        {
-            Image img = new Image();
-
-            img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireConnectors/wire_connector.png"));
-            img.Width = 10;
-            img.Height = 10;
-            img.Tag = "wire_connector" + queue;
-
-            img.MouseLeftButtonDown += new MouseButtonEventHandler(Image_MouseLeftButtonDown);
-            img.MouseLeftButtonUp += new MouseButtonEventHandler(Image_MouseLeftButtonUp);
-            img.MouseMove += new MouseEventHandler(Image_MouseMove);
-
-            Panel.SetZIndex(img, 2);
-
-            lc.ec.AddElementToList(img.Tag.ToString(), img);
-
-            queue++;
-
-            return img;
-        }
-        public void DeleteElement(Image draggableControl)
-        {
-            foreach (Polyline pl in lc.ec.GetLineListFromElement(draggableControl.Tag.ToString()))
-            {
-                DeleteWires(pl);
-            }
-            foreach (Dot d in lc.ec.GetDots(draggableControl.Tag.ToString()))
-            {
-                canvas.Children.Remove(d.GetDot());
-            }
-            lc.ec.RemoveElementFromList(draggableControl.Tag.ToString());
-            canvas.Children.Remove(draggableControl);
-        }
-
-        private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            Image draggableControl = sender as Image;
-
-            if (!Keyboard.IsKeyDown(Key.W) && !Keyboard.IsKeyDown(Key.X))
-            {                
-                originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
-                isDragging = true;
-                clickPosition = e.GetPosition(form);
-                draggableControl.CaptureMouse();
-            }
-            else if (Keyboard.IsKeyDown(Key.X))
-            {
-                DeleteElement(draggableControl);
-            }
-            else
-            {
-                DrawWireBetweenElements(draggableControl, draggableControl.Tag.ToString(), lc.ec, lc.dList);
-            }
-                
-                       
-        }
-
-        private void Image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            isDragging = false;
-            Image draggable = sender as Image;
-            draggable.ReleaseMouseCapture();            
-            SnapToClosestCell(draggable);   
-            
-            //lc.ec.UpdatePostitionValues(draggable.Tag.ToString());
-            //wgc.FindWireConnectedDots(draggable.Tag.ToString());
-            //hgc.IndicateCell(highlighting_rectangle);           
-            //indicating_rectangle.Visibility = Visibility.Hidden;
-
-            //ec.UpdatePostitionValues(draggable.Tag.ToString());
-        }
-
-        private void Image_MouseMove(object sender, MouseEventArgs e)
-        {
-            Image draggableControl = sender as Image;
-
-            if (isDragging && draggableControl != null)
-            {
-                Point currentPosition = e.GetPosition(form);
-                TranslateTransform transform = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
-                transform.X = originTT.X + (currentPosition.X - clickPosition.X);
-                transform.Y = originTT.Y + (currentPosition.Y - clickPosition.Y);
-                draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);          
-                SnapToClosestCell(draggableControl);                
-                FindWireConnectedDots(draggableControl.Tag.ToString());
-                //dgc.UpadateDotsLocation(draggableControl, lc.ec);
-                //hgc.Highlight_cell(draggableControl);
-
-                //wgc.FindWireConnectedDots(draggableControl.Tag.ToString());
-            }
-
-        }
-
+        }                             
+        
         private void Polyline_mouseLeave(object sender, MouseEventArgs e)
         {
             Polyline pl = sender as Polyline;
@@ -428,7 +152,7 @@ namespace CircuitBoardDiagram.GUIControls
                 if (!toLow)
                     DeleteWires(pl);
                 else
-                    DeleteElement(img);
+                    cogc.DeleteElement(img);
             }
             else if (Keyboard.IsKeyDown(Key.C))
             {
@@ -443,7 +167,11 @@ namespace CircuitBoardDiagram.GUIControls
             }
             else if(pl != previousLine && previousElementName != "")
             {                
-                ConnectWireToConnector(pl);
+                cogc.ConnectWireToConnector(pl, false);
+            }
+            else if(Keyboard.IsKeyDown(Key.W))
+            {
+                cogc.ConnectWireToConnector(pl, true);
             }
         }
 

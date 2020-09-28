@@ -61,8 +61,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CircuitChecker.cs" />
     <Compile Include="Dot.cs" />
     <Compile Include="GUIControls\CanvasGUIControl.cs" />
+    <Compile Include="GUIControls\ConnectorGUIControl.cs" />
     <Compile Include="GUIControls\DotGUIControl.cs" />
     <Compile Include="GUIControls\HighlighterGUIControl.cs" />
     <Compile Include="GUIControls\ImageGUIControl.cs" />

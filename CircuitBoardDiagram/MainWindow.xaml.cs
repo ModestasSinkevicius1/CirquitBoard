@@ -37,6 +37,9 @@ namespace CircuitBoardDiagram
         private DotGUIControl dgc;
         private HighlighterGUIControl hgc;
         private MenuGUIControl mngc;
+        private ConnectorGUIControl cogc;
+
+        private CircuitChecker cc;
 
         private ListContainer lc = new ListContainer();
 
@@ -54,13 +57,24 @@ namespace CircuitBoardDiagram
             dgc = new DotGUIControl(this, canvas, canvasGrid, wgc, lc);
             igc = new ImageGUIControl(this, canvas, canvasGrid, dgc, hgc, wgc, mgc, mngc, lc);
             cgc = new CanvasGUIControl(this, canvas, canvasGrid, lc, dock_bottom, highlighting_rectangle, indicating_rectangle, igc, dgc, lgc, hgc);
+            cogc = new ConnectorGUIControl(this, canvas, canvasGrid, mgc, wgc, mngc, lc);
             
             mngc.cgc = cgc;
             mngc.hgc = hgc;
             mngc.igc = igc;
             mngc.wgc = wgc;
+            mngc.cogc = cogc;
+
+            wgc.cogc = cogc;
+
+            cc = new CircuitChecker(lc);
 
             lgc.LoadImages(grid_expander);                       
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            cc.CheckCircuit();
         }
 
         /*private void BeginHide()

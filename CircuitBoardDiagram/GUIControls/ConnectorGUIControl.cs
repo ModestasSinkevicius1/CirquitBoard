@@ -1,88 +1,68 @@
 ﻿using CircuitBoardDiagram.GUIControls;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Ink;
 using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace CircuitBoardDiagram.GUIControls
 {
-    class ImageGUIControl
+    class ConnectorGUIControl
     {
+        private Point clickPosition;
+
+        private TranslateTransform originTT;
+
         private int queue = 0;
 
         protected bool isDragging;
-        
-        public string elementName { get; set; } = "";
 
-        private Point clickPosition;
-        private TranslateTransform originTT;
+        private Wire w;
+
+        private MainWindow form;
         private Canvas canvas;
         private Grid grid;
-        private MainWindow form;
-        private Rectangle highlighter;
-
-        private DotGUIControl dgc;
-        private HighlighterGUIControl hgc;
-        private WireGUIControl wgc;
         private MessageGUIControl mgc;
+        private WireGUIControl wgc;
         private MenuGUIControl mngc;
         private ListContainer lc;
 
-        private Point startPosition;
-        public ImageGUIControl(MainWindow form, Canvas canvas, Grid grid, DotGUIControl dgc, HighlighterGUIControl hgc, WireGUIControl wgc, MessageGUIControl mgc, MenuGUIControl mngc, ListContainer lc)
-        {            
+        public ConnectorGUIControl(MainWindow form, Canvas canvas, Grid grid, MessageGUIControl mgc, WireGUIControl wgc, MenuGUIControl mngc, ListContainer lc)
+        {
             this.form = form;
             this.canvas = canvas;
             this.grid = grid;
-            this.dgc = dgc;
-            this.hgc = hgc;
-            this.wgc = wgc;
             this.mgc = mgc;
+            this.wgc = wgc;
             this.mngc = mngc;
-            this.lc = lc;            
+            this.lc = lc;
         }
-
 
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Image draggableControl = sender as Image;
-            if (!Keyboard.IsKeyDown(Key.W) && !Keyboard.IsKeyDown(Key.C) && !Keyboard.IsKeyDown(Key.X))
+
+            if (!Keyboard.IsKeyDown(Key.W) && !Keyboard.IsKeyDown(Key.X))
             {
-                dgc.UpadateDotsLocation(draggableControl, lc.ec);
-                //highlighting_rectangle.Visibility = Visibility.Hidden;
                 originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
                 isDragging = true;
                 clickPosition = e.GetPosition(form);
                 draggableControl.CaptureMouse();
-                                
-                startPosition = Mouse.GetPosition(form);
-                dgc.BeginHide(startPosition, lc.ec.GetDots(draggableControl.Tag.ToString()));
             }
             else if (Keyboard.IsKeyDown(Key.X))
             {
                 DeleteElement(draggableControl);
             }
-            else if (Keyboard.IsKeyDown(Key.C))
+            else
             {
-                mgc.ShowPopupMessage(draggableControl);
+                wgc.DrawWireBetweenElements(draggableControl, draggableControl.Tag.ToString(), lc.ec, lc.dList);
             }
 
 
@@ -93,18 +73,11 @@ namespace CircuitBoardDiagram.GUIControls
             isDragging = false;
             Image draggable = sender as Image;
             draggable.ReleaseMouseCapture();
-            if(mngc.elementBehaviour!="neverGrid")
+            if (mngc.elementBehaviour != "neverGrid")
                 SnapToClosestCell(draggable);
-            else
-            {                
-                Canvas.SetLeft(draggable, 0);
-                Canvas.SetTop(draggable, 0);
-                draggable.RenderTransform = new TranslateTransform(Mouse.GetPosition(canvas).X-25, Mouse.GetPosition(canvas).Y-25);
-            }
-            hgc.Highlight_cell(draggable);
-            dgc.UpadateDotsLocation(draggable, lc.ec);
+
             lc.ec.UpdatePostitionValues(draggable.Tag.ToString());
-            wgc.FindWireConnectedDots(draggable.Tag.ToString());
+            //wgc.FindWireConnectedDots(draggable.Tag.ToString());
             //hgc.IndicateCell(highlighting_rectangle);           
             //indicating_rectangle.Visibility = Visibility.Hidden;
 
@@ -112,7 +85,7 @@ namespace CircuitBoardDiagram.GUIControls
         }
 
         private void Image_MouseMove(object sender, MouseEventArgs e)
-        {            
+        {
             Image draggableControl = sender as Image;
 
             if (isDragging && draggableControl != null)
@@ -122,73 +95,114 @@ namespace CircuitBoardDiagram.GUIControls
                 transform.X = originTT.X + (currentPosition.X - clickPosition.X);
                 transform.Y = originTT.Y + (currentPosition.Y - clickPosition.Y);
                 draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);
-                if(mngc.elementBehaviour=="alwaysGrid")
+                if(mngc.elementBehaviour == "alwaysGrid")
                     SnapToClosestCell(draggableControl);
-                dgc.UpadateDotsLocation(draggableControl, lc.ec);
-                hgc.Highlight_cell(draggableControl);                
-
                 wgc.FindWireConnectedDots(draggableControl.Tag.ToString());
+                //dgc.UpadateDotsLocation(draggableControl, lc.ec);
+                //hgc.Highlight_cell(draggableControl);
+
+                //wgc.FindWireConnectedDots(draggableControl.Tag.ToString());
             }
 
         }
-        private void Image_MouseEnter(object sender, MouseEventArgs e)
+        public Image CreateConnector()
         {
-            //isOnImage = true;
-            Image draggableControl = sender as Image;
-            hgc.Highlight_cell(draggableControl);
-        }
+            Image img = new Image();
 
-        private void Image_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Image img = sender as Image;
-            hgc.highlighter.Visibility = Visibility.Hidden;
-            startPosition = Mouse.GetPosition(form);
-            dgc.BeginHide(startPosition, lc.ec.GetDots(img.Tag.ToString()));
-        }
+            img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireConnectors/wire_connector.png"));
+            img.Width = 10;
+            img.Height = 10;
+            img.Tag = "wire_connector" + queue;
 
-        public void CreateElement(string currentImageName)
-        {
-            Image r = new Image();
-            r.Height = 50;
-            r.Width = 50;
-            r.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + currentImageName + ".png"));
-            r.Tag = currentImageName;           
+            img.MouseLeftButtonDown += new MouseButtonEventHandler(Image_MouseLeftButtonDown);
+            img.MouseLeftButtonUp += new MouseButtonEventHandler(Image_MouseLeftButtonUp);
+            img.MouseMove += new MouseEventHandler(Image_MouseMove);
 
-            r.Tag = currentImageName + queue;
+            Panel.SetZIndex(img, 2);
 
-            elementName = r.Tag.ToString();
+            lc.ec.AddElementToList(img.Tag.ToString(), img);
 
-            r.MouseLeftButtonDown += new MouseButtonEventHandler(Image_MouseLeftButtonDown);
-            r.MouseLeftButtonUp += new MouseButtonEventHandler(Image_MouseLeftButtonUp);
-            r.MouseMove += new MouseEventHandler(Image_MouseMove);
-            r.MouseEnter += new MouseEventHandler(Image_MouseEnter);
-            r.MouseLeave += new MouseEventHandler(Image_MouseLeave);
-
-            canvas.Children.Add(r);
-
-            lc.ec.AddElementToList(r.Tag.ToString(), r);
-
-            Canvas.SetTop(r, Mouse.GetPosition(canvas).Y - r.Width / 2);
-            Canvas.SetLeft(r, Mouse.GetPosition(canvas).X - r.Height / 2);            
-
-            Panel.SetZIndex(r, 1);            
             queue++;
+
+            return img;
         }
-        
-        public void DeleteElement(Image draggableControl)
+
+        public void ConnectWireToConnector(Polyline pl, bool singleLine)
         {
-            foreach (Polyline pl in lc.ec.GetLineListFromElement(draggableControl.Tag.ToString()))
-            {               
-                wgc.DeleteWires(pl);
+            int space = 3;
+
+            if (singleLine)
+                space = 2;
+
+            string[] nameABC = new string[space];
+            string[] dotABC = new string[space];
+
+            string name;
+            string dot;
+
+            wgc.turn = false;
+
+            wgc.previousLine.Name = pl.Name.ToString();
+
+            foreach (Wire w in lc.wList)
+            {
+                if (pl.Name == w.GetName())
+                {
+                    nameABC[0] = w.elementA;
+                    dotABC[0] = w.dotA;
+
+                    nameABC[1] = w.elementB;
+                    dotABC[1] = w.dotB;
+                }
             }
-            foreach (Dot d in lc.ec.GetDots(draggableControl.Tag.ToString()))
-            {                
-                canvas.Children.Remove(d.GetDot());
+            if (!singleLine)
+            {
+                nameABC[2] = wgc.previousElementName;
+                dotABC[2] = wgc.previousDotName;
             }
-            lc.ec.RemoveElementFromList(draggableControl.Tag.ToString());
-            canvas.Children.Remove(draggableControl);
+
+            Image img = CreateConnector();
+            SnapToClosestCell(img);
+            canvas.Children.Add(img);
+
+            lc.ec.UpdatePostitionValues(img.Tag.ToString());
+
+            wgc.DeleteWires(pl);
+            if(!singleLine)
+                canvas.Children.Remove(wgc.previousLine);
+
+            for (int i = 0; i < space; i++)
+            {
+                name = nameABC[i];
+                dot = dotABC[i];
+
+                Polyline newPl = wgc.CreatePolyline();
+
+                w = new Wire(dot + img.Tag.ToString());
+
+                w.elementA = name;
+                w.elementB = img.Tag.ToString();
+
+                newPl.Name = dot + img.Tag.ToString();
+
+                w.dotA = dot;
+                w.dotB = img.Tag.ToString();
+
+                w.AddPolyline(newPl);
+                lc.wList.Add(w);
+
+                lc.ec.AddLineForElement(name, newPl);
+                lc.ec.AddLineForElement(img.Tag.ToString(), newPl);
+
+                lc.ec.AddConnectionCountToSpecificElement(name);
+                lc.ec.AddConnectionCountToSpecificElement(img.Tag.ToString());
+
+                wgc.previousElementName = "";
+
+                wgc.UpdateWireLocation(w.dotA, w.dotB, newPl);
+            }
         }
-        
+
         public void SnapToClosestCell(Image draggableControl)
         {
             double distanceX;
@@ -291,65 +305,67 @@ namespace CircuitBoardDiagram.GUIControls
             Canvas.SetLeft(draggableControl, 0);
             Canvas.SetTop(draggableControl, 0);
 
-            draggableControl.RenderTransform = new TranslateTransform(cellWidth * cellX, cellHeight * cellY);
+            draggableControl.RenderTransform = new TranslateTransform((cellWidth * cellX) + 19, (cellHeight * cellY) + 19);
 
             //Grid.SetRow(draggableControl, 0);
             //Grid.SetColumn(draggableControl, 0);
         }
+        public void DeleteElement(Image draggableControl)
+        {
+            foreach (Polyline pl in lc.ec.GetLineListFromElement(draggableControl.Tag.ToString()))
+            {
+                wgc.DeleteWires(pl);
+            }
+            foreach (Dot d in lc.ec.GetDots(draggableControl.Tag.ToString()))
+            {
+                canvas.Children.Remove(d.GetDot());
+            }
+            lc.ec.RemoveElementFromList(draggableControl.Tag.ToString());
+            canvas.Children.Remove(draggableControl);
+        }
+
         public void RecreateElementsFromSave(ListContainer lc)
         {
             this.lc = lc;           
-            this.lc.dList.Clear();
-            
+
             foreach (SpecificElement se in lc.ec.GetAllElements())
             {
-                if (RemoveNumbers(se.GetName()) != "wire_connector")
+                if (RemoveNumbers(se.GetName()) == "wire_connector")
                 {
-                    Image r = new Image();
+                    Image img = new Image();
 
-                    r.Height = 50;
-                    r.Width = 50;
-                    r.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + RemoveNumbers(se.GetName()) + ".png"));
-                    r.Tag = se.GetName();
+                    img.Height = 10;
+                    img.Width = 10;
+                    img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireConnectors/" + RemoveNumbers(se.GetName()) + ".png"));
+                    img.Tag = se.GetName();
 
-                    r.MouseLeftButtonDown += new MouseButtonEventHandler(Image_MouseLeftButtonDown);
-                    r.MouseLeftButtonUp += new MouseButtonEventHandler(Image_MouseLeftButtonUp);
-                    r.MouseMove += new MouseEventHandler(Image_MouseMove);
-                    r.MouseEnter += new MouseEventHandler(Image_MouseEnter);
-                    r.MouseLeave += new MouseEventHandler(Image_MouseLeave);
+                    img.MouseLeftButtonDown += new MouseButtonEventHandler(Image_MouseLeftButtonDown);
+                    img.MouseLeftButtonUp += new MouseButtonEventHandler(Image_MouseLeftButtonUp);
+                    img.MouseMove += new MouseEventHandler(Image_MouseMove);
 
-                    canvas.Children.Add(r);
+                    canvas.Children.Add(img);
 
-                    se.SetImage(r);
+                    se.SetImage(img);
 
-                    Canvas.SetTop(r, 0);
-                    Canvas.SetLeft(r, 0);
+                    Canvas.SetTop(img, 0);
+                    Canvas.SetLeft(img, 0);
 
-                    r.RenderTransform = new TranslateTransform(se.GetPositionX(), se.GetPositionY());
+                    img.RenderTransform = new TranslateTransform(se.GetPositionX(), se.GetPositionY());
 
                     queue++;
 
-                    Panel.SetZIndex(r, 1);
-                    
-                    dgc.RecreateDot(se.GetName(), 4, this.lc);
-                    dgc.UpadateDotsLocation(se.GetElement(), this.lc.ec);
-
-                    foreach (Dot d in this.lc.dList)
-                    {
-                        d.GetDot().Visibility = Visibility.Hidden;
-                    }                
+                    Panel.SetZIndex(img, 1);
                 }
             }
         }
-        
         private string RemoveNumbers(string name)
-        {            
-            foreach(char w in name)
+        {
+            foreach (char w in name)
             {
-                if(Char.IsNumber(w))
-                {                    
+                if (Char.IsNumber(w))
+                {
                     name = name.Remove(name.Length - 1);
-                }               
+                }
             }
 
             return name;

@@ -43,6 +43,7 @@ namespace CircuitBoardDiagram.GUIControls
         public HighlighterGUIControl hgc { get; set; }
         public ImageGUIControl igc { get; set; }
         public WireGUIControl wgc { get; set; }
+        public ConnectorGUIControl cogc { get; set; }
 
         private ListContainer lc;
         private Menu menu;
@@ -174,8 +175,9 @@ namespace CircuitBoardDiagram.GUIControls
             {               
                 se.ClearDotList();
             }
-            
-            igc.RecreateElementsFromSave(lc);
+                      
+            igc.RecreateElementsFromSave(lc);                
+            cogc.RecreateElementsFromSave(lc);           
 
             wgc.UpdateListContainer(lc);
             wgc.RecreateWires();
@@ -185,6 +187,18 @@ namespace CircuitBoardDiagram.GUIControls
             {
                 wgc.FindWireConnectedDots(se.GetName());
             }           
+        }
+        private string RemoveNumbers(string name)
+        {
+            foreach (char w in name)
+            {
+                if (Char.IsNumber(w))
+                {
+                    name = name.Remove(name.Length - 1);
+                }
+            }
+
+            return name;
         }
         public void ResizeBasedElementsArangements()
         {
