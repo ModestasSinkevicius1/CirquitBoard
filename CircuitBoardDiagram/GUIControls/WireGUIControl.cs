@@ -472,6 +472,9 @@ namespace CircuitBoardDiagram.GUIControls
                     ec.AddLineForElement(previousElementName, previousLine);
                     ec.AddLineForElement(name, previousLine);
 
+                    ec.AddElementToParentElement(previousElementName, name);
+                    ec.AddElementToParentElement(name, previousElementName);
+
                     foreach (Dot d in dList)
                     {                        
                         if (d.GetName() == w.dotA)

@@ -74,7 +74,38 @@ namespace CircuitBoardDiagram
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            cc.CheckCircuit();
+            foreach(SpecificElement se in lc.ec.GetAllElements())
+            {
+                if(RemoveNumbers(se.GetName()) == "AC")
+                {
+                    cc.CheckCircuit(se);
+                    break;
+                }
+            }
+            
+            foreach(SpecificElement se in lc.ec.GetAllElements())
+            {
+                se.visited = false;
+                cc.RemoveDotVisited(se);
+            }
+            if(cc.circuitFull)
+                MessageBox.Show("Circuit is complete!");
+            else
+                MessageBox.Show("Circuit is not complete!");
+            cc.circuitFull = false;
+        }
+
+        private string RemoveNumbers(string name)
+        {
+            foreach (char w in name)
+            {
+                if (Char.IsNumber(w))
+                {
+                    name = name.Remove(name.Length - 1);
+                }
+            }
+
+            return name;
         }
 
         /*private void BeginHide()

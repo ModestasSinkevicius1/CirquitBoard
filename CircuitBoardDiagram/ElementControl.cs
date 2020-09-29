@@ -24,10 +24,50 @@ namespace CircuitBoardDiagram
             seList.Add(se);
         }
 
+        public void AddElementToParentElement(string parentName, string childName)
+        {
+            foreach(SpecificElement se in seList)
+            {
+                if(se.GetName() == parentName)
+                {
+                    foreach(SpecificElement se2 in seList)
+                    {
+                        if(se2.GetName() == childName)
+                        {
+                            se.AddElement(se2);
+                        }
+                    }
+                }
+            }
+        }
+
         public List<SpecificElement> GetAllElements()
         {
             return seList;
         }       
+
+        public void RemoveChildElementFromElement(string parent, string child)
+        {
+            int target = -1;
+            int i = 0;
+
+            foreach (SpecificElement se in seList)
+            {
+                if(se.GetName() == parent)
+                {
+                    foreach(SpecificElement se2 in se.GetElements())
+                    {
+                        if(se2.GetName() == child)
+                        {
+                            target = i;
+                        }
+                        i++;
+                    }
+                    if(target > -1)
+                        se.RemoveChildElement(target);
+                }
+            }
+        }
 
         public void RemoveElementFromList(string name)
         {

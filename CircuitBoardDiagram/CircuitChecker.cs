@@ -16,43 +16,159 @@ namespace CircuitBoardDiagram
     class CircuitChecker
     {
         private ListContainer lc;
+        public bool circuitFull = false;
         public CircuitChecker(ListContainer lc)
         {
             this.lc = lc;
         }
 
-        public void CheckCircuit()
+        public void CheckCircuit(SpecificElement se)
         {
-            List<string> connectedElements = new List<string>();
-
-            string name;
-
-            foreach(SpecificElement se in lc.ec.GetAllElements())
+            if (RemoveNumbers(se.GetName()) != "AC")
             {
-                foreach(Polyline pl in se.GetPolylineList())
+                se.visited = true;
+            }
+            SetDotVisited(se);
+
+            bool sameDot = false;
+
+            foreach(SpecificElement se2 in se.GetElements())
+            {
+                if (RemoveNumbers(se2.GetName()) != "AC" && !se2.visited)
                 {
-                    foreach(Wire w in lc.wList)
+                    MessageBox.Show(se2.GetName());
+                    CheckCircuit(se2);
+                }
+                else if (!se2.visited)
+                {
+                    MessageBox.Show("Found!");
+                    sameDot = isDotVisited(se, se2);                                      
+                    if (!sameDot)
                     {
-                        if(pl.Name == w.GetName())
+                        circuitFull = true;
+                        break;
+                    }
+                }
+            }            
+        }
+
+        public void RemoveDotVisited(SpecificElement se)
+        {
+            foreach (Polyline pl in se.GetPolylineList())
+            {
+                foreach (Wire w in lc.wList)
+                {
+                    if (pl.Name == w.GetName())
+                    {
+                        if (w.elementA == se.GetName())
                         {
-                            if(w.elementA != se.GetName())
+                            foreach (Dot d in lc.dList)
                             {
-                                connectedElements.Add(w.elementA);
+                                if (w.dotA == d.GetName())
+                                {
+                                    d.visited = false;
+                                }
                             }
-                            if(w.elementB != se.GetName())
+                        }
+                        if (w.elementB == se.GetName())
+                        {
+                            foreach (Dot d in lc.dList)
                             {
-                                connectedElements.Add(w.elementB);
+                                if (w.dotB == d.GetName())
+                                {
+                                    d.visited = false;
+                                }
                             }
                         }
                     }
                 }
-                foreach (string el in connectedElements)
-                {
-                    MessageBox.Show(se.GetName() + " is connected with " + el);
-                }
-                connectedElements.Clear();
-                break;
             }
+        }
+
+        private bool isDotVisited(SpecificElement se, SpecificElement se2)
+        {
+            foreach (Polyline pl in se2.GetPolylineList())
+            {
+                foreach (Wire w in lc.wList)
+                {
+                    if (pl.Name == w.GetName())
+                    {
+                        if (w.elementA == se.GetName())
+                        {
+                            foreach (Dot d in lc.dList)
+                            {
+                                if (w.dotA == d.GetName())
+                                {
+                                    if (d.visited)
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                        if (w.elementB == se.GetName())
+                        {
+                            foreach (Dot d in lc.dList)
+                            {
+                                if (w.dotB == d.GetName())
+                                {
+                                    if (d.visited)
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        private void SetDotVisited(SpecificElement se)
+        {
+            foreach (Polyline pl in se.GetPolylineList())
+            {
+                foreach (Wire w in lc.wList)
+                {
+                    if (pl.Name == w.GetName())
+                    {
+                        if (w.elementA == se.GetName())
+                        {
+                            foreach (Dot d in lc.dList)
+                            {
+                                if (w.dotA == d.GetName())
+                                {
+                                    d.visited = true;
+                                }
+                            }
+                        }
+                        if (w.elementB == se.GetName())
+                        {
+                            foreach (Dot d in lc.dList)
+                            {
+                                if (w.dotB == d.GetName())
+                                {
+                                    d.visited = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private string RemoveNumbers(string name)
+        {
+            foreach (char w in name)
+            {
+                if (Char.IsNumber(w))
+                {
+                    name = name.Remove(name.Length - 1);
+                }
+            }
+
+            return name;
         }
     }
 }

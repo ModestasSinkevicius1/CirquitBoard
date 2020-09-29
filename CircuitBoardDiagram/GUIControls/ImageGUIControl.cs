@@ -185,6 +185,10 @@ namespace CircuitBoardDiagram.GUIControls
             {                
                 canvas.Children.Remove(d.GetDot());
             }
+            foreach(SpecificElement se in lc.ec.GetAllElements())
+            {
+                lc.ec.RemoveChildElementFromElement(se.GetName() ,draggableControl.Tag.ToString());
+            }
             lc.ec.RemoveElementFromList(draggableControl.Tag.ToString());
             canvas.Children.Remove(draggableControl);
         }

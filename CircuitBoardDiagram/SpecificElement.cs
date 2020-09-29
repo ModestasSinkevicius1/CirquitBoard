@@ -13,8 +13,10 @@ namespace CircuitBoardDiagram
     {
         public string name;
         public bool isConnected=false;
+        public bool visited { get; set; } = false;
         public int connectionCount = 0;
         private List<Polyline> plList = new List<Polyline>();
+        private List<SpecificElement> seList = new List<SpecificElement>();
         public List<Dot> dList = new List<Dot>();
         public double offSetX;
         public double offSetY;
@@ -87,6 +89,11 @@ namespace CircuitBoardDiagram
             plList.Add(l);
         }
 
+        public void AddElement(SpecificElement se)
+        {
+            seList.Add(se);
+        }
+
         public void AddDot(Dot d)
         {
             dList.Add(d);
@@ -107,6 +114,11 @@ namespace CircuitBoardDiagram
             return plList;
         }
 
+        public List<SpecificElement> GetElements()
+        {
+            return seList;
+        }
+
         public void AddConnection()
         {
             connectionCount++;
@@ -115,6 +127,11 @@ namespace CircuitBoardDiagram
         public void RemoveConnection()
         {
             connectionCount--;
+        }
+
+        public void RemoveChildElement(int target)
+        {
+            seList.RemoveAt(target);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace CircuitBoardDiagram
         public bool direction = false;
         public int oposite = 1;
         public bool occupied { get; set; } = false;
+        public bool visited { get; set; } = false;
 
         private Image d;
 
