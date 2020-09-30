@@ -389,6 +389,9 @@ namespace CircuitBoardDiagram.GUIControls
                     lc.ec.EnableConnectionAvailability(w2.elementA);
                     lc.ec.EnableConnectionAvailability(w2.elementB);
 
+                    lc.ec.RemoveChildElementFromElement(w2.elementA, w2.elementB);
+                    lc.ec.RemoveChildElementFromElement(w2.elementB, w2.elementA);
+
                     lc.wList.Remove(w2);
                     break;
                 }

@@ -15,6 +15,7 @@ namespace CircuitBoardDiagram
 
         public string dotA { get; set; }
         public string dotB { get; set; }
+        public bool visited { get; set; } = false;
 
         private Polyline pl = new Polyline();
 

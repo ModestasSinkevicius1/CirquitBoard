@@ -85,8 +85,7 @@ namespace CircuitBoardDiagram
             
             foreach(SpecificElement se in lc.ec.GetAllElements())
             {
-                se.visited = false;
-                cc.RemoveDotVisited(se);
+                se.visited = false;                
             }
             if(cc.circuitFull)
                 MessageBox.Show("Circuit is complete!");
