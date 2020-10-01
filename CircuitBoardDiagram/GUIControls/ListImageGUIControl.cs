@@ -33,7 +33,7 @@ namespace CircuitBoardDiagram.GUIControls
 
             foreach (DatabaseElement e in dc.GetElements())
             {
-                if (i > 7)
+                if (i > 6)
                 {
                     i = 0;
                     y++;

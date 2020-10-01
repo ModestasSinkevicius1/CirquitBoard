@@ -63,7 +63,8 @@ namespace CircuitBoardDiagram.GUIControls
 
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Image draggableControl = sender as Image;
+            Image draggableControl = sender as Image;           
+
             if (!Keyboard.IsKeyDown(Key.W) && !Keyboard.IsKeyDown(Key.C) && !Keyboard.IsKeyDown(Key.X))
             {
                 dgc.UpadateDotsLocation(draggableControl, lc.ec);
