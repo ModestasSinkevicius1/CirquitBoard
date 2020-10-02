@@ -54,6 +54,12 @@ namespace CircuitBoardDiagram.GUIControls
             }
         }
         
+        private void CommonImage_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Image img = sender as Image;
+            currentImageName = img.Tag.ToString();            
+        }
+
         public void AddImageToCommon(string imageName, Panel dock_bottom)
         {
             int i = 0;
@@ -76,7 +82,8 @@ namespace CircuitBoardDiagram.GUIControls
                 foreach (Image img in dock_bottom.Children)
                 {
                     if (img.Tag == null)
-                    {
+                    {                       
+                        img.MouseDown += new MouseButtonEventHandler(CommonImage_MouseDown);
                         img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + imageName + ".png"));
                         img.Tag = imageName;
                         break;

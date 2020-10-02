@@ -29,7 +29,7 @@ namespace CircuitBoardDiagram.GUIControls
         private int queue = 0;
 
         protected bool isDragging;
-        
+
         public string elementName { get; set; } = "";
 
         private Point clickPosition;
@@ -47,6 +47,7 @@ namespace CircuitBoardDiagram.GUIControls
         private ListContainer lc;
 
         private Point startPosition;
+        private Image tmpImage;
         public ImageGUIControl(MainWindow form, Canvas canvas, Grid grid, DotGUIControl dgc, HighlighterGUIControl hgc, WireGUIControl wgc, MessageGUIControl mgc, MenuGUIControl mngc, ListContainer lc)
         {            
             this.form = form;
@@ -58,17 +59,17 @@ namespace CircuitBoardDiagram.GUIControls
             this.mgc = mgc;
             this.mngc = mngc;
             this.lc = lc;            
-        }
-
+        }       
 
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Image draggableControl = sender as Image;           
-
             if (!Keyboard.IsKeyDown(Key.W) && !Keyboard.IsKeyDown(Key.C) && !Keyboard.IsKeyDown(Key.X))
             {
                 dgc.UpadateDotsLocation(draggableControl, lc.ec);
                 //highlighting_rectangle.Visibility = Visibility.Hidden;
+                if (mngc.elementBehaviour != "neverGrid")
+                    SnapToClosestCell(draggableControl);
                 originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
                 isDragging = true;
                 clickPosition = e.GetPosition(form);
@@ -94,13 +95,13 @@ namespace CircuitBoardDiagram.GUIControls
             isDragging = false;
             Image draggable = sender as Image;
             draggable.ReleaseMouseCapture();
-            if(mngc.elementBehaviour!="neverGrid")
+            if (mngc.elementBehaviour != "neverGrid")
                 SnapToClosestCell(draggable);
             else
-            {                
+            {
                 Canvas.SetLeft(draggable, 0);
                 Canvas.SetTop(draggable, 0);
-                draggable.RenderTransform = new TranslateTransform(Mouse.GetPosition(canvas).X-25, Mouse.GetPosition(canvas).Y-25);
+                draggable.RenderTransform = new TranslateTransform(Mouse.GetPosition(canvas).X - 25, Mouse.GetPosition(canvas).Y - 25);
             }
             hgc.Highlight_cell(draggable);
             dgc.UpadateDotsLocation(draggable, lc.ec);
@@ -110,7 +111,7 @@ namespace CircuitBoardDiagram.GUIControls
             //indicating_rectangle.Visibility = Visibility.Hidden;
 
             //ec.UpdatePostitionValues(draggable.Tag.ToString());
-        }
+        }        
 
         private void Image_MouseMove(object sender, MouseEventArgs e)
         {            
@@ -128,7 +129,7 @@ namespace CircuitBoardDiagram.GUIControls
                 dgc.UpadateDotsLocation(draggableControl, lc.ec);
                 hgc.Highlight_cell(draggableControl);                
 
-                wgc.FindWireConnectedDots(draggableControl.Tag.ToString());
+                wgc.FindWireConnectedDots(draggableControl.Tag.ToString());               
             }
 
         }
@@ -169,6 +170,8 @@ namespace CircuitBoardDiagram.GUIControls
 
             lc.ec.AddElementToList(r.Tag.ToString(), r);
 
+            tmpImage = r;
+
             Canvas.SetTop(r, Mouse.GetPosition(canvas).Y - r.Width / 2);
             Canvas.SetLeft(r, Mouse.GetPosition(canvas).X - r.Height / 2);            
 
@@ -194,6 +197,12 @@ namespace CircuitBoardDiagram.GUIControls
             canvas.Children.Remove(draggableControl);
         }
         
+        public void UpadateImage()
+        {                              
+            SnapToClosestCell(tmpImage);
+            lc.ec.UpdatePostitionValues(tmpImage.Tag.ToString());
+        }
+
         public void SnapToClosestCell(Image draggableControl)
         {
             double distanceX;

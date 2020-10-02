@@ -79,6 +79,7 @@ namespace CircuitBoardDiagram.GUIControls
                 igc.CreateElement(lgc.currentImageName);
                 dgc.CreateDot(igc.elementName, 4);
                 lgc.AddImageToCommon(lgc.currentImageName, dock_bottom);
+                igc.UpadateImage();
             }
 
             if (Keyboard.IsKeyDown(Key.LeftShift))
