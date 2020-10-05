@@ -63,6 +63,9 @@
     </ApplicationDefinition>
     <Compile Include="CircuitChecker.cs" />
     <Compile Include="Dot.cs" />
+    <Compile Include="Element_features.xaml.cs">
+      <DependentUpon>Element_features.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GUIControls\CanvasGUIControl.cs" />
     <Compile Include="GUIControls\ConnectorGUIControl.cs" />
     <Compile Include="GUIControls\DotGUIControl.cs" />
@@ -79,6 +82,10 @@
     <Compile Include="SaveLoadController.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Wire.cs" />
+    <Page Include="Element_features.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

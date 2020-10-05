@@ -99,17 +99,20 @@ namespace CircuitBoardDiagram
 
         private void Dot_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Image img = sender as Image;
-            string name = "";            
-            
-            foreach (Dot d in lc.dList)
-            {               
-                if (img.Tag.ToString() == d.GetName())
+            if (Keyboard.IsKeyDown(Key.W) || wgc.turn == true)
+            {
+                Image img = sender as Image;
+                string name = "";
+
+                foreach (Dot d in lc.dList)
                 {
-                    name = d.GetCore();                   
-                    wgc.DrawWireBetweenElements(img, name, lc.ec, lc.dList);
+                    if (img.Tag.ToString() == d.GetName())
+                    {
+                        name = d.GetCore();
+                        wgc.DrawWireBetweenElements(img, name, lc.ec, lc.dList);
+                    }
                 }
-            }            
+            }
         }
 
         private void Dot_MouseLeave(object sender, MouseEventArgs e)

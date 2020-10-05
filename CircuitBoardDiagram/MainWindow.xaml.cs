@@ -45,8 +45,8 @@ namespace CircuitBoardDiagram
 
         public MainWindow()
         {            
-            InitializeComponent();
-            
+            InitializeComponent();            
+
             indicating_rectangle.Visibility = Visibility.Hidden;
             highlighting_rectangle.Visibility = Visibility.Hidden;
 
@@ -78,7 +78,7 @@ namespace CircuitBoardDiagram
             {
                 if(RemoveNumbers(se.GetName()) == "AC")
                 {
-                    cc.CheckCircuit(se);
+                    cc.CheckCircuit(se, 0);
                     break;
                 }
             }

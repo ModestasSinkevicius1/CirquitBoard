@@ -197,6 +197,9 @@ namespace CircuitBoardDiagram.GUIControls
                 lc.ec.AddConnectionCountToSpecificElement(name);
                 lc.ec.AddConnectionCountToSpecificElement(img.Tag.ToString());
 
+                lc.ec.AddElementToParentElement(img.Tag.ToString(), name);
+                lc.ec.AddElementToParentElement(name, img.Tag.ToString());
+
                 wgc.previousElementName = "";
 
                 wgc.UpdateWireLocation(w.dotA, w.dotB, newPl);

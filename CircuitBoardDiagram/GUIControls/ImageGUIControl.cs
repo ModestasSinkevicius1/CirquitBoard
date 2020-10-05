@@ -166,6 +166,20 @@ namespace CircuitBoardDiagram.GUIControls
             r.MouseEnter += new MouseEventHandler(Image_MouseEnter);
             r.MouseLeave += new MouseEventHandler(Image_MouseLeave);
 
+            ContextMenu newContext = new ContextMenu();
+
+            MenuItem newItem1 = new MenuItem();
+            newItem1.Click += new RoutedEventHandler(ContextProperties_Click);
+            newItem1.Header = "Properties";
+
+            MenuItem newItem2 = new MenuItem();
+            newItem2.Click += new RoutedEventHandler(ContextDelete_Click);
+            newItem2.Header = "Delete";
+
+            r.ContextMenu = newContext;
+            r.ContextMenu.Items.Add(newItem1);
+            r.ContextMenu.Items.Add(newItem2);
+
             canvas.Children.Add(r);
 
             lc.ec.AddElementToList(r.Tag.ToString(), r);
@@ -179,6 +193,23 @@ namespace CircuitBoardDiagram.GUIControls
             queue++;
         }
         
+        private void ContextDelete_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = sender as MenuItem;
+
+            ContextMenu cm = item.Parent as ContextMenu;
+
+            Image img = cm.PlacementTarget as Image;
+
+            DeleteElement(img);
+        }
+
+        private void ContextProperties_Click(object sender, RoutedEventArgs e)
+        {
+            Element_features ef = new Element_features();
+            ef.Show();
+        }
+
         public void DeleteElement(Image draggableControl)
         {
             foreach (Polyline pl in lc.ec.GetLineListFromElement(draggableControl.Tag.ToString()))

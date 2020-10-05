@@ -83,7 +83,7 @@ namespace CircuitBoardDiagram.GUIControls
         }
         private void MenuItemOption_Click(object sender, RoutedEventArgs e)
         {
-            OptionWindow opWindow = new OptionWindow(grid.ColumnDefinitions[0].Width.Value, grid.RowDefinitions[0].Height.Value);
+            OptionWindow opWindow = new OptionWindow(grid.ColumnDefinitions[0].Width.Value, grid.RowDefinitions[0].Height.Value, elementBehaviour);
             bool? result = opWindow.ShowDialog();
 
             if (opWindow.isPressedOk == true)

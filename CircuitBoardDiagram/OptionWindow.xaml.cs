@@ -26,12 +26,13 @@ namespace CircuitBoardDiagram
         public bool isPressedOk = false;
         private string elementBehaviour = "alwaysGrid";
 
-        public OptionWindow(double column, double row)
+        public OptionWindow(double column, double row, string elementBehaviour)
         {            
             InitializeComponent();
             AddRow();
             AddColumn();
-            ChangeSliderValue(column, row);          
+            ChangeSliderValue(column, row);
+            ChangeBehaviour(elementBehaviour);
         }
 
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -56,6 +57,16 @@ namespace CircuitBoardDiagram
                 }
                 //RemoveRows();                
             }
+        }
+
+        private void ChangeBehaviour(string elementBehaviour)
+        {
+            if (elementBehaviour == "alwaysGrid")
+                radioButton.IsChecked = true;
+            else if (elementBehaviour == "endGrid")
+                radioButton_Copy.IsChecked = true;
+            else if (elementBehaviour == "neverGrid")
+                radioButton_Copy1.IsChecked = true;
         }
 
         private void ChangeSliderValue(double column, double row)
@@ -155,6 +166,20 @@ namespace CircuitBoardDiagram
             {
                 elementBehaviour = "neverGrid";
             }
+        }
+
+        private void button_Copy1_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Are you sure want to reset settings?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                ChangeBehaviour("alwaysGrid");
+                ChangeSliderValue(50, 50);                
+            }            
+        }
+
+        private void button_Copy_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

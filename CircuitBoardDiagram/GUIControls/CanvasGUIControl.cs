@@ -62,6 +62,12 @@ namespace CircuitBoardDiagram.GUIControls
 
             LoadEvents();
             LoadGrids();
+            SetPositionStart();
+        }
+
+        public void SetPositionStart()
+        {
+            canvas.RenderTransform = new TranslateTransform(-4250f / 2, -1500f / 2);
         }
 
         public void LoadEvents()
