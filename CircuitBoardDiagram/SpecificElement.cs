@@ -11,6 +11,11 @@ namespace CircuitBoardDiagram
 {
     public class SpecificElement
     {
+        public double current { get; set; } = 2;
+        public double voltage { get; set; } = 220;
+        public double resistance { get; set; } = 0.5;
+        public double power { get; set; } = 200;      
+        
         public string name;
         public bool isConnected=false;
         public bool visited { get; set; } = false;

@@ -15,6 +15,7 @@ namespace CircuitBoardDiagram.GUIControls
     {
         private TextBlock tb = new TextBlock();
         private TextBlock wtb = new TextBlock();
+        private TextBlock stb = new TextBlock();
 
         private Canvas canvas;
         private ListContainer lc;
@@ -25,6 +26,7 @@ namespace CircuitBoardDiagram.GUIControls
 
             LoadPopupMessage();
             LoadWarningMessage();
+            LoadStatusMessage();
         }
 
         public void UpdateContainer(ListContainer lc)
@@ -67,6 +69,21 @@ namespace CircuitBoardDiagram.GUIControls
             canvas.Children.Add(wtb);
         }
 
+        public void LoadStatusMessage()
+        {
+            stb.Visibility = Visibility.Hidden;
+            SolidColorBrush scb = Brushes.Yellow;
+
+            //wtb.MouseLeave += new MouseEventHandler(Textbox_MouseLeave);
+
+            stb.Width = 60;
+            stb.Height = 20;
+            stb.Background = scb;
+            stb.Opacity = 0.90;
+            Panel.SetZIndex(stb, 3);
+            canvas.Children.Add(stb);
+        }
+
         public void ShowPopupMessage(Image draggableControl)
         {
             tb.Visibility = Visibility.Visible;
@@ -94,6 +111,59 @@ namespace CircuitBoardDiagram.GUIControls
                 row++;
             }                          
             wtb.RenderTransform = draggableControl.RenderTransform;
+        }
+
+        public void ShowStatusBox(Image draggableControl, double value)
+        {           
+            if (RemoveNumbers(draggableControl.Tag.ToString()) == "AC")
+            {
+                stb.Background = Brushes.DarkBlue;
+                stb.Foreground = Brushes.White;
+            }
+            else
+            {
+                stb.Background = Brushes.Yellow;
+                stb.Foreground = Brushes.Black;
+            }
+            stb.Visibility = Visibility.Visible;
+           
+            stb.RenderTransform = draggableControl.RenderTransform;
+
+            stb.RenderTransform = new TranslateTransform(draggableControl.RenderTransform.Value.OffsetX+-5, draggableControl.RenderTransform.Value.OffsetY+-25);
+
+            stb.HorizontalAlignment = HorizontalAlignment.Center;
+
+            stb.TextAlignment = TextAlignment.Center;            
+
+            stb.Text = value.ToString()+'V';
+        }
+
+        public void HideBox(string type)
+        {
+            if (type == "status")
+            {
+                stb.Visibility = Visibility.Hidden;
+            }
+            else if (type == "warning")
+            {
+                wtb.Visibility = Visibility.Hidden;
+            }
+            else if(type =="popup")
+            {
+                tb.Visibility = Visibility.Hidden;
+            }
+        }
+        private string RemoveNumbers(string name)
+        {
+            foreach (char w in name)
+            {
+                if (Char.IsNumber(w))
+                {
+                    name = name.Remove(name.Length - 1);
+                }
+            }
+
+            return name;
         }
     }
 }

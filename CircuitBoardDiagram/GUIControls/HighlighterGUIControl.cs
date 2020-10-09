@@ -17,6 +17,8 @@ namespace CircuitBoardDiagram.GUIControls
         public Rectangle highlighter { get; set; }
         public Rectangle indicator { get; set; }
 
+        public List<Rectangle> clList = new List<Rectangle>();
+
         private Canvas canvas;
         private Grid grid;
 
@@ -26,7 +28,51 @@ namespace CircuitBoardDiagram.GUIControls
             this.indicator = indicator;
             this.canvas = canvas;
             this.grid = grid;
+            //LoadCheckCircuitBox();
         }
+
+        /*public void LoadCheckCircuitBox()
+        {           
+            SolidColorBrush scb = Brushes.DeepSkyBlue;
+
+            cbox.Width = 60;
+            cbox.Height = 60;
+
+            cbox.Fill = scb;
+            cbox.Opacity = 0.80f;
+
+            canvas.Children.Add(cbox);
+        }*/
+
+        public void RemoveCheckCircuitBox()
+        {            
+            int count = clList.Count;
+
+            for(int i=0;i<count;i++)
+            {
+                canvas.Children.Remove(clList[i]);
+                clList[i] = null;
+            }
+            clList.Clear();
+        }
+
+        public void ShowCheckCircuitBox(Image draggableControl)
+        {
+            Rectangle cbox = new Rectangle();
+            SolidColorBrush scb = Brushes.DeepSkyBlue;
+
+            cbox.Width = 50;
+            cbox.Height = 50;
+
+            cbox.Fill = scb;
+            cbox.Opacity = 0.80f;           
+
+            canvas.Children.Add(cbox);
+            cbox.RenderTransform = new TranslateTransform(draggableControl.RenderTransform.Value.OffsetX, draggableControl.RenderTransform.Value.OffsetY);
+            
+            clList.Add(cbox);
+        }
+
         public void IndicateCell()
         {
             indicator.Visibility = Visibility.Visible;

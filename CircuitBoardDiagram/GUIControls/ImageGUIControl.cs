@@ -129,7 +129,8 @@ namespace CircuitBoardDiagram.GUIControls
                 dgc.UpadateDotsLocation(draggableControl, lc.ec);
                 hgc.Highlight_cell(draggableControl);                
 
-                wgc.FindWireConnectedDots(draggableControl.Tag.ToString());               
+                wgc.FindWireConnectedDots(draggableControl.Tag.ToString());
+                mgc.ShowStatusBox(draggableControl, 220);
             }
 
         }
@@ -138,12 +139,28 @@ namespace CircuitBoardDiagram.GUIControls
             //isOnImage = true;
             Image draggableControl = sender as Image;
             hgc.Highlight_cell(draggableControl);
+
+            SpecificElement se = null;
+
+            foreach(SpecificElement se2 in lc.ec.GetAllElements())
+            {
+                if(se2.GetName()==draggableControl.Tag.ToString())
+                {
+                    se = se2;
+                    break;
+                }
+            }
+
+            if (!wgc.turn && se != null)
+                mgc.ShowStatusBox(draggableControl, se.voltage);
+            hgc.RemoveCheckCircuitBox();
         }
 
         private void Image_MouseLeave(object sender, MouseEventArgs e)
         {
             Image img = sender as Image;
-            hgc.highlighter.Visibility = Visibility.Hidden;
+            hgc.highlighter.Visibility = Visibility.Hidden;          
+            mgc.HideBox("status");
             startPosition = Mouse.GetPosition(form);
             dgc.BeginHide(startPosition, lc.ec.GetDots(img.Tag.ToString()));
         }
@@ -191,8 +208,8 @@ namespace CircuitBoardDiagram.GUIControls
 
             Panel.SetZIndex(r, 1);            
             queue++;
-        }
-        
+        }               
+
         private void ContextDelete_Click(object sender, RoutedEventArgs e)
         {
             MenuItem item = sender as MenuItem;
@@ -206,8 +223,27 @@ namespace CircuitBoardDiagram.GUIControls
 
         private void ContextProperties_Click(object sender, RoutedEventArgs e)
         {
-            Element_features ef = new Element_features();
-            ef.Show();
+            MenuItem item = sender as MenuItem;
+
+            ContextMenu cm = item.Parent as ContextMenu;
+
+            Image img = cm.PlacementTarget as Image;
+
+            SpecificElement se = null;
+
+            foreach(SpecificElement se2 in lc.ec.GetAllElements())
+            {
+                if(se2.GetName() == img.Tag.ToString())
+                {
+                    se = se2;
+                    break;
+                }
+            }
+            if (se != null)
+            {
+                Element_features ef = new Element_features(se);
+                ef.Show();
+            }
         }
 
         public void DeleteElement(Image draggableControl)

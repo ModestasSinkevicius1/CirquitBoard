@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CircuitBoardDiagram.GUIControls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,11 +16,13 @@ namespace CircuitBoardDiagram
 {
     class CircuitChecker
     {
+        private HighlighterGUIControl hgc;
         private ListContainer lc;
         public bool circuitFull = false;       
-        public CircuitChecker(ListContainer lc)
+        public CircuitChecker(ListContainer lc, HighlighterGUIControl hgc)
         {
             this.lc = lc;
+            this.hgc = hgc;
         }
 
         public void CheckCircuit(SpecificElement se, int level)
@@ -37,11 +40,15 @@ namespace CircuitBoardDiagram
                     if (level > 0)
                     {
                         circuitFull = true;
+                        hgc.ShowCheckCircuitBox(se2.GetElement());
                         break;
                     }
                 }                
                 ACfound++;
-            }            
+            }
+            if (circuitFull)
+                hgc.ShowCheckCircuitBox(se.GetElement());
+                
         }
                    
         private string RemoveNumbers(string name)

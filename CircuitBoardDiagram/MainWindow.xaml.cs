@@ -67,19 +67,19 @@ namespace CircuitBoardDiagram
 
             wgc.cogc = cogc;
 
-            cc = new CircuitChecker(lc);
+            cc = new CircuitChecker(lc, hgc);
 
             lgc.LoadImages(grid_expander);                       
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            foreach(SpecificElement se in lc.ec.GetAllElements())
+            hgc.RemoveCheckCircuitBox();
+            foreach (SpecificElement se in lc.ec.GetAllElements())
             {
                 if(RemoveNumbers(se.GetName()) == "AC")
                 {
-                    cc.CheckCircuit(se, 0);
-                    break;
+                    cc.CheckCircuit(se, 0);                    
                 }
             }
             
