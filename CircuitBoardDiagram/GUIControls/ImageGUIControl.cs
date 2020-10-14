@@ -45,10 +45,11 @@ namespace CircuitBoardDiagram.GUIControls
         private MessageGUIControl mgc;
         private MenuGUIControl mngc;
         private ListContainer lc;
+        private ShortcutGUIControl sgc;
 
         private Point startPosition;
         private Image tmpImage;
-        public ImageGUIControl(MainWindow form, Canvas canvas, Grid grid, DotGUIControl dgc, HighlighterGUIControl hgc, WireGUIControl wgc, MessageGUIControl mgc, MenuGUIControl mngc, ListContainer lc)
+        public ImageGUIControl(MainWindow form, Canvas canvas, Grid grid, DotGUIControl dgc, HighlighterGUIControl hgc, WireGUIControl wgc, MessageGUIControl mgc, MenuGUIControl mngc, ListContainer lc, ShortcutGUIControl sgc)
         {            
             this.form = form;
             this.canvas = canvas;
@@ -58,7 +59,8 @@ namespace CircuitBoardDiagram.GUIControls
             this.wgc = wgc;
             this.mgc = mgc;
             this.mngc = mngc;
-            this.lc = lc;            
+            this.lc = lc;
+            this.sgc = sgc;
         }       
 
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -80,7 +82,12 @@ namespace CircuitBoardDiagram.GUIControls
             }
             else if (Keyboard.IsKeyDown(Key.X))
             {
-                DeleteElement(draggableControl);
+                if (!wgc.turn)
+                {
+                    DeleteElement(draggableControl);
+                }
+                else
+                    mgc.ShowWarningMessage(draggableControl, "Wiring process \n detected!");
             }
             else if (Keyboard.IsKeyDown(Key.C))
             {
@@ -137,6 +144,7 @@ namespace CircuitBoardDiagram.GUIControls
         private void Image_MouseEnter(object sender, MouseEventArgs e)
         {
             //isOnImage = true;
+            sgc.UpdateText("OnControl");
             Image draggableControl = sender as Image;
             hgc.Highlight_cell(draggableControl);
 
@@ -158,6 +166,7 @@ namespace CircuitBoardDiagram.GUIControls
 
         private void Image_MouseLeave(object sender, MouseEventArgs e)
         {
+            sgc.UpdateText("OnCanvas");
             Image img = sender as Image;
             hgc.highlighter.Visibility = Visibility.Hidden;          
             mgc.HideBox("status");

@@ -115,5 +115,7 @@
                 <MenuItem x:Name="Tools_Options" Header="Options"/>
             </MenuItem>
         </Menu>
+        <Label x:Name="label" Content="Functions:" HorizontalAlignment="Left" Margin="10,32,0,0" VerticalAlignment="Top" Height="44" Width="172" FontSize="24"/>
+        <Label x:Name="shortcut_hint" Content="" HorizontalAlignment="Left" Margin="127,32,0,0" VerticalAlignment="Top" FontSize="24" Width="auto" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>

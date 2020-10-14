@@ -42,11 +42,13 @@ namespace CircuitBoardDiagram.GUIControls
         private DotGUIControl dgc;
         private ListImageGUIControl lgc;
         private HighlighterGUIControl hgc;
+        private ShortcutGUIControl sgc;
+        public MessageGUIControl mgc { get; set; }
 
         private Rectangle highlighter;
         private Rectangle indicator;
 
-        public CanvasGUIControl(MainWindow form, Canvas canvas, Grid grid, ListContainer lc, DockPanel dock_bottom, Rectangle highlighter, Rectangle indicator, ImageGUIControl igc, DotGUIControl dgc, ListImageGUIControl lgc, HighlighterGUIControl hgc)
+        public CanvasGUIControl(MainWindow form, Canvas canvas, Grid grid, ListContainer lc, DockPanel dock_bottom, Rectangle highlighter, Rectangle indicator, ImageGUIControl igc, DotGUIControl dgc, ListImageGUIControl lgc, HighlighterGUIControl hgc, ShortcutGUIControl sgc)
         {
             this.form = form;
             this.canvas = canvas;
@@ -59,6 +61,7 @@ namespace CircuitBoardDiagram.GUIControls
             this.dgc = dgc;
             this.lgc = lgc;
             this.hgc = hgc;
+            this.sgc = sgc;
 
             LoadEvents();
             LoadGrids();
@@ -76,6 +79,7 @@ namespace CircuitBoardDiagram.GUIControls
             canvas.MouseLeftButtonUp += new MouseButtonEventHandler(canvas_MouseLeftButtonUp);
             canvas.MouseMove += new MouseEventHandler(canvas_MouseMove);
             canvas.MouseLeave += new MouseEventHandler(canvas_MouseLeave);
+            canvas.MouseEnter += new MouseEventHandler(canvas_MouseEnter);
         }
 
         private void canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -86,6 +90,10 @@ namespace CircuitBoardDiagram.GUIControls
                 dgc.CreateDot(igc.elementName, 4);
                 lgc.AddImageToCommon(lgc.currentImageName, dock_bottom);
                 igc.UpadateImage();
+            }
+            else if (Keyboard.IsKeyDown(Key.E))
+            {
+                mgc.ShowWarningMessage(null, "Select element first");
             }
 
             if (Keyboard.IsKeyDown(Key.LeftShift))
@@ -167,7 +175,13 @@ namespace CircuitBoardDiagram.GUIControls
 
         private void canvas_MouseLeave(object sender, MouseEventArgs e)
         {
+            sgc.UpdateText("");
             indicator.Visibility = Visibility.Hidden;
+        }
+
+        private void canvas_MouseEnter(object sender, MouseEventArgs e)
+        {
+            sgc.UpdateText("OnCanvas");
         }
 
         /*

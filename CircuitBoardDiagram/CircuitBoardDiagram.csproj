@@ -74,6 +74,7 @@
     <Compile Include="GUIControls\ListImageGUIControl.cs" />
     <Compile Include="GUIControls\MenuGUIControl.cs" />
     <Compile Include="GUIControls\MessageGUIControl.cs" />
+    <Compile Include="GUIControls\ShortcutGUIControl.cs" />
     <Compile Include="GUIControls\WireGUIControl.cs" />
     <Compile Include="ListContainer.cs" />
     <Compile Include="OptionWindow.xaml.cs">

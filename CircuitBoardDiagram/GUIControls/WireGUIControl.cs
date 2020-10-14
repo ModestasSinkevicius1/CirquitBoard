@@ -24,6 +24,8 @@ namespace CircuitBoardDiagram.GUIControls
 
         private ListContainer lc;
 
+        private ShortcutGUIControl sgc;
+
         private Wire w;
         private Image previousDot;
 
@@ -36,17 +38,18 @@ namespace CircuitBoardDiagram.GUIControls
         private Canvas canvas;
         private Grid grid;
 
-        private int row = 0;
+        private int queue = 0;
 
         private Ellipse el;                                         
 
-        public WireGUIControl(MainWindow form, Canvas canvas, Grid grid, MessageGUIControl mgc, ListContainer lc)
+        public WireGUIControl(MainWindow form, Canvas canvas, Grid grid, MessageGUIControl mgc, ListContainer lc, ShortcutGUIControl sgc)
         {
             this.form = form;
             this.canvas = canvas;
             this.grid = grid;
             this.mgc = mgc;           
             this.lc = lc;
+            this.sgc = sgc;
         }
 
         public void BeginDrawing()
@@ -82,6 +85,7 @@ namespace CircuitBoardDiagram.GUIControls
 
         private void Polyline_mouseEnter(object sender, MouseEventArgs e)
         {
+            sgc.UpdateText("OnControl");
             Polyline pl = sender as Polyline;
             SolidColorBrush bc = new SolidColorBrush();
 
@@ -112,6 +116,7 @@ namespace CircuitBoardDiagram.GUIControls
         
         private void Polyline_mouseLeave(object sender, MouseEventArgs e)
         {
+            sgc.UpdateText("OnCanvas");
             Polyline pl = sender as Polyline;
             SolidColorBrush bc = new SolidColorBrush();
 
@@ -366,7 +371,7 @@ namespace CircuitBoardDiagram.GUIControls
             foreach (Wire w2 in lc.wList)
             {                
                 if (w2.GetName() == l.Name)
-                {                    
+                {                   
                     foreach (Dot d in lc.dList)
                     {
                         if (w2.dotA == d.GetName())
@@ -452,7 +457,7 @@ namespace CircuitBoardDiagram.GUIControls
                     ec.EnableConnectionAvailability(previousElementName);
                     ec.EnableConnectionAvailability(name);
                     
-                    previousLine.Name = previousElementName + name;
+                    previousLine.Name = previousElementName + name + queue;
 
                     w = new Wire(previousLine.Name);                   
                     w.elementA = previousElementName;
@@ -494,6 +499,8 @@ namespace CircuitBoardDiagram.GUIControls
                     previousElementName = "";
 
                     turn = false;
+
+                    queue++;
                 }
                 else
                 {

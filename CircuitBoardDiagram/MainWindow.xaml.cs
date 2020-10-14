@@ -28,7 +28,8 @@ namespace CircuitBoardDiagram
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
-    {                         
+    {
+        private ShortcutGUIControl sgc;
         private ImageGUIControl igc;
         private CanvasGUIControl cgc;
         private WireGUIControl wgc;
@@ -50,13 +51,14 @@ namespace CircuitBoardDiagram
             indicating_rectangle.Visibility = Visibility.Hidden;
             highlighting_rectangle.Visibility = Visibility.Hidden;
 
+            sgc = new ShortcutGUIControl(shortcut_hint);
             mngc = new MenuGUIControl(canvas, canvasGrid, lc, menu);
             mgc = new MessageGUIControl(canvas, lc);
             hgc = new HighlighterGUIControl(canvas, canvasGrid, highlighting_rectangle, indicating_rectangle);
-            wgc = new WireGUIControl(this, canvas, canvasGrid, mgc, lc);
+            wgc = new WireGUIControl(this, canvas, canvasGrid, mgc, lc, sgc);
             dgc = new DotGUIControl(this, canvas, canvasGrid, wgc, lc);
-            igc = new ImageGUIControl(this, canvas, canvasGrid, dgc, hgc, wgc, mgc, mngc, lc);
-            cgc = new CanvasGUIControl(this, canvas, canvasGrid, lc, dock_bottom, highlighting_rectangle, indicating_rectangle, igc, dgc, lgc, hgc);
+            igc = new ImageGUIControl(this, canvas, canvasGrid, dgc, hgc, wgc, mgc, mngc, lc, sgc);
+            cgc = new CanvasGUIControl(this, canvas, canvasGrid, lc, dock_bottom, highlighting_rectangle, indicating_rectangle, igc, dgc, lgc, hgc, sgc);
             cogc = new ConnectorGUIControl(this, canvas, canvasGrid, mgc, wgc, mngc, lc);
             
             mngc.cgc = cgc;
@@ -66,6 +68,8 @@ namespace CircuitBoardDiagram
             mngc.cogc = cogc;
 
             wgc.cogc = cogc;
+
+            cgc.mgc = mgc;
 
             cc = new CircuitChecker(lc, hgc);
 

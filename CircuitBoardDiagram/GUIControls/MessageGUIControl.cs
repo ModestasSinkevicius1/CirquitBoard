@@ -109,8 +109,11 @@ namespace CircuitBoardDiagram.GUIControls
                     row = 0;
                 }
                 row++;
-            }                          
-            wtb.RenderTransform = draggableControl.RenderTransform;
+            }
+            if (draggableControl != null)
+                wtb.RenderTransform = draggableControl.RenderTransform;
+            else
+                wtb.RenderTransform = new TranslateTransform(Mouse.GetPosition(canvas).X + -25, Mouse.GetPosition(canvas).Y + -25);
         }
 
         public void ShowStatusBox(Image draggableControl, double value)
