@@ -114,12 +114,20 @@ namespace CircuitBoardDiagram
                 }
             }
         }
-
+        private void Dot_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Image img = sender as Image;
+            img.Opacity = 1f;
+        }
         private void Dot_MouseLeave(object sender, MouseEventArgs e)
         {
-            
-        }
-
+            Image img = sender as Image;
+            string name = System.IO.Path.GetFileNameWithoutExtension(img.Source.ToString());
+            if (name != "dotRed")
+            {
+                img.Opacity = 0.6f;
+            }
+        }        
         public void CreateDot(string name, int count)
         {            
             bool direction = false;
@@ -133,8 +141,10 @@ namespace CircuitBoardDiagram
                 img.Height = 15;
                 img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
                 img.Tag = name + "_" + i;
+                img.Opacity = 0.6f;
 
                 img.MouseLeftButtonDown += new MouseButtonEventHandler(Dot_MouseLeftButtonDown);
+                img.MouseEnter += new MouseEventHandler(Dot_MouseEnter);
                 img.MouseLeave += new MouseEventHandler(Dot_MouseLeave);
 
                 Panel.SetZIndex(img, 2);
@@ -171,8 +181,10 @@ namespace CircuitBoardDiagram
                 img.Height = 15;
                 img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
                 img.Tag = name + "_" + i;
+                img.Opacity = 0.6f;
 
                 img.MouseLeftButtonDown += new MouseButtonEventHandler(Dot_MouseLeftButtonDown);
+                img.MouseEnter += new MouseEventHandler(Dot_MouseEnter);
                 img.MouseLeave += new MouseEventHandler(Dot_MouseLeave);
 
                 Panel.SetZIndex(img, 2);

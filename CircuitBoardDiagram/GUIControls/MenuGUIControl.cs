@@ -113,33 +113,57 @@ namespace CircuitBoardDiagram.GUIControls
 
             ResizeBasedElementsArangements();
 
-            try
+            string path = "default.png";
+            bool isCanceled = false;
+
+            using (var fbd = new System.Windows.Forms.SaveFileDialog())
             {
-                canvas.RenderTransform = new TranslateTransform(-minX + 50, -minY + 50);
+                fbd.FileName = "project";
+                fbd.Filter = "PNG format (*.png)|*.png|JPG format (*.jpg)|*.jpg";
+                fbd.AddExtension = true;
+                fbd.DefaultExt = "png";               
+                System.Windows.Forms.DialogResult result = fbd.ShowDialog();                                
 
-                canvas.LayoutTransform = null;
-
-                Size size = new Size(maxX - minX + 200, maxY - minY + 200);
-
-                canvas.Measure(size);
-                canvas.Arrange(new Rect(size));
-
-                RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)size.Width, (int)size.Height, 96d, 96d, PixelFormats.Pbgra32);
-                renderBitmap.Render(canvas);
-
-                using (FileStream outStream = new FileStream("logo.png", FileMode.Create))
+                if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.FileName))
                 {
-                    PngBitmapEncoder encoder = new PngBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
-                    encoder.Save(outStream);
+                    path = fbd.FileName;
+                }
+
+                if(result == System.Windows.Forms.DialogResult.Cancel)
+                {
+                    isCanceled = true;
                 }
             }
-            catch (Exception exc)
+            if (!isCanceled)
             {
-                MessageBox.Show(exc.Message + "There are no elements found!");
+                try
+                {
+                    canvas.RenderTransform = new TranslateTransform(-minX + 50, -minY + 50);
+
+                    canvas.LayoutTransform = null;
+
+                    Size size = new Size(maxX - minX + 200, maxY - minY + 200);
+
+                    canvas.Measure(size);
+                    canvas.Arrange(new Rect(size));
+
+                    RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)size.Width, (int)size.Height, 96d, 96d, PixelFormats.Pbgra32);
+                    renderBitmap.Render(canvas);
+
+                    using (FileStream outStream = new FileStream(path, FileMode.Create))
+                    {
+                        PngBitmapEncoder encoder = new PngBitmapEncoder();
+                        encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+                        encoder.Save(outStream);
+                    }
+                }
+                catch (Exception exc)
+                {
+                    MessageBox.Show(exc.Message + "There are no elements found!");
+                }
+                canvas.LayoutTransform = transform;
+                canvas.RenderTransform = defaultRender;
             }
-            canvas.LayoutTransform = transform;
-            canvas.RenderTransform = defaultRender;
         }
 
         private void MenuItemSave_Click(object sender, RoutedEventArgs e)
@@ -188,18 +212,7 @@ namespace CircuitBoardDiagram.GUIControls
                 wgc.FindWireConnectedDots(se.GetName());
             }           
         }
-        private string RemoveNumbers(string name)
-        {
-            foreach (char w in name)
-            {
-                if (Char.IsNumber(w))
-                {
-                    name = name.Remove(name.Length - 1);
-                }
-            }
-
-            return name;
-        }
+        
         public void ResizeBasedElementsArangements()
         {
             maxX = -99999;
