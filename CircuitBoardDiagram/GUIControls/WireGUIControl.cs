@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -204,7 +205,7 @@ namespace CircuitBoardDiagram.GUIControls
             pl.MouseLeftButtonDown += new MouseButtonEventHandler(Polyline_mouseLeftButtonDown);
             pl.MouseEnter += new MouseEventHandler(Polyline_mouseEnter);
             pl.MouseLeave += new MouseEventHandler(Polyline_mouseLeave);
-            pl.MouseMove += new MouseEventHandler(Polyline_mouseMove);                           
+            pl.MouseMove += new MouseEventHandler(Polyline_mouseMove);                      
 
             canvas.Children.Add(pl);
 
@@ -301,8 +302,7 @@ namespace CircuitBoardDiagram.GUIControls
                 {
                     line1 = new Point(endLine2.X, startline2.Y);
                     line2 = new Point(endLine2.X, endLine2.Y);
-                }
-
+                }               
 
                 polylinePoints.Add(startLine1);
                 polylinePoints.Add(startline2);
@@ -310,7 +310,7 @@ namespace CircuitBoardDiagram.GUIControls
                 polylinePoints.Add(line2);
                 polylinePoints.Add(endLine2);
                 polylinePoints.Add(endLine1);
-
+                
                 pl.Points = polylinePoints;
             }
         }

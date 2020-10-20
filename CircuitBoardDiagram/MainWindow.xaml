@@ -20,6 +20,7 @@
                 <DropShadowEffect BlurRadius="10" Direction="320"/>
             </Button.Effect>
         </Button>
+        <Line x:Name="testLine" X1="0" Y1="25" X2="320" Y2="25" Stroke="Black" StrokeThickness="4" Margin="65,10,248,373" Grid.Column="1"/>
         <Border x:Name="canvas_border" BorderBrush="Black" BorderThickness="1" MinWidth="600" MinHeight="350" Margin="0,81,20,0" Grid.Column="1" ClipToBounds="True">
             <Canvas Width="4800" Height="1750" MinHeight="350" MinWidth="600" Name="canvas" Grid.Column="1" ClipToBounds="True">
                 <Canvas.Background>

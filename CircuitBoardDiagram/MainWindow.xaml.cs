@@ -18,6 +18,7 @@ using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -44,10 +45,41 @@ namespace CircuitBoardDiagram
 
         private ListContainer lc = new ListContainer();
 
+        public void BeginAnimate()
+        {            
+            Thread th = new Thread(UpdateStroke);
+            th.IsBackground = true;
+            th.Start();           
+        }
+        public void UpdateStroke()
+        {                             
+            while (true)
+            {
+                while (true)
+                {
+                    Thread.Sleep(100);
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        Storyboard storyboard = new Storyboard();
+                        DoubleAnimation animation = new DoubleAnimation(0, 250, new Duration(TimeSpan.FromSeconds(50)));
+
+                        //animation.RepeatBehavior = RepeatBehavior.Forever;
+                        testLine.BeginAnimation(Rectangle.StrokeDashOffsetProperty, animation);
+                    });
+                }               
+            }
+            
+        }
+
+
         public MainWindow()
         {            
-            InitializeComponent();            
-
+            InitializeComponent();
+            //
+            testLine.StrokeDashArray = new DoubleCollection() { 3 };           
+            
+            BeginAnimate();
+            //
             indicating_rectangle.Visibility = Visibility.Hidden;
             highlighting_rectangle.Visibility = Visibility.Hidden;
 
@@ -75,6 +107,8 @@ namespace CircuitBoardDiagram
 
             lgc.LoadImages(grid_expander);                       
         }
+
+        public static string StrokeValueProperty { get; }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {

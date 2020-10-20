@@ -37,7 +37,8 @@ namespace CircuitBoardDiagram.GUIControls
             if (keys == "OnControl")
             {
                 shortcut.Content = "X" + " - " + "Delete" + "  ";
-                shortcut.Content += "W" + " - " + "Wire";
+                shortcut.Content += "W" + " - " + "Wire" + "  ";
+                shortcut.Content += "C" + " - " + "Info";
             }
             if(keys == "OnCanvas")
             {

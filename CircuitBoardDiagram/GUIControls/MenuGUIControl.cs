@@ -116,7 +116,7 @@ namespace CircuitBoardDiagram.GUIControls
             string path = "default.png";
             bool isCanceled = false;
 
-            using (var fbd = new System.Windows.Forms.SaveFileDialog())
+            using (System.Windows.Forms.SaveFileDialog fbd = new System.Windows.Forms.SaveFileDialog())
             {
                 fbd.FileName = "project";
                 fbd.Filter = "PNG format (*.png)|*.png|JPG format (*.jpg)|*.jpg";
