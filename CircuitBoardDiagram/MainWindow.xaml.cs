@@ -22,6 +22,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 namespace CircuitBoardDiagram
 {
@@ -30,6 +31,7 @@ namespace CircuitBoardDiagram
     /// </summary>
     public partial class MainWindow : Window
     {
+        
         private ShortcutGUIControl sgc;
         private ImageGUIControl igc;
         private CanvasGUIControl cgc;
@@ -43,43 +45,12 @@ namespace CircuitBoardDiagram
 
         private CircuitChecker cc;
 
-        private ListContainer lc = new ListContainer();
-
-        public void BeginAnimate()
-        {            
-            Thread th = new Thread(UpdateStroke);
-            th.IsBackground = true;
-            th.Start();           
-        }
-        public void UpdateStroke()
-        {                             
-            while (true)
-            {
-                while (true)
-                {
-                    Thread.Sleep(100);
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        Storyboard storyboard = new Storyboard();
-                        DoubleAnimation animation = new DoubleAnimation(0, 250, new Duration(TimeSpan.FromSeconds(50)));
-
-                        //animation.RepeatBehavior = RepeatBehavior.Forever;
-                        testLine.BeginAnimation(Rectangle.StrokeDashOffsetProperty, animation);
-                    });
-                }               
-            }
-            
-        }
-
-
+        private ListContainer lc = new ListContainer();      
+        
         public MainWindow()
         {            
-            InitializeComponent();
-            //
-            testLine.StrokeDashArray = new DoubleCollection() { 3 };           
+            InitializeComponent();            
             
-            BeginAnimate();
-            //
             indicating_rectangle.Visibility = Visibility.Hidden;
             highlighting_rectangle.Visibility = Visibility.Hidden;
 
@@ -105,13 +76,13 @@ namespace CircuitBoardDiagram
 
             cc = new CircuitChecker(lc, hgc);
 
-            lgc.LoadImages(grid_expander);                       
-        }
+            mngc.cc = cc;
 
-        public static string StrokeValueProperty { get; }
+            lgc.LoadImages(grid_expander);                       
+        }                   
 
         private void Button_Click(object sender, RoutedEventArgs e)
-        {
+        {           
             hgc.RemoveCheckCircuitBox();
             foreach (SpecificElement se in lc.ec.GetAllElements())
             {
@@ -143,29 +114,6 @@ namespace CircuitBoardDiagram
             }
 
             return name;
-        }
-
-        /*private void BeginHide()
-        {
-            Thread th = new Thread(UpdateCurrentDotVisibilityStatus);
-            th.IsBackground = true;
-            th.Start();
-        }
-        private void UpdateCurrentDotVisibilityStatus()
-        {
-            double maxWait = 10;
-            t1 = new System.Timers.Timer();
-            t1.Interval = 1000;
-
-            while (true)
-            {
-                Thread.Sleep(50);
-                form.Dispatcher.BeginInvoke(new Action(() =>
-                {
-
-                }));
-            }
-        }
-        */
+        }               
     }
 }

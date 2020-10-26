@@ -65,7 +65,29 @@ namespace CircuitBoardDiagram.GUIControls
 
             LoadEvents();
             LoadGrids();
+
+            CreateGridLines();
+
             SetPositionStart();
+        }
+
+        private void CreateGridLines()
+        {           
+            for (int j = 0; j < grid.RowDefinitions.Count; j++)
+            {
+                for (int i = 0; i < grid.ColumnDefinitions.Count; i++)
+                {
+                    Border bord = new Border();
+                    bord.BorderBrush = Brushes.Black;
+                    bord.BorderThickness = new Thickness(1);
+                    bord.Opacity = 0.2;
+                    bord.Width = 50;
+                    bord.Height = 50;
+                    canvas.Children.Add(bord);
+                    Canvas.SetTop(bord, j * 50);
+                    Canvas.SetLeft(bord, i * 50);
+                }
+            }
         }
 
         public void SetPositionStart()
@@ -237,22 +259,22 @@ namespace CircuitBoardDiagram.GUIControls
             while (originalValue > value)
             {
                 newCount += newCount;
-                originalValue /= 2;
+                originalValue /= 2;               
             }
 
             while (i < newCount)
             {
                 ColumnDefinition c = new ColumnDefinition();
                 c.Width = new GridLength(value);
-                grid.ColumnDefinitions.Add(c);
+                grid.ColumnDefinitions.Add(c);                
 
                 i++;
             }
 
             foreach (ColumnDefinition column in grid.ColumnDefinitions)
             {
-                column.Width = new GridLength(value);
-            }
+                column.Width = new GridLength(value);                
+            }           
         }
 
         public void AddRow(double value, int count)
@@ -293,7 +315,7 @@ namespace CircuitBoardDiagram.GUIControls
             ResetRow();
 
             AddColumn(50, 12 * 8);
-            AddRow(50, 7 * 5);
+            AddRow(50, 7 * 5);            
         }
     }
 }

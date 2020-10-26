@@ -44,6 +44,7 @@ namespace CircuitBoardDiagram.GUIControls
         public ImageGUIControl igc { get; set; }
         public WireGUIControl wgc { get; set; }
         public ConnectorGUIControl cogc { get; set; }
+        public CircuitChecker cc { get; set; }
 
         private ListContainer lc;
         private Menu menu;
@@ -206,6 +207,7 @@ namespace CircuitBoardDiagram.GUIControls
             wgc.UpdateListContainer(lc);
             wgc.RecreateWires();
 
+            cc.UpdateListContainer(lc);
 
             foreach (SpecificElement se in lc.ec.GetAllElements())
             {

@@ -25,6 +25,11 @@ namespace CircuitBoardDiagram
             this.hgc = hgc;
         }
 
+        public void UpdateListContainer(ListContainer lc)
+        {
+            this.lc = lc;
+        }
+
         public void CheckCircuit(SpecificElement se, int level)
         {           
             se.visited = true;
