@@ -137,7 +137,14 @@ namespace CircuitBoardDiagram.GUIControls
                 hgc.Highlight_cell(draggableControl);                
 
                 wgc.FindWireConnectedDots(draggableControl.Tag.ToString());
-                mgc.ShowStatusBox(draggableControl, 220);
+                foreach(SpecificElement se in lc.ec.GetAllElements())
+                {
+                    if(se.GetName()==draggableControl.Tag.ToString())
+                    {
+                        mgc.ShowStatusBox(draggableControl, se.voltage);
+                        break;
+                    }
+                }               
             }
 
         }
@@ -174,6 +181,23 @@ namespace CircuitBoardDiagram.GUIControls
             dgc.BeginHide(startPosition, lc.ec.GetDots(img.Tag.ToString()));
         }
 
+        public void AddContextHandler(Image r)
+        {
+            ContextMenu newContext = new ContextMenu();
+
+            MenuItem newItem1 = new MenuItem();
+            newItem1.Click += new RoutedEventHandler(ContextProperties_Click);
+            newItem1.Header = "Properties";
+
+            MenuItem newItem2 = new MenuItem();
+            newItem2.Click += new RoutedEventHandler(ContextDelete_Click);
+            newItem2.Header = "Delete";
+
+            r.ContextMenu = newContext;
+            r.ContextMenu.Items.Add(newItem1);
+            r.ContextMenu.Items.Add(newItem2);
+        }
+
         public void CreateElement(string currentImageName)
         {
             Image r = new Image();
@@ -192,19 +216,7 @@ namespace CircuitBoardDiagram.GUIControls
             r.MouseEnter += new MouseEventHandler(Image_MouseEnter);
             r.MouseLeave += new MouseEventHandler(Image_MouseLeave);
 
-            ContextMenu newContext = new ContextMenu();
-
-            MenuItem newItem1 = new MenuItem();
-            newItem1.Click += new RoutedEventHandler(ContextProperties_Click);
-            newItem1.Header = "Properties";
-
-            MenuItem newItem2 = new MenuItem();
-            newItem2.Click += new RoutedEventHandler(ContextDelete_Click);
-            newItem2.Header = "Delete";
-
-            r.ContextMenu = newContext;
-            r.ContextMenu.Items.Add(newItem1);
-            r.ContextMenu.Items.Add(newItem2);
+            AddContextHandler(r);
 
             canvas.Children.Add(r);
 
@@ -408,6 +420,8 @@ namespace CircuitBoardDiagram.GUIControls
                     r.MouseEnter += new MouseEventHandler(Image_MouseEnter);
                     r.MouseLeave += new MouseEventHandler(Image_MouseLeave);
 
+                    AddContextHandler(r);
+                    
                     canvas.Children.Add(r);
 
                     se.SetImage(r);

@@ -35,10 +35,19 @@ namespace CircuitBoardDiagram
 
         private void UpdateTextBoxes()
         {
+            label_element.Content = se.GetName();
+
             textBox_current.Text = se.current.ToString();
             textBox_voltage.Text = se.voltage.ToString();
             textBox_resistance.Text = se.resistance.ToString();
             textBox_power.Text = se.power.ToString();
+
+            textBox_max_connection.Text = se.maxCount.ToString();
+            textBox_required_connection.Text = se.requiredCount.ToString();
+
+            checkBox_custom.IsChecked = se.isCustom;
+
+            isCustomChecked();
         }
 
         private void UpdateElement()
@@ -47,6 +56,11 @@ namespace CircuitBoardDiagram
             se.voltage = Convert.ToDouble(textBox_voltage.Text);
             se.resistance = Convert.ToDouble(textBox_resistance.Text);
             se.power = Convert.ToDouble(textBox_power.Text);
+
+            se.maxCount = Convert.ToInt32(textBox_max_connection.Text);
+            se.requiredCount = Convert.ToInt32(textBox_required_connection.Text);
+
+            se.isCustom = checkBox_custom.IsChecked.Value;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -110,5 +124,29 @@ namespace CircuitBoardDiagram
                 oldValue_power = value;
             }
         }
+
+        private void checkBox_custom_Checked(object sender, RoutedEventArgs e)
+        {
+            isCustomChecked();            
+        }
+
+        private void checkBox_custom_Unchecked(object sender, RoutedEventArgs e)
+        {
+            isCustomChecked();
+        }
+
+        private void isCustomChecked()
+        {
+            if (checkBox_custom.IsChecked == false)
+            {
+                textBox_max_connection.IsEnabled = false;
+                textBox_required_connection.IsEnabled = false;
+            }
+            else
+            {
+                textBox_max_connection.IsEnabled = true;
+                textBox_required_connection.IsEnabled = true;
+            }
+        }    
     }
 }

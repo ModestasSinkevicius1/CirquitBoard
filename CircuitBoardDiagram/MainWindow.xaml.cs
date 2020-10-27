@@ -45,7 +45,7 @@ namespace CircuitBoardDiagram
 
         private CircuitChecker cc;
 
-        private ListContainer lc = new ListContainer();      
+        public ListContainer lc = new ListContainer();      
         
         public MainWindow()
         {            
@@ -55,7 +55,7 @@ namespace CircuitBoardDiagram
             highlighting_rectangle.Visibility = Visibility.Hidden;
 
             sgc = new ShortcutGUIControl(shortcut_hint);
-            mngc = new MenuGUIControl(canvas, canvasGrid, lc, menu);
+            mngc = new MenuGUIControl(this, canvas, canvasGrid, lc, menu);
             mgc = new MessageGUIControl(canvas, lc);
             hgc = new HighlighterGUIControl(canvas, canvasGrid, highlighting_rectangle, indicating_rectangle);
             wgc = new WireGUIControl(this, canvas, canvasGrid, mgc, lc, sgc);

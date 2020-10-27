@@ -5,33 +5,42 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CircuitBoardDiagram"
         mc:Ignorable="d"
-        Title="Element_features" Height="451.226" Width="244.551">
+        Title="Element_features" Height="451.226" Width="306.551">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="38*"/>
             <ColumnDefinition Width="41*"/>
         </Grid.ColumnDefinitions>
-        <Label x:Name="label_element" Content="Element name" HorizontalAlignment="Center" Margin="61,10,61,0" VerticalAlignment="Top" Height="31" Width="115" FontSize="16" Grid.ColumnSpan="2"/>
-        <Label x:Name="label_current" Content="Current:" HorizontalAlignment="Right" Margin="44,63,0,0" VerticalAlignment="Top" Height="35" Width="70" FontSize="16"/>
-        <Label x:Name="label_voltage" Content="Voltage:" HorizontalAlignment="Right" Margin="43,98,0,0" VerticalAlignment="Top" Height="35" Width="71" FontSize="16"/>
+        <Label x:Name="label_element" Content="Element name" HorizontalContentAlignment="Center" HorizontalAlignment="Center" Margin="80,10,80,0" VerticalAlignment="Top" Height="31" Width="115" FontSize="16" Grid.ColumnSpan="2"/>
+        <Label x:Name="label_current" Content="Current:" HorizontalAlignment="Right" Margin="0,63,0,0" VerticalAlignment="Top" Height="35" Width="70" FontSize="16"/>
+        <Label x:Name="label_voltage" Content="Voltage:" HorizontalAlignment="Right" Margin="0,98,0,0" VerticalAlignment="Top" Height="35" Width="71" FontSize="16"/>
         <Label x:Name="label_resistance" Content="Resistance:" HorizontalAlignment="Right" Margin="0,128,3,0" VerticalAlignment="Top" Height="35" Width="87" FontSize="16"/>
-        <Label x:Name="label_power" Content="Power:" HorizontalAlignment="Right" Margin="50,163,0,0" VerticalAlignment="Top" Height="36" Width="60" FontSize="16"/>
+        <Label x:Name="label_power" Content="Power:" HorizontalAlignment="Right" Margin="0,163,0,0" VerticalAlignment="Top" Height="36" Width="60" FontSize="16"/>
         <TextBox x:Name="textBox_current" HorizontalAlignment="Left" Height="30" Margin="16,65,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="86" FontSize="16" Grid.Column="1" TextChanged="textBox_current_TextChanged"/>
         <TextBox x:Name="textBox_voltage" HorizontalAlignment="Left" Height="30" Margin="16,98,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="86" FontSize="16" Grid.Column="1" TextChanged="textBox_voltage_TextChanged"/>
         <TextBox x:Name="textBox_resistance" HorizontalAlignment="Left" Height="29" Margin="16,132,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="86" FontSize="16" Grid.Column="1" TextChanged="textBox_resistance_TextChanged"/>
         <TextBox x:Name="textBox_power" HorizontalAlignment="Left" Height="30" Margin="16,167,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="86" FontSize="16" Grid.Column="1" TextChanged="textBox_power_TextChanged"/>
-        <DockPanel HorizontalAlignment="Left" Height="420" LastChildFill="False" VerticalAlignment="Top" Width="237" Grid.ColumnSpan="2">
-
+        <DockPanel HorizontalAlignment="Left" Height="420" LastChildFill="False" VerticalAlignment="Top" Width="261" Grid.ColumnSpan="2" Grid.RowSpan="2">
+            <CheckBox x:Name="checkBox_custom" Content="Enable custom restrictions" Height="191" VerticalAlignment="Top" Width="298" Margin="0,229,0,0" Checked="checkBox_custom_Checked" Unchecked="checkBox_custom_Unchecked"/>
         </DockPanel>
-        <Button Style="{StaticResource RoundButtonTemplate}" Content="Apply" Margin="10,374,38,0" BorderBrush="{x:Null}" Foreground="Black" Height="26" FontFamily="Arial Black" VerticalAlignment="Top" RenderTransformOrigin="0.531,1.412" Grid.Column="1" Click="Button_Click">
+        <Button Style="{StaticResource RoundButtonTemplate}" Content="Apply" Margin="10,164.333,38,0" BorderBrush="{x:Null}" Foreground="Black" Height="26" FontFamily="Arial Black" VerticalAlignment="Top" RenderTransformOrigin="0.531,1.412" Grid.Column="1" Click="Button_Click" Grid.Row="1">
             <Button.Effect>
                 <DropShadowEffect BlurRadius="10" Direction="320"/>
             </Button.Effect>
         </Button>
-        <Button Style="{StaticResource RoundButtonTemplate}" Content="Cancel" Margin="29,374,10,0" BorderBrush="{x:Null}" Foreground="Black" Height="26" FontFamily="Arial Black" VerticalAlignment="Top" RenderTransformOrigin="0.531,1.412">
+        <Button Style="{StaticResource RoundButtonTemplate}" Content="Cancel" Margin="29,164.333,10,0" BorderBrush="{x:Null}" Foreground="Black" Height="26" FontFamily="Arial Black" VerticalAlignment="Top" RenderTransformOrigin="0.531,1.412" Grid.Row="1">
             <Button.Effect>
                 <DropShadowEffect BlurRadius="10" Direction="320"/>
             </Button.Effect>
         </Button>
+        <Label x:Name="label_max_connection" Content="Max connections:" HorizontalAlignment="Right" Margin="-1,49.333,0,0" VerticalAlignment="Top" Height="36" Width="133" FontSize="16" Grid.Row="1"/>
+        <TextBox x:Name="textBox_max_connection" HorizontalAlignment="Left" Height="30" Margin="16,53.333,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="86" FontSize="16" Grid.Column="1" TextChanged="textBox_power_TextChanged" Grid.Row="1"/>
+        <Label x:Name="label_required_connection" Content="Required connections:" HorizontalAlignment="Right" Margin="-1,84.333,0,0" VerticalAlignment="Top" Height="36" Width="133" FontSize="16" Grid.Row="1"/>
+        <TextBox x:Name="textBox_required_connection" HorizontalAlignment="Left" Height="30" Margin="16,88.333,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="86" FontSize="16" Grid.Column="1" TextChanged="textBox_power_TextChanged" Grid.Row="1"/>
+        <Separator HorizontalAlignment="Left" Height="420" Margin="0" Grid.RowSpan="2" VerticalAlignment="Top" Width="299" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>

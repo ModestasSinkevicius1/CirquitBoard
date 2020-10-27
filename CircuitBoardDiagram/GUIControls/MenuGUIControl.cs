@@ -37,6 +37,8 @@ namespace CircuitBoardDiagram.GUIControls
 
         public string elementBehaviour { get; set; } = "alwaysGrid";
 
+        private MainWindow form;
+
         private Canvas canvas;
         private Grid grid;
         public CanvasGUIControl cgc { get; set; }
@@ -52,8 +54,9 @@ namespace CircuitBoardDiagram.GUIControls
         private MenuItem baseItem;
         private MenuItem[] item = new MenuItem[4];
 
-        public MenuGUIControl(Canvas canvas, Grid grid, ListContainer lc, Menu menu)
+        public MenuGUIControl(MainWindow form, Canvas canvas, Grid grid, ListContainer lc, Menu menu)
         {
+            this.form = form;
             this.canvas = canvas;
             this.grid = grid;           
             this.lc = lc;
@@ -208,6 +211,8 @@ namespace CircuitBoardDiagram.GUIControls
             wgc.RecreateWires();
 
             cc.UpdateListContainer(lc);
+
+            form.lc = lc;
 
             foreach (SpecificElement se in lc.ec.GetAllElements())
             {

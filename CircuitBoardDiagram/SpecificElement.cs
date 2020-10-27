@@ -26,7 +26,12 @@ namespace CircuitBoardDiagram
         public double offSetX;
         public double offSetY;
 
-        private Image img;        
+        private Image img;       
+        
+        public bool isCustom = false; 
+
+        public int requiredCount = 2;
+        public int maxCount = 2;
 
         public SpecificElement()
         {
@@ -58,7 +63,7 @@ namespace CircuitBoardDiagram
         public int GetConnectionCount()
         {
             return connectionCount;
-        }
+        }      
 
         public double GetPositionX()
         {
@@ -72,10 +77,20 @@ namespace CircuitBoardDiagram
 
         public void SetConnection(bool state, int connectionRequiredCount)
         {
-            if (state && connectionRequiredCount<=connectionCount)
-                isConnected = true;
+            if (!isCustom)
+            {
+                if (state && connectionRequiredCount <= connectionCount)
+                    isConnected = true;
+                else
+                    isConnected = false;
+            }
             else
-                isConnected = false;
+            {
+                if (requiredCount <= connectionCount)
+                    isConnected = true;
+                else
+                    isConnected = false;
+            }
         }        
 
         public void SetPostitions()
