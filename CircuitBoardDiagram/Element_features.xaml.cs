@@ -20,11 +20,10 @@ namespace CircuitBoardDiagram
     public partial class Element_features : Window
     {
         SpecificElement se;
+       
+        string oldValue_double = "0";
 
-        string oldValue_current = "0";
-        string oldValue_voltage = "0";
-        string oldValue_resistance = "0";
-        string oldValue_power = "0";
+        string oldValue_int = "0";
 
         public Element_features(SpecificElement se)
         {
@@ -68,60 +67,45 @@ namespace CircuitBoardDiagram
             UpdateElement();
             Close();
         }
+       
+        private void textBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox text = sender as TextBox;            
 
-        private void textBox_current_TextChanged(object sender, TextChangedEventArgs e)
-        {            
-            string value = textBox_current.Text;
+            string value = text.Text;            
 
             if (!double.TryParse(value, out _))
             {
-                textBox_current.Text = oldValue_current;
+                text.Text = oldValue_double;
             }
             else
             {
-                oldValue_current = value;
+                oldValue_double = value;
             }
         }
 
-        private void textBox_voltage_TextChanged(object sender, TextChangedEventArgs e)
+        private void textBox_TextChanged_int(object sender, TextChangedEventArgs e)
         {
-            string value = textBox_voltage.Text;
+            TextBox text = sender as TextBox;
 
-            if (!double.TryParse(value, out _))
-            {
-                textBox_voltage.Text = oldValue_voltage;
+            string value = text.Text;
+
+            if (!int.TryParse(value, out _))
+            {               
+                text.Text = oldValue_int;
             }
             else
             {
-                oldValue_voltage = value;
-            }
-        }
-
-        private void textBox_resistance_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string value = textBox_resistance.Text;
-
-            if (!double.TryParse(value, out _))
-            {
-                textBox_resistance.Text = oldValue_resistance;
-            }
-            else
-            {
-                oldValue_resistance = value;
-            }
-        }
-
-        private void textBox_power_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string value = textBox_power.Text;
-
-            if (!double.TryParse(value, out _))
-            {
-                textBox_power.Text = oldValue_power;
-            }
-            else
-            {
-                oldValue_power = value;
+                if (Convert.ToInt32(value) <= 4)
+                {
+                    oldValue_int = value;
+                }
+                else
+                {
+                    text.Text = "4";
+                    value = "4";
+                    oldValue_int = value;                    
+                }
             }
         }
 
@@ -147,6 +131,8 @@ namespace CircuitBoardDiagram
                 textBox_max_connection.IsEnabled = true;
                 textBox_required_connection.IsEnabled = true;
             }
-        }    
+        }
+
+        
     }
 }
