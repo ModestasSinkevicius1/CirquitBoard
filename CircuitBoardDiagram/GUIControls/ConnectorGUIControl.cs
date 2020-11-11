@@ -47,25 +47,23 @@ namespace CircuitBoardDiagram.GUIControls
 
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Image draggableControl = sender as Image;
+            Image draggableControl = sender as Image;           
 
-            if (!Keyboard.IsKeyDown(Key.W) && !Keyboard.IsKeyDown(Key.X))
+            if (!Keyboard.IsKeyDown(Key.W) && !Keyboard.IsKeyDown(Key.X) && !wgc.turn)
             {
                 originTT = draggableControl.RenderTransform as TranslateTransform ?? new TranslateTransform();
                 isDragging = true;
                 clickPosition = e.GetPosition(form);
                 draggableControl.CaptureMouse();
             }
-            else if (Keyboard.IsKeyDown(Key.X))
+            else if (Keyboard.IsKeyDown(Key.X) && !wgc.turn)
             {
                 DeleteElement(draggableControl);
             }
-            else
-            {
-                wgc.DrawWireBetweenElements(draggableControl, draggableControl.Tag.ToString(), lc.ec, lc.dList);
-            }
-
-
+            else 
+            {               
+                wgc.DrawWireFromConnector(draggableControl, draggableControl.Tag.ToString(), lc.ec, lc.dList);
+            }            
         }
 
         private void Image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -142,7 +140,7 @@ namespace CircuitBoardDiagram.GUIControls
 
             wgc.turn = false;
 
-            wgc.previousLine.Name = pl.Name.ToString();
+            wgc.previousLine.Name = pl.Name.ToString();            
 
             foreach (Wire w in lc.wList)
             {
@@ -178,12 +176,13 @@ namespace CircuitBoardDiagram.GUIControls
 
                 Polyline newPl = wgc.CreatePolyline();
 
-                w = new Wire(dot + img.Tag.ToString());
+                Panel.SetZIndex(newPl, 1);
+                w = new Wire(dot + img.Tag.ToString() + queue);
 
                 w.elementA = name;
                 w.elementB = img.Tag.ToString();
 
-                newPl.Name = dot + img.Tag.ToString();
+                newPl.Name = dot + img.Tag.ToString() + queue;
 
                 w.dotA = dot;
                 w.dotB = img.Tag.ToString();

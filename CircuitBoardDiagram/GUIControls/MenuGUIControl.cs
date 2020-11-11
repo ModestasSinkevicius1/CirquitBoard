@@ -53,6 +53,7 @@ namespace CircuitBoardDiagram.GUIControls
 
         private MenuItem baseItem;
         private MenuItem[] item = new MenuItem[4];
+        public bool isProgress { get; set; } = false;
 
         public MenuGUIControl(MainWindow form, Canvas canvas, Grid grid, ListContainer lc, Menu menu)
         {
@@ -107,7 +108,16 @@ namespace CircuitBoardDiagram.GUIControls
 
         private void MenuItemNew_Click(object sender, RoutedEventArgs e)
         {
-            
+            if (isProgress)
+            {
+                if (MessageBox.Show("Any progress will be lost, are you sure want to start new project ?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    EraseWorksSpace();
+                    isProgress = false;
+                }
+            }
+            else
+                EraseWorksSpace();
         }
 
         private void MenuItemExport_Click(object sender, RoutedEventArgs e)
@@ -182,7 +192,7 @@ namespace CircuitBoardDiagram.GUIControls
         }
 
         private void MenuItemOpen_Click(object sender, RoutedEventArgs e)
-        {              
+        {
             Image img;
 
             for (int i = 0; i < canvas.Children.Count; i++)
@@ -196,14 +206,14 @@ namespace CircuitBoardDiagram.GUIControls
             }
 
             lc.dList.Clear();
-                   
+
             lc = slc.ReadXML();
 
             foreach (SpecificElement se in lc.ec.GetAllElements())
-            {               
+            {
                 se.ClearDotList();
             }
-                      
+
             igc.RecreateElementsFromSave(lc);                
             cogc.RecreateElementsFromSave(lc);           
 
@@ -220,6 +230,30 @@ namespace CircuitBoardDiagram.GUIControls
             }           
         }
         
+        private void EraseWorksSpace()
+        {
+            Image img;
+
+            for (int i = 0; i < canvas.Children.Count; i++)
+            {
+                if (canvas.Children[i].GetType() == typeof(Image))
+                {
+                    img = canvas.Children[i] as Image;
+                    igc.DeleteElement(img);
+                    i--;
+                }
+            }
+
+            lc.dList.Clear();            
+
+            foreach (SpecificElement se in lc.ec.GetAllElements())
+            {
+                se.ClearDotList();
+            }
+
+            igc.ResetQueue();
+        }
+
         public void ResizeBasedElementsArangements()
         {
             maxX = -99999;

@@ -132,33 +132,50 @@ namespace CircuitBoardDiagram.GUIControls
         }
 
         private void Polyline_mouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            bool toLow = false;
-
+        {           
             Image img = new Image();
+
+            bool foundA = false;
+            bool foundB = false;
+
+            string elementA = "";
+            string elementB = "";
 
             Polyline pl = sender as Polyline;
 
             if (Keyboard.IsKeyDown(Key.X))
             {
-                foreach(SpecificElement se in lc.ec.GetAllElements())
+                foreach(Wire w2 in lc.wList)
                 {
-                    if (se.GetName().Length > 13)
+                    if(w2.GetPolyline().Name == pl.Name)
                     {
-                        if (se.GetName().Substring(0, 14) == "wire_connector")
+                        if(RemoveNumbers(w2.elementA) == "wire_connector" && lc.ec.GetConnectionCount(w2.elementA)<4)
                         {
-                            if (se.GetConnectionCount() < 3)
-                            {
-                                img = se.GetElement();
-                                toLow = true;
-                            }
+                            elementA = w2.elementA;
+                            elementB = w2.elementB;
+
+                            foundA = true;
+                        }
+                        if(RemoveNumbers(w2.elementB) == "wire_connector" && lc.ec.GetConnectionCount(w2.elementB)<4)
+                        {
+                            elementB = w2.elementB;
+                            elementA = w2.elementA;
+
+                            foundB = true;
                         }
                     }
                 }
-                if (!toLow)
-                    DeleteWires(pl);
-                else
-                    cogc.DeleteElement(img);
+                if(foundA)
+                {
+                    RewireBetweenElements(elementA, elementB);
+                }
+                if(foundB)
+                {
+                    RewireBetweenElements(elementB, elementA);
+                }
+                //RewireBetweenElements(pl);
+                DeleteWires(pl);
+               
             }
             else if (Keyboard.IsKeyDown(Key.C))
             {
@@ -166,7 +183,7 @@ namespace CircuitBoardDiagram.GUIControls
                 {                   
                     if (w2.GetName() == pl.Name)
                     {
-                        MessageBox.Show(w2.elementA + " connected with " + w2.elementB);
+                        MessageBox.Show("line: "+ w2.GetName()+ "||" + w2.elementA + " connected with " + w2.elementB);
                         break;
                     }
                 }
@@ -175,24 +192,50 @@ namespace CircuitBoardDiagram.GUIControls
             {                
                 cogc.ConnectWireToConnector(pl, false);
             }
-            else if(Keyboard.IsKeyDown(Key.W))
+            else if(Keyboard.IsKeyDown(Key.W) && !turn)
             {
                 cogc.ConnectWireToConnector(pl, true);
             }
-        }
-
-        private void Polyline_mouseMove(object sender, MouseEventArgs e)
-        {
-            Line draggableControl = sender as Line;
-
-            List<Line> lList;
-
-            double length = 10;
-
-            int dotX = 0;
-            int dotY = 0;
-        }
+        }       
        
+        private void RewireBetweenElements(string deleteElement, string avoidElement)
+        {
+            string targetElementA = "";
+            string targetElementB = "";
+
+            string targetDotA = "";
+            string targetDotB = "";
+
+            Image img = null;
+
+            foreach (SpecificElement se in lc.ec.GetAllElements())
+            {
+                if(se.GetName()==deleteElement)
+                {
+                    img = se.GetElement();
+                    foreach(SpecificElement se2 in se.GetElements())
+                    {
+                        if(se2.GetName() != avoidElement && targetElementA == "")
+                        {                           
+                            targetElementA = se2.GetName();
+                            targetDotA = se2.GetDots()[0].GetName();
+                        }
+                        else if(se2.GetName() != avoidElement && targetElementB == "")
+                        {
+                            targetElementB = se2.GetName();
+                            targetDotB = se2.GetDots()[0].GetName();
+                        }                        
+                    }
+                }
+            }
+            cogc.DeleteElement(img);
+
+            Polyline pl = CreatePolyline();
+            pl.Name = targetElementA + targetElementB + queue;
+
+            UpdateWireLocation(targetDotA, targetDotB, pl);
+        }
+
         public Polyline CreatePolyline()
         {
             Polyline pl = new Polyline();
@@ -204,8 +247,7 @@ namespace CircuitBoardDiagram.GUIControls
             
             pl.MouseLeftButtonDown += new MouseButtonEventHandler(Polyline_mouseLeftButtonDown);
             pl.MouseEnter += new MouseEventHandler(Polyline_mouseEnter);
-            pl.MouseLeave += new MouseEventHandler(Polyline_mouseLeave);
-            pl.MouseMove += new MouseEventHandler(Polyline_mouseMove);                      
+            pl.MouseLeave += new MouseEventHandler(Polyline_mouseLeave);                                  
 
             canvas.Children.Add(pl);
 
@@ -215,7 +257,7 @@ namespace CircuitBoardDiagram.GUIControls
         
         public void UpdateWireLocation(string dotNameA, string dotNameB, Polyline pl)
         {
-            bool direction=false;
+            bool direction = false;
             int n = -1;
 
             Point startLine1;
@@ -410,7 +452,6 @@ namespace CircuitBoardDiagram.GUIControls
             {
                 if (w2.GetName() == pl.Name)
                 {
-
                     pl.Stroke = bc;
                     pl.StrokeThickness = thickness;
                     singleLine = false;
@@ -424,6 +465,111 @@ namespace CircuitBoardDiagram.GUIControls
             }
         }
         
+        public void DrawWireFromConnector(Image dot, string name, ElementControl ec, List<Dot> dList)
+        {
+            if (!ec.GetConnectionAvailability(name) && !isDotOccupied(dot, dList))
+            {               
+                if (!turn && previousElementName != name && previousDotName != dot.Tag.ToString())
+                {
+                    Polyline pl = CreatePolyline();
+
+                    Panel.SetZIndex(pl, 0);                  
+
+                    previousElementName = name;
+                    previousDotName = dot.Tag.ToString();
+
+                    previousLine = pl;
+                    previousDot = dot;
+
+                    turn = true;
+
+                    BeginDrawing();
+                }
+                else if (previousElementName != name && previousDotName != dot.Tag.ToString())
+                {
+                    Panel.SetZIndex(previousLine, 2);
+
+                    ec.AddConnectionCountToSpecificElement(previousElementName);
+                    ec.AddConnectionCountToSpecificElement(name);
+
+                    ec.EnableConnectionAvailability(previousElementName);
+                    ec.EnableConnectionAvailability(name);
+
+                    previousLine.Name = previousElementName + name + queue;
+
+                    w = new Wire(previousLine.Name);
+                    w.elementA = previousElementName;
+                    w.elementB = name;
+
+                    w.dotA = previousDotName;
+                    w.dotB = dot.Tag.ToString();
+
+                    foreach (Dot d in dList)
+                    {
+                        if (d.GetName() == previousDot.Tag.ToString() || d.GetName() == dot.Tag.ToString())
+                        {
+                            d.occupied = true;
+                        }
+                    }
+
+                    w.AddPolyline(previousLine);
+                    lc.wList.Add(w);
+
+                    ec.AddLineForElement(previousElementName, previousLine);
+                    ec.AddLineForElement(name, previousLine);
+
+                    ec.AddElementToParentElement(previousElementName, name);
+                    ec.AddElementToParentElement(name, previousElementName);
+
+                    foreach (Dot d in dList)
+                    {
+                        if (d.GetName() == w.dotA)
+                        {
+                            d.SetWireName(w.elementA);
+                        }
+                        if (d.GetName() == w.dotB)
+                        {
+                            d.SetWireName(w.elementB);
+                        }
+                    }
+                    UpdateWireLocation(previousDotName, dot.Tag.ToString(), previousLine);
+
+                    previousElementName = "";
+
+                    turn = false;
+
+                    queue++;
+                }
+                else
+                {
+                    turn = false;                   
+                    canvas.Children.Remove(previousLine);
+
+                    previousLine = null;
+                    previousDot = null;
+                    previousElementName = "";
+                    previousDotName = "";
+
+
+                }
+            }
+            else
+            {
+                foreach (SpecificElement se in lc.ec.GetAllElements())
+                {
+                    if (se.GetName() == name)
+                    {
+                        if (ec.GetConnectionAvailability(name))
+                            mgc.ShowWarningMessage(se.GetElement(), "This element has max connections used");
+                        else if (isDotOccupied(dot, dList))
+                        {
+                            mgc.ShowWarningMessage(se.GetElement(), "This dot is being used by another wire");
+                        }
+                    }
+                }                
+            }
+        }
+
         public void DrawWireBetweenElements(Image dot, string name, ElementControl ec, List<Dot> dList)
         {
             if (!ec.GetConnectionAvailability(name) && !isDotOccupied(dot, dList))
@@ -535,7 +681,7 @@ namespace CircuitBoardDiagram.GUIControls
                     }
                 }
                 //MessageBox.Show("This element has max connections used");
-                if (ec.GetConnectionAvailability(name))
+                if (ec.GetConnectionAvailability(name) && previousDot != null)
                 {                    
                     previousDot.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotGreen.png"));
                 }
@@ -580,6 +726,17 @@ namespace CircuitBoardDiagram.GUIControls
             }
             mgc.UpdateContainer(lc);
         }
-        
+        private string RemoveNumbers(string name)
+        {
+            foreach (char w in name)
+            {
+                if (Char.IsNumber(w))
+                {
+                    name = name.Remove(name.Length - 1);
+                }
+            }
+
+            return name;
+        }
     }
 }

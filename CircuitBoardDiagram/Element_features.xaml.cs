@@ -50,7 +50,7 @@ namespace CircuitBoardDiagram
         }
 
         private void UpdateElement()
-        {
+        {           
             se.current = Convert.ToDouble(textBox_current.Text);
             se.voltage = Convert.ToDouble(textBox_voltage.Text);
             se.resistance = Convert.ToDouble(textBox_resistance.Text);
@@ -60,23 +60,80 @@ namespace CircuitBoardDiagram
             se.requiredCount = Convert.ToInt32(textBox_required_connection.Text);
 
             se.isCustom = checkBox_custom.IsChecked.Value;
+
+            if(checkBox_custom.IsChecked.Value)
+            {
+                se.SetConnection(true, se.requiredCount);
+            }
+        }
+
+        private void CheckTextBoxesWhiteSpace()
+        {
+            if (textBox_current.Text == "")
+            {
+                textBox_current.Text = "0";
+            }
+            if (textBox_power.Text == "")
+            {
+                textBox_power.Text = "0";
+            }
+            if (textBox_voltage.Text == "")
+            {
+                textBox_voltage.Text = "0";
+            }
+            if (textBox_resistance.Text == "")
+            {
+                textBox_resistance.Text = "0";
+            }
+            if (textBox_max_connection.Text == "")
+            {
+                textBox_max_connection.Text = "0";
+            }
+            if (textBox_required_connection.Text == "")
+            {
+                textBox_required_connection.Text = "0";
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            CheckTextBoxesWhiteSpace();
             UpdateElement();
             Close();
         }
        
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            TextBox text = sender as TextBox;            
+            TextBox text = sender as TextBox;           
 
-            string value = text.Text;            
+            string value = text.Text;
+            
+            if("" == value)
+            {
+                value = "0";
+            }
 
             if (!double.TryParse(value, out _))
             {
                 text.Text = oldValue_double;
+                /*
+                if(text.Name != "textBox_current")
+                {                   
+                   textBox_current.Text = UseAltOhmsLawEquation(Convert.ToDouble(textBox_voltage.Text), Convert.ToDouble(textBox_resistance.Text));
+                }
+                if(text.Name != "textBox_power")
+                {
+                    
+                }
+                if(text.Name != "textBox_voltage")
+                {
+                    textBox_voltage.Text = UseOhmsLawEquation(Convert.ToDouble(textBox_current.Text), Convert.ToDouble(textBox_resistance.Text));
+                }
+                if(text.Name != "textBox_resistance")
+                {
+                    textBox_voltage.Text = UseReistanceEquation(Convert.ToDouble(textBox_voltage.Text), Convert.ToDouble(textBox_current.Text));
+                }
+                */
             }
             else
             {
@@ -84,11 +141,49 @@ namespace CircuitBoardDiagram
             }
         }
 
+        private void textBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            TextBox text = sender as TextBox;
+            oldValue_double = text.Text;
+        }
+
+        private string UseOhmsLawEquation(double i, double r)
+        {
+            double v;
+            
+            v = i * r;            
+
+            return Convert.ToString(v);
+        }
+
+        private string UseAltOhmsLawEquation(double v, double r)
+        {
+            double i;
+
+            i = v / r;
+
+            return Convert.ToString(i);
+        }
+
+        private string UseReistanceEquation(double v, double i)
+        {
+            double r;
+
+            r = v / i;
+
+            return Convert.ToString(r);
+        }
+
         private void textBox_TextChanged_int(object sender, TextChangedEventArgs e)
         {
             TextBox text = sender as TextBox;
 
             string value = text.Text;
+
+            if ("" == value)
+            {
+                value = "0";
+            }
 
             if (!int.TryParse(value, out _))
             {               
@@ -131,8 +226,6 @@ namespace CircuitBoardDiagram
                 textBox_max_connection.IsEnabled = true;
                 textBox_required_connection.IsEnabled = true;
             }
-        }
-
-        
+        }        
     }
 }

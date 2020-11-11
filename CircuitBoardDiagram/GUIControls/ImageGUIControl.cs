@@ -200,6 +200,8 @@ namespace CircuitBoardDiagram.GUIControls
 
         public void CreateElement(string currentImageName)
         {
+            mngc.isProgress = true;
+
             Image r = new Image();
             r.Height = 50;
             r.Width = 50;
@@ -400,6 +402,8 @@ namespace CircuitBoardDiagram.GUIControls
         }
         public void RecreateElementsFromSave(ListContainer lc)
         {
+            mngc.isProgress = true;
+
             this.lc = lc;           
             this.lc.dList.Clear();
             
@@ -444,8 +448,8 @@ namespace CircuitBoardDiagram.GUIControls
                     }                
                 }
             }
-        }
-        
+        }       
+
         private string RemoveNumbers(string name)
         {            
             foreach(char w in name)
@@ -457,6 +461,11 @@ namespace CircuitBoardDiagram.GUIControls
             }
 
             return name;
+        }
+
+        public void ResetQueue()
+        {
+            queue = 0;
         }
     }
 }

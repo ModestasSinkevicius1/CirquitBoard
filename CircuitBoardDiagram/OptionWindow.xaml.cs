@@ -169,7 +169,7 @@ namespace CircuitBoardDiagram
         }
 
         private void button_Copy1_Click(object sender, RoutedEventArgs e)
-        {
+        {        
             if (MessageBox.Show("Are you sure want to reset settings?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 ChangeBehaviour("alwaysGrid");

@@ -90,7 +90,7 @@ namespace CircuitBoardDiagram
                     isConnected = true;
                 else
                     isConnected = false;
-            }
+            }            
         }        
 
         public void SetPostitions()
