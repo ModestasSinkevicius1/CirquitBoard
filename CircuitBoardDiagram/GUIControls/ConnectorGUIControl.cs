@@ -34,6 +34,8 @@ namespace CircuitBoardDiagram.GUIControls
         private MenuGUIControl mngc;
         private ListContainer lc;
 
+        private bool once = true;
+
         public ConnectorGUIControl(MainWindow form, Canvas canvas, Grid grid, MessageGUIControl mgc, WireGUIControl wgc, MenuGUIControl mngc, ListContainer lc)
         {
             this.form = form;
@@ -62,7 +64,7 @@ namespace CircuitBoardDiagram.GUIControls
             }
             else 
             {               
-                wgc.DrawWireFromConnector(draggableControl, draggableControl.Tag.ToString(), lc.ec, lc.dList);
+                wgc.DrawWireFromConnector(draggableControl, draggableControl.Tag.ToString(), lc.ec, lc.dList);               
             }            
         }
 
@@ -130,8 +132,8 @@ namespace CircuitBoardDiagram.GUIControls
             int space = 3;
 
             if (singleLine)
-                space = 2;
-
+                space = 2;            
+            
             string[] nameABC = new string[space];
             string[] dotABC = new string[space];
 
@@ -140,7 +142,8 @@ namespace CircuitBoardDiagram.GUIControls
 
             wgc.turn = false;
 
-            wgc.previousLine.Name = pl.Name.ToString();            
+            if(!singleLine)
+                wgc.previousLine.Name = pl.Name.ToString();            
 
             foreach (Wire w in lc.wList)
             {
