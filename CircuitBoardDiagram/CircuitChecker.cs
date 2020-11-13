@@ -23,17 +23,18 @@ namespace CircuitBoardDiagram
         {
             this.lc = lc;
             this.hgc = hgc;
-        }
+        }       
 
         public void UpdateListContainer(ListContainer lc)
-        {
+        {            
             this.lc = lc;
         }
 
         public void CheckCircuit(SpecificElement se, int level)
         {           
             se.visited = true;
-            int ACfound = 0;           
+            int ACfound = 0;
+            
             foreach (SpecificElement se2 in se.GetElements())
             {                
                 if (RemoveNumbers(se2.GetName()) != "AC" && !se2.visited)

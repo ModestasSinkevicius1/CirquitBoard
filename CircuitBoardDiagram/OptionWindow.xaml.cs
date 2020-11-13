@@ -25,14 +25,17 @@ namespace CircuitBoardDiagram
 
         public bool isPressedOk = false;
         private string elementBehaviour = "alwaysGrid";
+        private string wireBehaviour = "alwaysGrid";
+        private bool isGrid = true;
 
-        public OptionWindow(double column, double row, string elementBehaviour)
+        public OptionWindow(double column, double row, string elementBehaviour, string wireBehaviour, bool isGrid)
         {            
             InitializeComponent();
             AddRow();
             AddColumn();
             ChangeSliderValue(column, row);
-            ChangeBehaviour(elementBehaviour);
+            ChangeBehaviour(elementBehaviour, wireBehaviour);
+            ChangeShowGrid(isGrid);
         }
 
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -59,7 +62,7 @@ namespace CircuitBoardDiagram
             }
         }
 
-        private void ChangeBehaviour(string elementBehaviour)
+        private void ChangeBehaviour(string elementBehaviour, string wireBehaviour)
         {
             if (elementBehaviour == "alwaysGrid")
                 radioButton.IsChecked = true;
@@ -67,6 +70,21 @@ namespace CircuitBoardDiagram
                 radioButton_Copy.IsChecked = true;
             else if (elementBehaviour == "neverGrid")
                 radioButton_Copy1.IsChecked = true;
+
+            if (wireBehaviour == "alwaysGrid")
+                radioButton1.IsChecked = true;
+            else if (wireBehaviour == "endGrid")
+                radioButton1_Copy.IsChecked = true;
+            else if (wireBehaviour == "neverGrid")
+                radioButton1_Copy1.IsChecked = true;
+        }
+
+        private void ChangeShowGrid(bool isGrid)
+        {
+            if (isGrid)
+                checkBox.IsChecked = true;
+            else
+                checkBox.IsChecked = false;
         }
 
         private void ChangeSliderValue(double column, double row)
@@ -144,6 +162,16 @@ namespace CircuitBoardDiagram
             return elementBehaviour;
         }
 
+        public string GetWireBehaviour()
+        {
+            return wireBehaviour;
+        }
+
+        public bool GetIsShowGrid()
+        {
+            return checkBox.IsChecked.Value;
+        }
+
         private void radioButton_Checked(object sender, RoutedEventArgs e)
         {
             if(radioButton.IsChecked==true)
@@ -152,7 +180,7 @@ namespace CircuitBoardDiagram
             }
         }
 
-        private void radioButton_Copy_Checked(object sender, RoutedEventArgs e)
+        private void radioButton_Checked2(object sender, RoutedEventArgs e)
         {
             if (radioButton_Copy.IsChecked == true)
             {
@@ -160,7 +188,7 @@ namespace CircuitBoardDiagram
             }
         }
 
-        private void radioButton_Copy1_Checked(object sender, RoutedEventArgs e)
+        private void radioButton_Checked3(object sender, RoutedEventArgs e)
         {
             if (radioButton_Copy1.IsChecked == true)
             {
@@ -168,11 +196,35 @@ namespace CircuitBoardDiagram
             }
         }
 
+        private void radioButton_wire_Checked(object sender, RoutedEventArgs e)
+        {
+            if (radioButton1.IsChecked == true)
+            {
+                wireBehaviour = "alwaysGrid";
+            }
+        }
+
+        private void radioButton_wire_Checked2(object sender, RoutedEventArgs e)
+        {
+            if (radioButton1_Copy.IsChecked == true)
+            {
+                wireBehaviour = "endGrid";
+            }
+        }
+
+        private void radioButton_wire_Checked3(object sender, RoutedEventArgs e)
+        {
+            if (radioButton1_Copy1.IsChecked == true)
+            {
+                wireBehaviour = "neverGrid";
+            }
+        }
+
         private void button_Copy1_Click(object sender, RoutedEventArgs e)
         {        
             if (MessageBox.Show("Are you sure want to reset settings?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                ChangeBehaviour("alwaysGrid");
+                ChangeBehaviour("alwaysGrid", "alwaysGrid");
                 ChangeSliderValue(50, 50);                
             }            
         }

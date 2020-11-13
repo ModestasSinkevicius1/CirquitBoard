@@ -36,6 +36,8 @@ namespace CircuitBoardDiagram.GUIControls
         private double maxY = -99999;
 
         public string elementBehaviour { get; set; } = "alwaysGrid";
+        public string wireBehaviour { get; set; } = "alwaysGrid";
+        public bool isGrid = true;
 
         private MainWindow form;
 
@@ -88,7 +90,7 @@ namespace CircuitBoardDiagram.GUIControls
         }
         private void MenuItemOption_Click(object sender, RoutedEventArgs e)
         {
-            OptionWindow opWindow = new OptionWindow(grid.ColumnDefinitions[0].Width.Value, grid.RowDefinitions[0].Height.Value, elementBehaviour);
+            OptionWindow opWindow = new OptionWindow(grid.ColumnDefinitions[0].Width.Value, grid.RowDefinitions[0].Height.Value, elementBehaviour, wireBehaviour, isGrid);
             bool? result = opWindow.ShowDialog();
 
             if (opWindow.isPressedOk == true)
@@ -103,6 +105,16 @@ namespace CircuitBoardDiagram.GUIControls
                 hgc.UpdateHighlightorSize();
 
                 elementBehaviour=opWindow.GetElementBehaviour();
+                wireBehaviour = opWindow.GetWireBehaviour();
+
+                isGrid = opWindow.GetIsShowGrid();
+
+                if (!isGrid)
+                {
+                    cgc.RemoveGridLines();
+                }
+                else
+                    cgc.CreateGridLines();
             }
         }
 
@@ -221,6 +233,7 @@ namespace CircuitBoardDiagram.GUIControls
             wgc.RecreateWires();
 
             cc.UpdateListContainer(lc);
+            form.UpdateListContainer(lc);
 
             form.lc = lc;
 

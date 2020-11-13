@@ -99,8 +99,12 @@ namespace CircuitBoardDiagram
             if(cc.circuitFull)
                 MessageBox.Show("Circuit is complete!");
             else
-                MessageBox.Show("Circuit is not complete!");
+                MessageBox.Show("Circuit is not complete!");           
             cc.circuitFull = false;
+        }
+        public void UpdateListContainer(ListContainer lc)
+        {
+            this.lc = lc;           
         }
 
         private string RemoveNumbers(string name)

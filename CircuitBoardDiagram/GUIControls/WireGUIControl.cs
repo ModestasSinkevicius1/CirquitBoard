@@ -715,7 +715,10 @@ namespace CircuitBoardDiagram.GUIControls
         }
 
         public void RecreateWires()
-        {           
+        {
+
+            string childElement = "";
+
             foreach (Wire w2 in lc.wList)
             {
                 Polyline pl = CreatePolyline();
@@ -733,11 +736,35 @@ namespace CircuitBoardDiagram.GUIControls
                             {
                                 d.GetDot().Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "WireDots/dotRed.png"));
                             }
-                        }
+                        }                                              
+
                         UpdateWireLocation(w2.dotA, w2.dotB, w2.GetPolyline());
-                    }                   
+                    }                    
                 }              
             }
+
+            foreach(SpecificElement se in lc.ec.GetAllElements())
+            {                
+                foreach(Polyline pl in se.GetPolylineList())
+                {
+                    foreach(Wire w2 in lc.wList)
+                    {
+                        if(pl.Name == w2.GetName())
+                        {
+                            if(se.GetName()==w2.elementA)
+                            {
+                                childElement = w2.elementB;
+                            }
+                            else if(se.GetName() == w2.elementB)
+                            {
+                                childElement = w2.elementA;
+                            }
+                            lc.ec.AddElementToParentElement(se.GetName(), childElement);
+                        }
+                    }
+                }
+            }
+
             mgc.UpdateContainer(lc);
         }
         private string RemoveNumbers(string name)

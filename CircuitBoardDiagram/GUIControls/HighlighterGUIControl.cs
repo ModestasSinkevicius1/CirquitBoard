@@ -67,9 +67,13 @@ namespace CircuitBoardDiagram.GUIControls
             cbox.Fill = scb;
             cbox.Opacity = 0.80f;           
 
-            canvas.Children.Add(cbox);
-            cbox.RenderTransform = new TranslateTransform(draggableControl.RenderTransform.Value.OffsetX, draggableControl.RenderTransform.Value.OffsetY);
-            
+            canvas.Children.Add(cbox);           
+            if (RemoveNumbers(draggableControl.Tag.ToString()) != "wire_connector")
+            {
+                cbox.RenderTransform = new TranslateTransform(draggableControl.RenderTransform.Value.OffsetX, draggableControl.RenderTransform.Value.OffsetY);
+            }
+            else
+                cbox.RenderTransform = new TranslateTransform(draggableControl.RenderTransform.Value.OffsetX-18, draggableControl.RenderTransform.Value.OffsetY-18);
             clList.Add(cbox);
         }
 
@@ -234,6 +238,18 @@ namespace CircuitBoardDiagram.GUIControls
         {
             highlighter.Visibility = Visibility.Visible;
             highlighter.RenderTransform = draggableControl.RenderTransform;
-        }              
+        }
+        private string RemoveNumbers(string name)
+        {
+            foreach (char w in name)
+            {
+                if (Char.IsNumber(w))
+                {
+                    name = name.Remove(name.Length - 1);
+                }
+            }
+
+            return name;
+        }
     }
 }

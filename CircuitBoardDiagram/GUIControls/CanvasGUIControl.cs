@@ -48,6 +48,8 @@ namespace CircuitBoardDiagram.GUIControls
         private Rectangle highlighter;
         private Rectangle indicator;
 
+        private string gridState = "empty";
+
         public CanvasGUIControl(MainWindow form, Canvas canvas, Grid grid, ListContainer lc, DockPanel dock_bottom, Rectangle highlighter, Rectangle indicator, ImageGUIControl igc, DotGUIControl dgc, ListImageGUIControl lgc, HighlighterGUIControl hgc, ShortcutGUIControl sgc)
         {
             this.form = form;
@@ -71,22 +73,44 @@ namespace CircuitBoardDiagram.GUIControls
             SetPositionStart();
         }
 
-        private void CreateGridLines()
-        {           
-            for (int j = 0; j < grid.RowDefinitions.Count; j++)
+        public void CreateGridLines()
+        {
+            if (gridState != "full")
             {
-                for (int i = 0; i < grid.ColumnDefinitions.Count; i++)
+                for (int j = 0; j < grid.RowDefinitions.Count; j++)
                 {
-                    Border bord = new Border();
-                    bord.BorderBrush = Brushes.Black;
-                    bord.BorderThickness = new Thickness(1);
-                    bord.Opacity = 0.2;
-                    bord.Width = 50;
-                    bord.Height = 50;
-                    canvas.Children.Add(bord);
-                    Canvas.SetTop(bord, j * 50);
-                    Canvas.SetLeft(bord, i * 50);
+                    for (int i = 0; i < grid.ColumnDefinitions.Count; i++)
+                    {
+                        Border bord = new Border();
+                        bord.BorderBrush = Brushes.Black;
+                        bord.BorderThickness = new Thickness(1);
+                        bord.Opacity = 0.2;
+                        bord.Width = 50;
+                        bord.Height = 50;
+                        canvas.Children.Add(bord);
+                        Canvas.SetTop(bord, j * 50);
+                        Canvas.SetLeft(bord, i * 50);
+                    }
                 }
+                gridState = "full";
+            }
+        }
+
+        public void RemoveGridLines()
+        {
+            if (gridState != "empty")
+            {
+                for (int i = 0; i < canvas.Children.Count; i++)
+                {
+                    UIElement b = canvas.Children[i] as UIElement;
+
+                    if (b.GetType() == typeof(Border))
+                    {
+                        canvas.Children.Remove(b);
+                        i--;
+                    }
+                }
+                gridState = "empty";
             }
         }
 
@@ -316,6 +340,6 @@ namespace CircuitBoardDiagram.GUIControls
 
             AddColumn(50, 12 * 8);
             AddRow(50, 7 * 5);            
-        }
+        }        
     }
 }
