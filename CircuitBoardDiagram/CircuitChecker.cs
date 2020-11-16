@@ -40,21 +40,22 @@ namespace CircuitBoardDiagram
                 if (RemoveNumbers(se2.GetName()) != "AC" && !se2.visited)
                 {                   
                     CheckCircuit(se2, level+1);
-                }
-                else if (!se2.visited || ACfound>0)
-                {
-                    if (level > 0)
+                    if(circuitFull)
                     {
-                        circuitFull = true;
                         hgc.ShowCheckCircuitBox(se2.GetElement());
                         break;
                     }
-                }                
-                ACfound++;
+                }
+                else if (RemoveNumbers(se2.GetName()) == "AC" && !se2.visited)
+                {                                       
+                    circuitFull = true;
+                    hgc.ShowCheckCircuitBox(se2.GetElement());
+                    break;                   
+                }
+                ACfound++;                                            
             }
             if (circuitFull)
-                hgc.ShowCheckCircuitBox(se.GetElement());
-                
+                hgc.ShowCheckCircuitBox(se.GetElement());             
         }
                    
         private string RemoveNumbers(string name)
