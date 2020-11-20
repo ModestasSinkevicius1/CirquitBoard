@@ -2,11 +2,11 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"                       
         xmlns:local="clr-namespace:CircuitBoardDiagram"       
-        mc:Ignorable="d"
-        Title="MainWindow" Height="605" Width="830" MinWidth="830" MinHeight="605" >
-    <Grid>
+        mc:Ignorable="d"                       
+        Title="MainWindow" Height="605" Width="909.5" MinWidth="830" MinHeight="605" >
+    <Grid Margin="0,0,-65,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="437*"/>
             <RowDefinition Height="137*"/>
@@ -15,20 +15,20 @@
             <ColumnDefinition Width="193"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="button_check" Style="{StaticResource RoundButtonTemplate}" Content="Check" Margin="0,32,20,0" BorderBrush="{x:Null}" Foreground="Black" FontFamily="Arial Black" Grid.Column="1" Height="38" MaxWidth="200" VerticalAlignment="Top" HorizontalAlignment="Right" Width="101" Click="Button_Click">
+        <Button x:Name="button_check" Style="{StaticResource RoundButtonTemplate}" Content="Check" Margin="0,36,79,0" BorderBrush="{x:Null}" Foreground="Black" FontFamily="Arial Black" Grid.Column="1" Height="38" MaxWidth="200" VerticalAlignment="Top" HorizontalAlignment="Right" Width="101" Click="Button_Click">
             <Button.Effect>
                 <DropShadowEffect BlurRadius="10" Direction="320"/>
             </Button.Effect>
         </Button>
-        <Border x:Name="canvas_border" BorderBrush="Black" BorderThickness="1" MinWidth="600" MinHeight="350" Margin="0,81,20,0" Grid.Column="1" ClipToBounds="True">
-            <Canvas Width="4800" Height="1750" MinHeight="350" MinWidth="600" Name="canvas" Grid.Column="1" ClipToBounds="True">
+        <Border x:Name="canvas_border" BorderBrush="Black" BorderThickness="1" MinWidth="600" MinHeight="300" Margin="49,110,79,0" Grid.Column="1" ClipToBounds="True">
+            <Canvas MinHeight="350" MinWidth="600" Name="canvas" Grid.Column="1" ClipToBounds="True" Margin="-1,-1,-4177,-1426">
                 <Canvas.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FFAEA8A8" Offset="0"/>
                         <GradientStop Color="White" Offset="1"/>
                     </LinearGradientBrush>
                 </Canvas.Background>
-                <Grid x:Name="canvasGrid" Width="600" Height="350" HorizontalAlignment="Stretch">
+                <Grid x:Name="canvasGrid" Width="600" Height="300" HorizontalAlignment="Stretch">
                     <Grid.Background>
                         <ImageBrush Opacity="0.5" TileMode="Tile"/>
                     </Grid.Background>
@@ -58,9 +58,10 @@
                     <Rectangle Fill="#338EFF07" RadiusY="1" x:Name="indicating_rectangle" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
                     <Rectangle Fill="#6609FF36" RadiusY="10" RadiusX="10" x:Name="highlighting_rectangle" Grid.ColumnSpan="2" Margin="-5,-5,45,45" Grid.RowSpan="2"/>
                 </Grid>
+
             </Canvas>
         </Border>
-        <DockPanel x:Name="dock_bottom" LastChildFill="False" Margin="1,10,20,17" RenderTransformOrigin="0.6,-0.07" Background="#7FA8A8A8" Grid.Column="1" Grid.Row="1">
+        <DockPanel x:Name="dock_bottom" LastChildFill="False" Margin="1,10,79,17" RenderTransformOrigin="0.6,-0.07" Background="#7FA8A8A8" Grid.Column="1" Grid.Row="1">
             <Image x:Name="image" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
             <Image x:Name="image_Copy" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
             <Image x:Name="image_Copy1" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
@@ -102,7 +103,7 @@
                 </Grid.ColumnDefinitions>
             </Grid>
         </Expander>
-        <Menu x:Name="menu" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="808" Grid.ColumnSpan="2">
+        <Menu x:Name="menu" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Width="888" Grid.ColumnSpan="2">
             <MenuItem x:Name="File" Header="File" Height="27" Width="45" Padding="11.5,0,0,0">
                 <MenuItem x:Name="File_New" Header="New"/>
                 <MenuItem x:Name="File_Open" Header="Open"/>
@@ -115,6 +116,24 @@
                 <MenuItem x:Name="Tools_Options" Header="Options"/>
             </MenuItem>
         </Menu>
+        <Border BorderBrush="Black" BorderThickness="1" Height="29" VerticalAlignment="Top" MinWidth="600" MaxWidth="4300" Margin="49,81,79,0" Grid.Column="1" ClipToBounds="True">
+            <Grid x:Name="hRulerGrid" Background="Khaki" ClipToBounds="True" Margin="0,0,-4300,0" HorizontalAlignment="Left" Width="4944">
+                <TickBar Minimum="0" Maximum="98" TickFrequency="5" Placement="Top" Fill="Black" 
+               VerticalAlignment="Bottom" Height="10"/>
+                <TickBar Minimum="0" Maximum="98" TickFrequency="1" Placement="Top" Fill="Black" 
+               VerticalAlignment="Bottom" Height="6"/>
+                <UniformGrid x:Name="uHRulerGrid" Rows="1" VerticalAlignment="Top">
+                </UniformGrid>
+            </Grid>
+        </Border>
+
+        <Border BorderBrush="Black" BorderThickness="1" Width="38" Margin="11,110,0,0" Grid.Column="1" ClipToBounds="True" HorizontalAlignment="Left">
+            <Grid x:Name="vRulerGrid" Background="Khaki" Margin="-1,-1,-1,-1426" ClipToBounds="True" HorizontalAlignment="Left" Width="38" Height="1752" VerticalAlignment="Top">
+                <TickBar Minimum="0" Maximum="50" TickFrequency="5" Placement="Right" Fill="Black" Width="10" HorizontalAlignment="Right"/>
+                <TickBar Minimum="0" Maximum="50" TickFrequency="1" Placement="Right" Fill="Black" Width="6" HorizontalAlignment="Right"/>
+                <UniformGrid x:Name="uVRulerGrid" Columns="1"/>
+            </Grid>
+        </Border>
         <Label x:Name="label" Content="Functions:" HorizontalAlignment="Left" Margin="10,32,0,0" VerticalAlignment="Top" Height="44" Width="172" FontSize="24"/>
         <Label x:Name="shortcut_hint" Content="" HorizontalAlignment="Left" Margin="127,32,0,0" VerticalAlignment="Top" FontSize="24" Width="auto" Grid.ColumnSpan="2"/>
     </Grid>

@@ -48,9 +48,15 @@ namespace CircuitBoardDiagram.GUIControls
         private Rectangle highlighter;
         private Rectangle indicator;
 
+        private Grid hRulerGrid;
+        private UniformGrid uHRulerGrid;
+
+        private Grid vRulerGrid;
+        private UniformGrid uVRulerGrid;
+
         private string gridState = "empty";
 
-        public CanvasGUIControl(MainWindow form, Canvas canvas, Grid grid, ListContainer lc, DockPanel dock_bottom, Rectangle highlighter, Rectangle indicator, ImageGUIControl igc, DotGUIControl dgc, ListImageGUIControl lgc, HighlighterGUIControl hgc, ShortcutGUIControl sgc)
+        public CanvasGUIControl(MainWindow form, Canvas canvas, Grid grid, ListContainer lc, DockPanel dock_bottom, Rectangle highlighter, Rectangle indicator, Grid hRulerGrid, UniformGrid uHRulerGrid, Grid vRulerGrid, UniformGrid uVRulerGrid, ImageGUIControl igc, DotGUIControl dgc, ListImageGUIControl lgc, HighlighterGUIControl hgc, ShortcutGUIControl sgc)
         {
             this.form = form;
             this.canvas = canvas;
@@ -59,6 +65,13 @@ namespace CircuitBoardDiagram.GUIControls
             this.dock_bottom = dock_bottom;
             this.highlighter = highlighter;
             this.indicator = indicator;
+
+            this.hRulerGrid = hRulerGrid;
+            this.uHRulerGrid = uHRulerGrid;
+
+            this.vRulerGrid = vRulerGrid;
+            this.uVRulerGrid = uVRulerGrid;
+
             this.igc = igc;
             this.dgc = dgc;
             this.lgc = lgc;
@@ -71,6 +84,121 @@ namespace CircuitBoardDiagram.GUIControls
             CreateGridLines();
 
             SetPositionStart();
+
+            CreateRuler();
+        }
+
+        private void CreateRuler()
+        {
+            /*Grid rulerGrid = new Grid();
+
+            rulerGrid.Width = 500;
+            rulerGrid.Height = 25;
+            rulerGrid.Background = Brushes.Khaki;
+
+            TickBar majorTick = new TickBar();
+            majorTick.Minimum = 0;
+            majorTick.Maximum = 50;
+            majorTick.TickFrequency = 5;
+            //majorTick.Placement = TickBarPlacement.Top;
+            majorTick.Fill = Brushes.Black;
+            //majorTick.VerticalAlignment = VerticalAlignment.Bottom;
+            majorTick.Height = 10;
+
+            TickBar minTick = new TickBar();
+            minTick.Minimum = 0;
+            minTick.Maximum = 50;
+            minTick.TickFrequency = 1;
+           //minTick.Placement = TickBarPlacement.Top;
+            minTick.Fill = Brushes.Black;
+            //minTick.VerticalAlignment = VerticalAlignment.Bottom;
+            minTick.Height = 6;
+
+            UniformGrid uGrid = new UniformGrid();
+            uGrid.Rows = 1;
+            uGrid.Width = 400;
+            //uGrid.VerticalAlignment = VerticalAlignment.Top;
+
+            for(int i=0;i<5;i++)
+            {
+                TextBlock tbRuler = new TextBlock();
+                tbRuler.Text = Convert.ToString(10 * i);
+                tbRuler.FontSize = 10;
+                //tbRuler.HorizontalAlignment = HorizontalAlignment.Center;
+
+                uGrid.Children.Add(tbRuler);
+            }
+
+            rulerGrid.Children.Add(majorTick);
+            rulerGrid.Children.Add(minTick);
+
+            rulerGrid.Children.Add(uGrid);
+
+            canvas.Children.Add(rulerGrid);
+            */
+
+            //hRulerGrid.Width = 4000;
+            //uHRulerGrid.Width = 4000;
+
+            AddTickNumbersHorizontalRuler();
+            AddTickNumbersVerticalRuler();
+            
+
+            hRulerGrid.RenderTransform = new TranslateTransform(canvas.RenderTransform.Value.OffsetX, hRulerGrid.RenderTransform.Value.OffsetY);
+            vRulerGrid.RenderTransform = new TranslateTransform(vRulerGrid.RenderTransform.Value.OffsetX, canvas.RenderTransform.Value.OffsetY);
+            //alignRulerToTop(rulerGrid);
+        }
+
+        private void AddTickNumbersHorizontalRuler()
+        {
+            int n = 500;
+
+            for (int i = 0; i < 47; i++)
+            {
+                TextBlock hTb = new TextBlock();
+                n = n - 10;
+                hTb.Text = Convert.ToString(n * -1);
+                hTb.FontSize = 10;
+                hTb.HorizontalAlignment = HorizontalAlignment.Center;
+                uHRulerGrid.Children.Add(hTb);
+            }
+
+            for (int i = 0; i < 49; i++)
+            {
+                TextBlock hTb = new TextBlock();
+                hTb.Text = Convert.ToString(10 * i);
+                hTb.FontSize = 10;
+                hTb.HorizontalAlignment = HorizontalAlignment.Center;
+                uHRulerGrid.Children.Add(hTb);
+            }
+        }
+
+        private void AddTickNumbersVerticalRuler()
+        {
+            int n = 120;
+
+            for (int i = 0; i < 5*3; i++)
+            {
+                TextBlock vTb = new TextBlock();
+                n = n - 10;
+                vTb.Text = Convert.ToString(n * -1);
+                vTb.FontSize = 10;
+                vTb.VerticalAlignment = VerticalAlignment.Center;
+                uVRulerGrid.Children.Add(vTb);
+            }           
+            for (int i = 0; i < 5*2; i++)
+            {
+                TextBlock vTb = new TextBlock();
+                vTb.Text = Convert.ToString(10 * i);
+                vTb.FontSize = 10;
+                vTb.VerticalAlignment = VerticalAlignment.Center;
+                uVRulerGrid.Children.Add(vTb);
+            }
+        }
+
+        private void alignRulerToTop(Grid rulerGrid)
+        {
+            Canvas.SetTop(rulerGrid, 50);
         }
 
         public void CreateGridLines()
@@ -174,27 +302,34 @@ namespace CircuitBoardDiagram.GUIControls
                 transform.Y = originTT.Y + (currentPosition.Y - clickPosition.Y);
 
                 draggableControl.RenderTransform = new TranslateTransform(transform.X, transform.Y);
+
+                hRulerGrid.RenderTransform = new TranslateTransform(transform.X, hRulerGrid.RenderTransform.Value.OffsetY);
+                vRulerGrid.RenderTransform = new TranslateTransform(vRulerGrid.RenderTransform.Value.OffsetX, transform.Y);
             }
 
             if (draggableControl.RenderTransform.Value.OffsetY > 50.0f)
             {
                 draggableControl.RenderTransform = new TranslateTransform(draggableControl.RenderTransform.Value.OffsetX, 50.0f);
+                vRulerGrid.RenderTransform = new TranslateTransform(vRulerGrid.RenderTransform.Value.OffsetX, 50.0f);
             }
 
             if (draggableControl.RenderTransform.Value.OffsetX > 50.0f)
             {
                 draggableControl.RenderTransform = new TranslateTransform(50.0f, draggableControl.RenderTransform.Value.OffsetY);
+                hRulerGrid.RenderTransform = new TranslateTransform(50.0f, hRulerGrid.RenderTransform.Value.OffsetY);
             }
 
             if (draggableControl.RenderTransform.Value.OffsetY < -1500f)
             {
                 //MessageBox.Show("I have reached my limit");
                 draggableControl.RenderTransform = new TranslateTransform(draggableControl.RenderTransform.Value.OffsetX, -1500f);
+                vRulerGrid.RenderTransform = new TranslateTransform(vRulerGrid.RenderTransform.Value.OffsetX, -1500f);
             }
 
             if (draggableControl.RenderTransform.Value.OffsetX < -4250f)
             {
                 draggableControl.RenderTransform = new TranslateTransform(-4250f, draggableControl.RenderTransform.Value.OffsetY);
+                hRulerGrid.RenderTransform = new TranslateTransform(-4250f, hRulerGrid.RenderTransform.Value.OffsetY);
             }
 
             if (!isOnImage || !form.IsMouseCaptured)

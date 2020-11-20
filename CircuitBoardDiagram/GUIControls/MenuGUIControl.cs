@@ -65,7 +65,7 @@ namespace CircuitBoardDiagram.GUIControls
             this.lc = lc;
             this.menu = menu;
 
-            LoadEvents();
+            LoadEvents();          
         }
 
         private void LoadEvents()

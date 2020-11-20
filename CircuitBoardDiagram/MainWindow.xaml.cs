@@ -61,7 +61,7 @@ namespace CircuitBoardDiagram
             wgc = new WireGUIControl(this, canvas, canvasGrid, mgc, lc, sgc);
             dgc = new DotGUIControl(this, canvas, canvasGrid, wgc, lc);
             igc = new ImageGUIControl(this, canvas, canvasGrid, dgc, hgc, wgc, mgc, mngc, lc, sgc);
-            cgc = new CanvasGUIControl(this, canvas, canvasGrid, lc, dock_bottom, highlighting_rectangle, indicating_rectangle, igc, dgc, lgc, hgc, sgc);
+            cgc = new CanvasGUIControl(this, canvas, canvasGrid, lc, dock_bottom, highlighting_rectangle, indicating_rectangle, hRulerGrid, uHRulerGrid, vRulerGrid, uVRulerGrid, igc, dgc, lgc, hgc, sgc);
             cogc = new ConnectorGUIControl(this, canvas, canvasGrid, mgc, wgc, mngc, lc);
             
             mngc.cgc = cgc;
@@ -78,7 +78,7 @@ namespace CircuitBoardDiagram
 
             mngc.cc = cc;
 
-            lgc.LoadImages(grid_expander);                       
+            lgc.LoadImages(grid_expander);            
         }                   
 
         private void Button_Click(object sender, RoutedEventArgs e)
