@@ -15,7 +15,7 @@ namespace CircuitBoardDiagram.GUIControls
     class HighlighterGUIControl
     {
         public Rectangle highlighter { get; set; }
-        public Rectangle indicator { get; set; }
+        public Rectangle indicator { get; set; }        
 
         public List<Rectangle> clList = new List<Rectangle>();
 
@@ -25,7 +25,7 @@ namespace CircuitBoardDiagram.GUIControls
         public HighlighterGUIControl(Canvas canvas, Grid grid, Rectangle highlighter, Rectangle indicator)
         {
             this.highlighter = highlighter;
-            this.indicator = indicator;
+            this.indicator = indicator;            
             this.canvas = canvas;
             this.grid = grid;
             //LoadCheckCircuitBox();
@@ -75,7 +75,7 @@ namespace CircuitBoardDiagram.GUIControls
             else
                 cbox.RenderTransform = new TranslateTransform(draggableControl.RenderTransform.Value.OffsetX-18, draggableControl.RenderTransform.Value.OffsetY-18);
             clList.Add(cbox);
-        }
+        }       
 
         public void IndicateCell()
         {
@@ -239,6 +239,14 @@ namespace CircuitBoardDiagram.GUIControls
             highlighter.Visibility = Visibility.Visible;
             highlighter.RenderTransform = draggableControl.RenderTransform;
         }
+
+        public void SelectImageFromList(Image img)
+        {
+            
+
+            //listImage_selector.RenderTransform = new TranslateTransform(img.RenderTransform.Value.OffsetX, img.RenderTransform.Value.OffsetY);
+        }
+
         private string RemoveNumbers(string name)
         {
             foreach (char w in name)

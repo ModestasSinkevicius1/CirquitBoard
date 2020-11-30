@@ -142,6 +142,18 @@
   <ItemGroup>
     <Resource Include="tenor.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="add.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="info.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="delete.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="add_2.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.113.1\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.113.1\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

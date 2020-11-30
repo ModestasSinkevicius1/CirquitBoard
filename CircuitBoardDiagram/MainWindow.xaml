@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"                       
         xmlns:local="clr-namespace:CircuitBoardDiagram"       
         mc:Ignorable="d"                       
-        Title="MainWindow" Height="605" Width="909.5" MinWidth="830" MinHeight="605" >
+        Title="MainWindow" Height="776" Width="909.5" MinWidth="830" MinHeight="605" >
     <Grid Margin="0,0,-65,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="437*"/>
-            <RowDefinition Height="137*"/>
+            <RowDefinition Height="607*"/>
+            <RowDefinition Height="138*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="193"/>
@@ -20,7 +20,7 @@
                 <DropShadowEffect BlurRadius="10" Direction="320"/>
             </Button.Effect>
         </Button>
-        <Border x:Name="canvas_border" BorderBrush="Black" BorderThickness="1" MinWidth="600" MinHeight="300" Margin="49,110,79,0" Grid.Column="1" ClipToBounds="True">
+        <Border x:Name="canvas_border" BorderBrush="Black" BorderThickness="1" MinWidth="600" MinHeight="300" Margin="39,206,78,0" Grid.Column="1" ClipToBounds="True">
             <Canvas MinHeight="350" MinWidth="600" Name="canvas" Grid.Column="1" ClipToBounds="True" Margin="-1,-1,-4177,-1426">
                 <Canvas.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -58,16 +58,15 @@
                     <Rectangle Fill="#338EFF07" RadiusY="1" x:Name="indicating_rectangle" Grid.ColumnSpan="1" Grid.RowSpan="1"/>
                     <Rectangle Fill="#6609FF36" RadiusY="10" RadiusX="10" x:Name="highlighting_rectangle" Grid.ColumnSpan="2" Margin="-5,-5,45,45" Grid.RowSpan="2"/>
                 </Grid>
-
             </Canvas>
         </Border>
-        <DockPanel x:Name="dock_bottom" LastChildFill="False" Margin="1,10,79,17" RenderTransformOrigin="0.6,-0.07" Background="#7FA8A8A8" Grid.Column="1" Grid.Row="1">
-            <Image x:Name="image" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
-            <Image x:Name="image_Copy" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
-            <Image x:Name="image_Copy1" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
-            <Image x:Name="image_Copy2" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
-            <Image x:Name="image_Copy3" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
-            <Image x:Name="image_Copy4" Height="100" VerticalAlignment="Top" Width="100" Margin="0,5,0,0" Stretch="Fill"/>
+        <DockPanel x:Name="dock_bottom" LastChildFill="False" Margin="1,10,79,17" RenderTransformOrigin="0.6,-0.07" Background="#7FA8A8A8" Grid.Column="1" Grid.Row="1" MinHeight="111">
+            <Image x:Name="image" Width="100" Margin="0,5,0,5"/>
+            <Image x:Name="image_Copy" Width="100" Margin="0,5,0,5"/>
+            <Image x:Name="image_Copy1" Width="100" Margin="0,5,0,5"/>
+            <Image x:Name="image_Copy2" Width="100" Margin="0,5,0,5"/>
+            <Image x:Name="image_Copy3" Width="100" Margin="0,5,0,5"/>
+            <Image x:Name="image_Copy4" Width="100" Margin="0,5,0,5"/>
         </DockPanel>
         <DockPanel HorizontalAlignment="Left" MinHeight="476" Margin="10,81,0,17" Width="172" Background="#7FA8A8A8" Grid.RowSpan="2"/>
         <Expander x:Name="expander" Header="Element list" MinHeight="476" MinWidth="172" Margin="10,81,11,17" Grid.RowSpan="2">
@@ -116,25 +115,45 @@
                 <MenuItem x:Name="Tools_Options" Header="Options"/>
             </MenuItem>
         </Menu>
-        <Border BorderBrush="Black" BorderThickness="1" Height="29" VerticalAlignment="Top" MinWidth="600" MaxWidth="4300" Margin="49,81,79,0" Grid.Column="1" ClipToBounds="True">
-            <Grid x:Name="hRulerGrid" Background="Khaki" ClipToBounds="True" Margin="0,0,-4300,0" HorizontalAlignment="Left" Width="4944">
-                <TickBar Minimum="0" Maximum="98" TickFrequency="5" Placement="Top" Fill="Black" 
+        <Border BorderBrush="Black" BorderThickness="1" Height="29" VerticalAlignment="Top" MinWidth="600" MaxWidth="4300" Margin="38,177,79,0" Grid.Column="1" ClipToBounds="True">
+            <Grid x:Name="hRulerGrid" Background="Khaki" ClipToBounds="True" Margin="0,0,-4300,0" HorizontalAlignment="Left" Width="4948">
+                <TickBar Minimum="0" Maximum="99" TickFrequency="5" Placement="Top" Fill="Black" 
                VerticalAlignment="Bottom" Height="10"/>
-                <TickBar Minimum="0" Maximum="98" TickFrequency="1" Placement="Top" Fill="Black" 
+                <TickBar Minimum="0" Maximum="99" TickFrequency="1" Placement="Top" Fill="Black" 
                VerticalAlignment="Bottom" Height="6"/>
                 <UniformGrid x:Name="uHRulerGrid" Rows="1" VerticalAlignment="Top">
                 </UniformGrid>
             </Grid>
         </Border>
 
-        <Border BorderBrush="Black" BorderThickness="1" Width="38" Margin="11,110,0,0" Grid.Column="1" ClipToBounds="True" HorizontalAlignment="Left">
-            <Grid x:Name="vRulerGrid" Background="Khaki" Margin="-1,-1,-1,-1426" ClipToBounds="True" HorizontalAlignment="Left" Width="38" Height="1752" VerticalAlignment="Top">
-                <TickBar Minimum="0" Maximum="50" TickFrequency="5" Placement="Right" Fill="Black" Width="10" HorizontalAlignment="Right"/>
-                <TickBar Minimum="0" Maximum="50" TickFrequency="1" Placement="Right" Fill="Black" Width="6" HorizontalAlignment="Right"/>
-                <UniformGrid x:Name="uVRulerGrid" Columns="1"/>
+        <Border BorderBrush="Black" BorderThickness="1" Width="38" Margin="1,206,0,0" ClipToBounds="True" HorizontalAlignment="Left" Grid.Column="1">
+            <Grid x:Name="vRulerGrid" Background="Khaki" Margin="0,0,0,-1427" ClipToBounds="True" Height="1752" VerticalAlignment="Top" Width="36">
+                <TickBar Minimum="0" Maximum="35" TickFrequency="5" Placement="Right" Fill="Black" Width="10" HorizontalAlignment="Right" Margin="0,0,0,5"/>
+                <TickBar Minimum="0" Maximum="35" TickFrequency="1" Placement="Right" Fill="Black" Width="6" HorizontalAlignment="Right" Margin="0,0,0,5"/>
+                <UniformGrid x:Name="uVRulerGrid" Columns="1" Margin="0,0,0,5"/>
             </Grid>
         </Border>
         <Label x:Name="label" Content="Functions:" HorizontalAlignment="Left" Margin="10,32,0,0" VerticalAlignment="Top" Height="44" Width="172" FontSize="24"/>
-        <Label x:Name="shortcut_hint" Content="" HorizontalAlignment="Left" Margin="127,32,0,0" VerticalAlignment="Top" FontSize="24" Width="auto" Grid.ColumnSpan="2"/>
+        <Label x:Name="shortcut_hint" Content="" HorizontalAlignment="Left" Margin="127,32,0,0" VerticalAlignment="Top" FontSize="24" Width="10" Height="42"/>
+
+        <Grid Grid.Column="1" HorizontalAlignment="Left" Height="96" Margin="1,81,0,0" VerticalAlignment="Top" Width="695">
+            <Separator HorizontalAlignment="Left" Height="86" Margin="0" VerticalAlignment="Top" Width="119"/>
+            <Label x:Name="label1" Content="Tools" HorizontalAlignment="Left" FontSize="24" Margin="0,0,0,57"/>
+            <ToggleButton x:Name="button_create" HorizontalAlignment="Left" Margin="0,53,0,0" VerticalAlignment="Top" Width="37" Height="37" Click="button_create_Click" Background="White" >
+                <StackPanel>
+                    <Image Source="D:\GitHub\CirquitBoard\CircuitBoardDiagram\bin\Debug\Custom\buttonIcons\add.ico"/>
+                </StackPanel>
+            </ToggleButton>
+            <ToggleButton x:Name="button_info" HorizontalAlignment="Left" Margin="42,53,0,0" VerticalAlignment="Top" Width="37" Height="37" Click="button_info_Click" Background="White">
+                <StackPanel>
+                    <Image Source="D:\GitHub\CirquitBoard\CircuitBoardDiagram\bin\Debug\Custom\buttonIcons\info.ico"/>
+                </StackPanel>
+            </ToggleButton>
+            <ToggleButton x:Name="button_delete" HorizontalAlignment="Left" Margin="84,53,0,0" VerticalAlignment="Top" Width="37" Height="37" Click="button_delete_Click" Background="White">
+                <StackPanel>
+                    <Image Source="D:\GitHub\CirquitBoard\CircuitBoardDiagram\bin\Debug\Custom\buttonIcons\delete.ico"/>
+                </StackPanel>
+            </ToggleButton>
+        </Grid>
     </Grid>
 </Window>

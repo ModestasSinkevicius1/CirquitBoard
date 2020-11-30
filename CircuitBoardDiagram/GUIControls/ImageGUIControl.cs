@@ -49,6 +49,8 @@ namespace CircuitBoardDiagram.GUIControls
 
         private Point startPosition;
         private Image tmpImage;
+        public string modeTool { get; set; } = "";
+
         public ImageGUIControl(MainWindow form, Canvas canvas, Grid grid, DotGUIControl dgc, HighlighterGUIControl hgc, WireGUIControl wgc, MessageGUIControl mgc, MenuGUIControl mngc, ListContainer lc, ShortcutGUIControl sgc)
         {            
             this.form = form;
@@ -66,7 +68,7 @@ namespace CircuitBoardDiagram.GUIControls
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Image draggableControl = sender as Image;           
-            if (!Keyboard.IsKeyDown(Key.W) && !Keyboard.IsKeyDown(Key.C) && !Keyboard.IsKeyDown(Key.X))
+            if (!Keyboard.IsKeyDown(Key.W) && !Keyboard.IsKeyDown(Key.C) && !Keyboard.IsKeyDown(Key.X) && modeTool != "delete")
             {
                 dgc.UpadateDotsLocation(draggableControl, lc.ec);
                 //highlighting_rectangle.Visibility = Visibility.Hidden;
@@ -80,7 +82,7 @@ namespace CircuitBoardDiagram.GUIControls
                 startPosition = Mouse.GetPosition(form);
                 dgc.BeginHide(startPosition, lc.ec.GetDots(draggableControl.Tag.ToString()));
             }
-            else if (Keyboard.IsKeyDown(Key.X))
+            if (Keyboard.IsKeyDown(Key.X) || modeTool == "delete")
             {
                 if (!wgc.turn)
                 {
@@ -89,7 +91,7 @@ namespace CircuitBoardDiagram.GUIControls
                 else
                     mgc.ShowWarningMessage(draggableControl, "Wiring process \n detected!");
             }
-            else if (Keyboard.IsKeyDown(Key.C))
+            if (Keyboard.IsKeyDown(Key.C) || modeTool == "info")
             {
                 mgc.ShowPopupMessage(draggableControl);
             }

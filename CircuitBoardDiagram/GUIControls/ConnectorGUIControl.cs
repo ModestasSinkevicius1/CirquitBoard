@@ -35,6 +35,7 @@ namespace CircuitBoardDiagram.GUIControls
         private ListContainer lc;
 
         private bool once = true;
+        public string modeTool { get; set; } = "";
 
         public ConnectorGUIControl(MainWindow form, Canvas canvas, Grid grid, MessageGUIControl mgc, WireGUIControl wgc, MenuGUIControl mngc, ListContainer lc)
         {

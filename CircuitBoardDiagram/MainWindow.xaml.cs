@@ -43,10 +43,14 @@ namespace CircuitBoardDiagram
         private MenuGUIControl mngc;
         private ConnectorGUIControl cogc;
 
+        private string modeTool = "create";
+
         private CircuitChecker cc;
 
-        public ListContainer lc = new ListContainer();      
-        
+        public ListContainer lc = new ListContainer();
+
+        private List<ToggleButton> tbuttonList = new List<ToggleButton>();
+
         public MainWindow()
         {            
             InitializeComponent();            
@@ -78,8 +82,20 @@ namespace CircuitBoardDiagram
 
             mngc.cc = cc;
 
-            lgc.LoadImages(grid_expander);            
+            lgc.hgc = hgc;
+            lgc.grid_expander = grid_expander;
+
+            lgc.LoadImages();
+
+            CreateListForToolButtons();
         }                   
+
+        private void CreateListForToolButtons()
+        {
+            tbuttonList.Add(button_create);
+            tbuttonList.Add(button_info);
+            tbuttonList.Add(button_delete);
+        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {           
@@ -118,6 +134,83 @@ namespace CircuitBoardDiagram
             }
 
             return name;
-        }               
+        }
+
+        private void button_create_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleButton tButton = sender as ToggleButton;
+
+            CheckForActiveModes(tButton);
+
+            if (button_create.IsChecked == true)
+            {
+                cgc.modeTool = "create";
+                igc.modeTool = "create";
+                wgc.modeTool = "create";
+                cogc.modeTool = "create";
+            }
+            else
+            {
+                cgc.modeTool = "";
+                igc.modeTool = "";
+                wgc.modeTool = "";
+                cogc.modeTool = "";
+            }
+        }      
+
+        private void button_info_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleButton tButton = sender as ToggleButton;
+
+            CheckForActiveModes(tButton);
+
+            if (button_info.IsChecked == true)
+            {
+                cgc.modeTool = "info";
+                igc.modeTool = "info";
+                wgc.modeTool = "info";
+                cogc.modeTool = "info";
+            }
+            else
+            {
+                cgc.modeTool = "";
+                igc.modeTool = "";
+                wgc.modeTool = "";
+                cogc.modeTool = "";
+            }
+        }
+
+        private void button_delete_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleButton tButton = sender as ToggleButton;
+
+            CheckForActiveModes(tButton);
+
+            if (button_delete.IsChecked == true)
+            {
+                cgc.modeTool = "delete";
+                igc.modeTool = "delete";
+                wgc.modeTool = "delete";
+                cogc.modeTool = "delete";
+            }
+            else
+            {
+                cgc.modeTool = "";
+                igc.modeTool = "";
+                wgc.modeTool = "";
+                cogc.modeTool = "";
+            }
+        }
+
+        private void CheckForActiveModes(ToggleButton activeButton)
+        {
+            foreach(ToggleButton tbutton in tbuttonList)
+            {
+                if(activeButton != tbutton)
+                {
+                    tbutton.IsChecked = false;
+                }
+            }
+        }
     }
 }

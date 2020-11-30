@@ -55,6 +55,7 @@ namespace CircuitBoardDiagram.GUIControls
         private UniformGrid uVRulerGrid;
 
         private string gridState = "empty";
+        public string modeTool { get; set; } = "";
 
         public CanvasGUIControl(MainWindow form, Canvas canvas, Grid grid, ListContainer lc, DockPanel dock_bottom, Rectangle highlighter, Rectangle indicator, Grid hRulerGrid, UniformGrid uHRulerGrid, Grid vRulerGrid, UniformGrid uVRulerGrid, ImageGUIControl igc, DotGUIControl dgc, ListImageGUIControl lgc, HighlighterGUIControl hgc, ShortcutGUIControl sgc)
         {
@@ -78,6 +79,8 @@ namespace CircuitBoardDiagram.GUIControls
             this.hgc = hgc;
             this.sgc = sgc;
 
+            this.modeTool = modeTool;
+
             LoadEvents();
             LoadGrids();
 
@@ -86,74 +89,23 @@ namespace CircuitBoardDiagram.GUIControls
             SetPositionStart();
 
             CreateRuler();
-        }
+        } 
 
         private void CreateRuler()
-        {
-            /*Grid rulerGrid = new Grid();
-
-            rulerGrid.Width = 500;
-            rulerGrid.Height = 25;
-            rulerGrid.Background = Brushes.Khaki;
-
-            TickBar majorTick = new TickBar();
-            majorTick.Minimum = 0;
-            majorTick.Maximum = 50;
-            majorTick.TickFrequency = 5;
-            //majorTick.Placement = TickBarPlacement.Top;
-            majorTick.Fill = Brushes.Black;
-            //majorTick.VerticalAlignment = VerticalAlignment.Bottom;
-            majorTick.Height = 10;
-
-            TickBar minTick = new TickBar();
-            minTick.Minimum = 0;
-            minTick.Maximum = 50;
-            minTick.TickFrequency = 1;
-           //minTick.Placement = TickBarPlacement.Top;
-            minTick.Fill = Brushes.Black;
-            //minTick.VerticalAlignment = VerticalAlignment.Bottom;
-            minTick.Height = 6;
-
-            UniformGrid uGrid = new UniformGrid();
-            uGrid.Rows = 1;
-            uGrid.Width = 400;
-            //uGrid.VerticalAlignment = VerticalAlignment.Top;
-
-            for(int i=0;i<5;i++)
-            {
-                TextBlock tbRuler = new TextBlock();
-                tbRuler.Text = Convert.ToString(10 * i);
-                tbRuler.FontSize = 10;
-                //tbRuler.HorizontalAlignment = HorizontalAlignment.Center;
-
-                uGrid.Children.Add(tbRuler);
-            }
-
-            rulerGrid.Children.Add(majorTick);
-            rulerGrid.Children.Add(minTick);
-
-            rulerGrid.Children.Add(uGrid);
-
-            canvas.Children.Add(rulerGrid);
-            */
-
-            //hRulerGrid.Width = 4000;
-            //uHRulerGrid.Width = 4000;
-
+        {            
             AddTickNumbersHorizontalRuler();
             AddTickNumbersVerticalRuler();
             
 
             hRulerGrid.RenderTransform = new TranslateTransform(canvas.RenderTransform.Value.OffsetX, hRulerGrid.RenderTransform.Value.OffsetY);
-            vRulerGrid.RenderTransform = new TranslateTransform(vRulerGrid.RenderTransform.Value.OffsetX, canvas.RenderTransform.Value.OffsetY);
-            //alignRulerToTop(rulerGrid);
+            vRulerGrid.RenderTransform = new TranslateTransform(vRulerGrid.RenderTransform.Value.OffsetX, canvas.RenderTransform.Value.OffsetY);            
         }
 
         private void AddTickNumbersHorizontalRuler()
         {
-            int n = 500;
+            int n = 510;
 
-            for (int i = 0; i < 47; i++)
+            for (int i = 0; i < 50; i++)
             {
                 TextBlock hTb = new TextBlock();
                 n = n - 10;
@@ -175,9 +127,9 @@ namespace CircuitBoardDiagram.GUIControls
 
         private void AddTickNumbersVerticalRuler()
         {
-            int n = 120;
+            int n = 130;
 
-            for (int i = 0; i < 5*3; i++)
+            for (int i = 0; i < 17; i++)
             {
                 TextBlock vTb = new TextBlock();
                 n = n - 10;
@@ -185,8 +137,8 @@ namespace CircuitBoardDiagram.GUIControls
                 vTb.FontSize = 10;
                 vTb.VerticalAlignment = VerticalAlignment.Center;
                 uVRulerGrid.Children.Add(vTb);
-            }           
-            for (int i = 0; i < 5*2; i++)
+            }      
+            for (int i = 0; i < 18; i++)
             {
                 TextBlock vTb = new TextBlock();
                 vTb.Text = Convert.ToString(10 * i);
@@ -194,12 +146,7 @@ namespace CircuitBoardDiagram.GUIControls
                 vTb.VerticalAlignment = VerticalAlignment.Center;
                 uVRulerGrid.Children.Add(vTb);
             }
-        }
-
-        private void alignRulerToTop(Grid rulerGrid)
-        {
-            Canvas.SetTop(rulerGrid, 50);
-        }
+        }       
 
         public void CreateGridLines()
         {
@@ -258,14 +205,14 @@ namespace CircuitBoardDiagram.GUIControls
 
         private void canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.E) && lgc.currentImageName != null)
-            {
+            if ((Keyboard.IsKeyDown(Key.E) || modeTool == "create") && lgc.currentImageName != null)
+            {                
                 igc.CreateElement(lgc.currentImageName);
                 dgc.CreateDot(igc.elementName, 4);
                 lgc.AddImageToCommon(lgc.currentImageName, dock_bottom);
                 igc.UpadateImage();
             }
-            else if (Keyboard.IsKeyDown(Key.E))
+            else if (Keyboard.IsKeyDown(Key.E) || modeTool == "create")
             {
                 mgc.ShowWarningMessage(null, "Select element first");
             }

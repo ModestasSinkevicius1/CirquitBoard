@@ -15,14 +15,19 @@ namespace CircuitBoardDiagram.GUIControls
     {
         private int next = 0;
         public string currentImageName { get; set; }
+        public HighlighterGUIControl hgc { get; set; }
+        public Grid grid_expander { get; set; }
 
         private void image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            Image img = sender as Image;
-            currentImageName = img.Tag.ToString();            
+        {           
+            Image img = sender as Image;           
+
+            currentImageName = img.Tag.ToString();
+
+            HighlightSelectedElement(img);
         }
 
-        public void LoadImages(Grid grid_expander)
+        public void LoadImages()
         {
             DatabaseControl dc = new DatabaseControl();
 
@@ -45,17 +50,25 @@ namespace CircuitBoardDiagram.GUIControls
                 img.Tag = e.GetElementType();
                 img.Stretch = Stretch.Fill;
 
-                img.MouseLeftButtonDown += new MouseButtonEventHandler(image_MouseLeftButtonDown);
+                img.MouseLeftButtonDown += new MouseButtonEventHandler(image_MouseLeftButtonDown);               
 
-                Grid.SetColumn(img, i);
-                Grid.SetRow(img, y);
-                grid_expander.Children.Add(img);
+
+                Border b = new Border();
+                b.BorderBrush = Brushes.Black;               
+                b.Child = img;
+
+
+                Grid.SetColumn(b, i);
+                Grid.SetRow(b, y);
+
+                grid_expander.Children.Add(b);                
+
                 i++;
             }
         }
         
         private void CommonImage_MouseDown(object sender, MouseButtonEventArgs e)
-        {
+        {           
             Image img = sender as Image;
             currentImageName = img.Tag.ToString();            
         }
@@ -96,6 +109,26 @@ namespace CircuitBoardDiagram.GUIControls
                         next++;
                     }
                     i++;
+                }
+            }
+        }
+
+        public void HighlightSelectedElement(Image img)
+        {
+            DeselectOtherElements(img);
+
+            Border b = img.Parent as Border;
+
+            b.BorderThickness = new Thickness(1);
+        }
+
+        public void DeselectOtherElements(Image img)
+        {
+            foreach(Border b in grid_expander.Children)
+            {
+                if(b.Child != img)
+                {
+                    b.BorderThickness = new Thickness(0);
                 }
             }
         }

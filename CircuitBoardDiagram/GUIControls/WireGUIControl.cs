@@ -17,7 +17,7 @@ namespace CircuitBoardDiagram.GUIControls
 {
     class WireGUIControl
     {
-        public bool turn = false;       
+        public bool turn = false;
         public string previousElementName = "";
         public string previousDotName = "";
 
@@ -41,20 +41,22 @@ namespace CircuitBoardDiagram.GUIControls
 
         private int queue = 0;
 
-        private Ellipse el;                                         
+        private Ellipse el;
+
+        public string modeTool { get; set; } = "";
 
         public WireGUIControl(MainWindow form, Canvas canvas, Grid grid, MessageGUIControl mgc, ListContainer lc, ShortcutGUIControl sgc)
         {
             this.form = form;
             this.canvas = canvas;
             this.grid = grid;
-            this.mgc = mgc;           
+            this.mgc = mgc;
             this.lc = lc;
             this.sgc = sgc;
         }
 
         public void BeginDrawing()
-        {           
+        {
             Thread th = new Thread(UpdateWirePosition);
             th.IsBackground = true;
             th.Start();
@@ -68,7 +70,7 @@ namespace CircuitBoardDiagram.GUIControls
         public void UpdateWirePosition()
         {
             //Point startPostition = (Point)obj;
-            
+
             while (turn)
             {
                 Thread.Sleep(30);
@@ -76,7 +78,7 @@ namespace CircuitBoardDiagram.GUIControls
                 {
                     UpdateWireLocation(previousDotName, "mouse", previousLine);
                 }));
-            }          
+            }
         }
 
         public void UpdateListContainer(ListContainer lc)
@@ -91,8 +93,8 @@ namespace CircuitBoardDiagram.GUIControls
             SolidColorBrush bc = new SolidColorBrush();
 
             if (!turn)
-            {                                
-                if (Keyboard.IsKeyDown(Key.X))
+            {
+                if (Keyboard.IsKeyDown(Key.X) || modeTool == "delete")
                 {
                     bc.Color = Colors.Red;
                 }
@@ -101,10 +103,10 @@ namespace CircuitBoardDiagram.GUIControls
 
                 ChangeLineStyle(pl, bc, 4);
             }
-            else if(pl != previousLine)
+            else if (pl != previousLine)
             {
                 bc.Color = Colors.Gold;
-                ChangeLineStyle(pl, bc, 4);                
+                ChangeLineStyle(pl, bc, 4);
                 /*el = new Ellipse();
                 el.Stroke = Brushes.Black;
                 el.Fill = Brushes.AliceBlue;
@@ -113,8 +115,8 @@ namespace CircuitBoardDiagram.GUIControls
                 canvas.Children.Add(el);
                 */
             }
-        }                             
-        
+        }
+
         private void Polyline_mouseLeave(object sender, MouseEventArgs e)
         {
             sgc.UpdateText("OnCanvas");
@@ -123,16 +125,16 @@ namespace CircuitBoardDiagram.GUIControls
 
             bc.Color = Colors.Black;
             ChangeLineStyle(pl, bc, 1);
-           
+
             if (pl != previousLine)
-            {                
+            {
                 canvas.Children.Remove(el);
-                el = null;                
+                el = null;
             }
         }
 
         private void Polyline_mouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {           
+        {
             Image img = new Image();
 
             bool foundA = false;
@@ -143,20 +145,20 @@ namespace CircuitBoardDiagram.GUIControls
 
             Polyline pl = sender as Polyline;
 
-            if (Keyboard.IsKeyDown(Key.X))
+            if (Keyboard.IsKeyDown(Key.X) || modeTool == "delete")
             {
-                foreach(Wire w2 in lc.wList)
+                foreach (Wire w2 in lc.wList)
                 {
-                    if(w2.GetPolyline().Name == pl.Name)
+                    if (w2.GetPolyline().Name == pl.Name)
                     {
-                        if(RemoveNumbers(w2.elementA) == "wire_connector" && lc.ec.GetConnectionCount(w2.elementA)<4)
+                        if (RemoveNumbers(w2.elementA) == "wire_connector" && lc.ec.GetConnectionCount(w2.elementA) < 4)
                         {
                             elementA = w2.elementA;
                             elementB = w2.elementB;
 
                             foundA = true;
                         }
-                        if(RemoveNumbers(w2.elementB) == "wire_connector" && lc.ec.GetConnectionCount(w2.elementB)<4)
+                        if (RemoveNumbers(w2.elementB) == "wire_connector" && lc.ec.GetConnectionCount(w2.elementB) < 4)
                         {
                             elementB = w2.elementB;
                             elementA = w2.elementA;
@@ -165,18 +167,18 @@ namespace CircuitBoardDiagram.GUIControls
                         }
                     }
                 }
-                if(foundA)
+                if (foundA)
                 {
                     RewireBetweenElements(elementA, elementB);
                 }
-                if(foundB)
+                if (foundB)
                 {
                     RewireBetweenElements(elementB, elementA);
-                }               
+                }
                 DeleteWires(pl);
-               
+
             }
-            else if (Keyboard.IsKeyDown(Key.C))
+            if (Keyboard.IsKeyDown(Key.C) || modeTool == "info")
             {                
                 foreach (Wire w2 in lc.wList)
                 {                   
