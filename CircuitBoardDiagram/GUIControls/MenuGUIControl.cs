@@ -54,7 +54,7 @@ namespace CircuitBoardDiagram.GUIControls
         private Menu menu;
 
         private MenuItem baseItem;
-        private MenuItem[] item = new MenuItem[4];
+        private MenuItem[] item = new MenuItem[5];
         public bool isProgress { get; set; } = false;
 
         public MenuGUIControl(MainWindow form, Canvas canvas, Grid grid, ListContainer lc, Menu menu)
@@ -76,17 +76,19 @@ namespace CircuitBoardDiagram.GUIControls
             item[1] = baseItem.FindName("File_Open") as MenuItem;
             item[2] = baseItem.FindName("File_Save") as MenuItem;
             item[3] = baseItem.FindName("File_Export") as MenuItem;
+            item[4] = baseItem.FindName("File_Options") as MenuItem;
 
             item[0].Click += new RoutedEventHandler(MenuItemNew_Click);
             item[1].Click += new RoutedEventHandler(MenuItemOpen_Click);
             item[2].Click += new RoutedEventHandler(MenuItemSave_Click);
             item[3].Click += new RoutedEventHandler(MenuItemExport_Click);
+            item[4].Click += new RoutedEventHandler(MenuItemOption_Click);
 
             //item = menu.Items[0];
-            baseItem = menu.FindName("Tools") as MenuItem;
+            //baseItem = menu.FindName("Tools") as MenuItem;
 
-            item[0] = baseItem.FindName("Tools_Options") as MenuItem;                                    
-            item[0].Click += new RoutedEventHandler(MenuItemOption_Click);
+            //item[0] = baseItem.FindName("Tools_Options") as MenuItem;                                    
+            //item[0].Click += new RoutedEventHandler(MenuItemOption_Click);
         }
         private void MenuItemOption_Click(object sender, RoutedEventArgs e)
         {

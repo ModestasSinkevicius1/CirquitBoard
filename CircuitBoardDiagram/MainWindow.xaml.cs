@@ -85,7 +85,7 @@ namespace CircuitBoardDiagram
             lgc.hgc = hgc;
             lgc.grid_expander = grid_expander;
 
-            lgc.LoadImages();
+            lgc.LoadImages("All");
 
             CreateListForToolButtons();
         }                   
@@ -95,6 +95,14 @@ namespace CircuitBoardDiagram
             tbuttonList.Add(button_create);
             tbuttonList.Add(button_info);
             tbuttonList.Add(button_delete);
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBoxItem typeItem = (ComboBoxItem)comboBox_elementList.SelectedItem;
+            string value = typeItem.Content.ToString();
+            
+            lgc.LoadImages(value);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -211,6 +219,6 @@ namespace CircuitBoardDiagram
                     tbutton.IsChecked = false;
                 }
             }
-        }
+        }        
     }
 }

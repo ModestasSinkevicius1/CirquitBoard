@@ -11,12 +11,14 @@ namespace CircuitBoardDiagram
         private int ID;
         private string type;
         private int connectionCount;
+        private string classElement;
 
-        public DatabaseElement(int ID, string type, int connectionCount)
+        public DatabaseElement(int ID, string type, int connectionCount, string classElement)
         {
             this.ID = ID;
             this.type = type;
             this.connectionCount = connectionCount;
+            this.classElement = classElement;
         }
 
         public int GetID()
@@ -32,6 +34,11 @@ namespace CircuitBoardDiagram
         public int GetConnectionCount()
         {
             return connectionCount;
+        }
+
+        public string GetClass()
+        {
+            return classElement;
         }
     }
 }

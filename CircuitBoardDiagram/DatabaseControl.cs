@@ -22,7 +22,7 @@ namespace CircuitBoardDiagram
             {
                 while (result.Read())
                 {
-                    DatabaseElement e = new DatabaseElement(Convert.ToInt32(result["ID"]), Convert.ToString(result["Type"]), Convert.ToInt32(result["ConnectionCount"]));
+                    DatabaseElement e = new DatabaseElement(Convert.ToInt32(result["ID"]), Convert.ToString(result["Type"]), Convert.ToInt32(result["ConnectionCount"]), Convert.ToString(result["Class"]));
                     eList.Add(e);
                 }
             }

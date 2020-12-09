@@ -27,8 +27,14 @@ namespace CircuitBoardDiagram.GUIControls
             HighlightSelectedElement(img);
         }
 
-        public void LoadImages()
+        private void DeleteImages()
         {
+            grid_expander.Children.Clear();
+        }
+
+        public void LoadImages(string filter)
+        {
+            DeleteImages();
             DatabaseControl dc = new DatabaseControl();
 
             Image img;
@@ -38,32 +44,35 @@ namespace CircuitBoardDiagram.GUIControls
 
             foreach (DatabaseElement e in dc.GetElements())
             {
-                if (i > 6)
+                if (e.GetClass() == filter || filter == "All")
                 {
-                    i = 0;
-                    y++;
+                    if (i > 6)
+                    {
+                        i = 0;
+                        y++;
+                    }
+                    img = new Image();
+                    img.Width = 22;
+                    img.Height = 22;
+                    img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + e.GetElementType() + ".png"));
+                    img.Tag = e.GetElementType();
+                    img.Stretch = Stretch.Fill;
+
+                    img.MouseLeftButtonDown += new MouseButtonEventHandler(image_MouseLeftButtonDown);
+
+
+                    Border b = new Border();
+                    b.BorderBrush = Brushes.Black;
+                    b.Child = img;
+
+
+                    Grid.SetColumn(b, i);
+                    Grid.SetRow(b, y);
+
+                    grid_expander.Children.Add(b);
+
+                    i++;
                 }
-                img = new Image();
-                img.Width = 22;
-                img.Height = 22;
-                img.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + e.GetElementType() + ".png"));
-                img.Tag = e.GetElementType();
-                img.Stretch = Stretch.Fill;
-
-                img.MouseLeftButtonDown += new MouseButtonEventHandler(image_MouseLeftButtonDown);               
-
-
-                Border b = new Border();
-                b.BorderBrush = Brushes.Black;               
-                b.Child = img;
-
-
-                Grid.SetColumn(b, i);
-                Grid.SetRow(b, y);
-
-                grid_expander.Children.Add(b);                
-
-                i++;
             }
         }
         
@@ -124,11 +133,15 @@ namespace CircuitBoardDiagram.GUIControls
 
         public void DeselectOtherElements(Image img)
         {
-            foreach(Border b in grid_expander.Children)
+            foreach(UIElement uie in grid_expander.Children)
             {
-                if(b.Child != img)
+                if (uie.GetType() != typeof(ComboBox))
                 {
-                    b.BorderThickness = new Thickness(0);
+                    Border b = uie as Border;
+                    if (b.Child != img)
+                    {
+                        b.BorderThickness = new Thickness(0);
+                    }
                 }
             }
         }

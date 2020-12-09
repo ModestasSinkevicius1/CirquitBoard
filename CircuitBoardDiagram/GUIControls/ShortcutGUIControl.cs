@@ -33,18 +33,18 @@ namespace CircuitBoardDiagram.GUIControls
         }
 
         public void UpdateText(string keys)
-        {
+        {           
             if (keys == "OnControl")
             {
                 shortcut.Content = "X" + " - " + "Delete" + "  ";
-                shortcut.Content += "W" + " - " + "Wire" + "  ";
-                shortcut.Content += "C" + " - " + "Info";
+                shortcut.Content += "W" + " - " + "Wire (while mouse on dot)" + "  ";
+                shortcut.Content += "C" + " - " + "Element info";
             }
             if(keys == "OnCanvas")
-            {
+            {               
                 shortcut.Content = "SHIFT" + " - " + "Pan canvas" + "  ";
                 shortcut.Content += "E" + " - " + "Create";
-            }
+            }            
             if (keys == "")
                 shortcut.Content = "";
         }

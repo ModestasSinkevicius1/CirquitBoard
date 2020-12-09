@@ -210,7 +210,7 @@ namespace CircuitBoardDiagram.GUIControls
                 igc.CreateElement(lgc.currentImageName);
                 dgc.CreateDot(igc.elementName, 4);
                 lgc.AddImageToCommon(lgc.currentImageName, dock_bottom);
-                igc.UpadateImage();
+                igc.UpdateImage();
             }
             else if (Keyboard.IsKeyDown(Key.E) || modeTool == "create")
             {

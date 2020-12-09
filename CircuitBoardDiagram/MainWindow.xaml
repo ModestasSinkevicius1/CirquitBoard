@@ -68,41 +68,52 @@
             <Image x:Name="image_Copy3" Width="100" Margin="0,5,0,5"/>
             <Image x:Name="image_Copy4" Width="100" Margin="0,5,0,5"/>
         </DockPanel>
-        <DockPanel HorizontalAlignment="Left" MinHeight="476" Margin="10,81,0,17" Width="172" Background="#7FA8A8A8" Grid.RowSpan="2"/>
-        <Expander x:Name="expander" Header="Element list" MinHeight="476" MinWidth="172" Margin="10,81,11,17" Grid.RowSpan="2">
-            <Grid Background="#FFE5E5E5" RenderTransformOrigin="-0.031,-0.312" x:Name="grid_expander">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="24"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="24"/>
-                </Grid.ColumnDefinitions>
-            </Grid>
-        </Expander>
-        <Menu x:Name="menu" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Width="888" Grid.ColumnSpan="2">
+        <DockPanel HorizontalAlignment="Left" MinHeight="476" Margin="10,81,0,92" Width="172" Background="#7FA8A8A8" Grid.RowSpan="2">
+            <Label x:Name="label_elementList" Content="Element list" HorizontalAlignment="Center" FontSize="16" Margin="0,35,0,0"/>
+        </DockPanel>
+
+        <ComboBox Margin="10,85,11,0" Text="General" x:Name="comboBox_elementList" Panel.ZIndex="5" Height="25" VerticalAlignment="Top" SelectionChanged="ComboBox_SelectionChanged">
+            <ComboBoxItem Content="All"/>
+            <ComboBoxItem Content="Lamp"/>
+            <ComboBoxItem Content="Resistor"/>
+            <ComboBoxItem Content="Switch"/>
+            <ComboBoxItem Content="Meter"/>
+            <ComboBoxItem Content="Transformer"/>
+            <ComboBoxItem Content="Ground"/>
+            <ComboBoxItem Content="Other"/>
+        </ComboBox>
+        <Grid Background="#FFE5E5E5" x:Name="grid_expander" Margin="10,157,11,0" Height="571" VerticalAlignment="Top" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="24"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="24"/>
+                <ColumnDefinition Width="24"/>
+                <ColumnDefinition Width="24"/>
+                <ColumnDefinition Width="24"/>
+                <ColumnDefinition Width="24"/>
+                <ColumnDefinition Width="24"/>
+                <ColumnDefinition Width="24"/>
+            </Grid.ColumnDefinitions>
+        </Grid>
+        <Menu x:Name="menu" Height="32" VerticalAlignment="Top" Grid.ColumnSpan="2" Margin="0,0,79,0">
             <MenuItem x:Name="File" Header="File" Height="27" Width="45" Padding="11.5,0,0,0">
                 <MenuItem x:Name="File_New" Header="New"/>
                 <MenuItem x:Name="File_Open" Header="Open"/>
@@ -110,9 +121,10 @@
                 <MenuItem x:Name="File_Save" Header="Save"/>
                 <Separator/>
                 <MenuItem x:Name="File_Export" Header="Export"/>
+                <Separator/>
+                <MenuItem x:Name="File_Options" Header="Options"/>
             </MenuItem>
-            <MenuItem x:Name="Tools" Header="Tools" Height="27" Width="45" Padding="6,0,0,0">
-                <MenuItem x:Name="Tools_Options" Header="Options"/>
+            <MenuItem x:Name="About" Header="About" Height="27" Width="45" Padding="6,0,0,0">
             </MenuItem>
         </Menu>
         <Border BorderBrush="Black" BorderThickness="1" Height="29" VerticalAlignment="Top" MinWidth="600" MaxWidth="4300" Margin="38,177,79,0" Grid.Column="1" ClipToBounds="True">
@@ -134,26 +146,31 @@
             </Grid>
         </Border>
         <Label x:Name="label" Content="Functions:" HorizontalAlignment="Left" Margin="10,32,0,0" VerticalAlignment="Top" Height="44" Width="172" FontSize="24"/>
-        <Label x:Name="shortcut_hint" Content="" HorizontalAlignment="Left" Margin="127,32,0,0" VerticalAlignment="Top" FontSize="24" Width="10" Height="42"/>
+        <Label x:Name="shortcut_hint" Content="" HorizontalAlignment="Left" Margin="127,32,0,0" VerticalAlignment="Top" FontSize="24" Width="640" Height="42" Grid.ColumnSpan="2"/>
 
-        <Grid Grid.Column="1" HorizontalAlignment="Left" Height="96" Margin="1,81,0,0" VerticalAlignment="Top" Width="695">
-            <Separator HorizontalAlignment="Left" Height="86" Margin="0" VerticalAlignment="Top" Width="119"/>
+        <Grid Grid.Column="1" Height="96" Margin="1,81,78,0" VerticalAlignment="Top">
+            <Separator HorizontalAlignment="Left" Height="86" Margin="0" VerticalAlignment="Top" Width="141"/>
             <Label x:Name="label1" Content="Tools" HorizontalAlignment="Left" FontSize="24" Margin="0,0,0,57"/>
-            <ToggleButton x:Name="button_create" HorizontalAlignment="Left" Margin="0,53,0,0" VerticalAlignment="Top" Width="37" Height="37" Click="button_create_Click" Background="White" >
+            <ToggleButton x:Name="button_create" ToolTip="Enables adding new elements" HorizontalAlignment="Left" Margin="10,53,0,0" VerticalAlignment="Top" Width="37" Height="37" Click="button_create_Click" Background="White" >
                 <StackPanel>
                     <Image Source="D:\GitHub\CirquitBoard\CircuitBoardDiagram\bin\Debug\Custom\buttonIcons\add.ico"/>
                 </StackPanel>
             </ToggleButton>
-            <ToggleButton x:Name="button_info" HorizontalAlignment="Left" Margin="42,53,0,0" VerticalAlignment="Top" Width="37" Height="37" Click="button_info_Click" Background="White">
+            <ToggleButton x:Name="button_info" ToolTip="Enables showing elements or wire status" HorizontalAlignment="Left" Margin="52,53,0,0" VerticalAlignment="Top" Width="37" Height="37" Click="button_info_Click" Background="White">
                 <StackPanel>
                     <Image Source="D:\GitHub\CirquitBoard\CircuitBoardDiagram\bin\Debug\Custom\buttonIcons\info.ico"/>
                 </StackPanel>
             </ToggleButton>
-            <ToggleButton x:Name="button_delete" HorizontalAlignment="Left" Margin="84,53,0,0" VerticalAlignment="Top" Width="37" Height="37" Click="button_delete_Click" Background="White">
+            <ToggleButton x:Name="button_delete" ToolTip="Enables deleting selected element or wire" HorizontalAlignment="Left" Margin="94,53,0,0" VerticalAlignment="Top" Width="37" Height="37" Click="button_delete_Click" Background="White">
                 <StackPanel>
                     <Image Source="D:\GitHub\CirquitBoard\CircuitBoardDiagram\bin\Debug\Custom\buttonIcons\delete.ico"/>
                 </StackPanel>
             </ToggleButton>
+            <Rectangle Panel.ZIndex="-1" Height="96" VerticalAlignment="Top">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="#FFD4D4D4"/>
+                </Rectangle.Fill>
+            </Rectangle>
         </Grid>
     </Grid>
 </Window>

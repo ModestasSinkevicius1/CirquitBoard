@@ -205,8 +205,16 @@ namespace CircuitBoardDiagram.GUIControls
             mngc.isProgress = true;
 
             Image r = new Image();
-            r.Height = 50;
-            r.Width = 50;
+            if (currentImageName != "transformer")
+            {
+                r.Height = 50;
+                r.Width = 50;
+            }
+            else
+            {
+                r.Height = 100;
+                r.Width = 100;
+            }
             r.Source = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "Circuit element images/" + currentImageName + ".png"));
             r.Tag = currentImageName;           
 
@@ -289,7 +297,7 @@ namespace CircuitBoardDiagram.GUIControls
             canvas.Children.Remove(draggableControl);
         }
         
-        public void UpadateImage()
+        public void UpdateImage()
         {                              
             SnapToClosestCell(tmpImage);
             lc.ec.UpdatePostitionValues(tmpImage.Tag.ToString());
@@ -315,7 +323,7 @@ namespace CircuitBoardDiagram.GUIControls
             double length = 50;
 
             double widthLength = grid.ColumnDefinitions[0].Width.Value;
-            double heightLength = grid.RowDefinitions[0].Height.Value;
+            double heightLength = grid.RowDefinitions[0].Height.Value;                          
 
             if (widthLength < length)
             {
@@ -392,7 +400,7 @@ namespace CircuitBoardDiagram.GUIControls
             }
 
             cellWidth = grid.ColumnDefinitions[(int)cellX].Width.Value;
-            cellHeight = grid.RowDefinitions[(int)cellY].Height.Value;
+            cellHeight = grid.RowDefinitions[(int)cellY].Height.Value;                       
 
             Canvas.SetLeft(draggableControl, 0);
             Canvas.SetTop(draggableControl, 0);

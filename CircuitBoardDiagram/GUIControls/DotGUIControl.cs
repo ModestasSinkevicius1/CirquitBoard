@@ -155,7 +155,8 @@ namespace CircuitBoardDiagram
                 lc.ec.AddDot(name, d);                
                 lc.dList.Add(d);               
 
-                direction = direction == true ? false : true;
+                if(RemoveNumbers(name) != "transformer")
+                    direction = direction == true ? false : true;
                 if (i < 1)
                 {
                     oposite = 1;
@@ -207,38 +208,81 @@ namespace CircuitBoardDiagram
         }
 
         public void UpadateDotsLocation(Image draggableControl, ElementControl ec)
-        {
+        {            
             List<Dot> dList = ec.GetDots(draggableControl.Tag.ToString());
 
             //MessageBox.Show(dList.Count.ToString());
 
-            double x = draggableControl.RenderTransform.Value.OffsetX+17;
-            double y = draggableControl.RenderTransform.Value.OffsetY+17;           
+            double x = draggableControl.RenderTransform.Value.OffsetX + 17;
+            double y = draggableControl.RenderTransform.Value.OffsetY + 17;
 
             double distanceX = draggableControl.Width / 2;
-            double distanceY = draggableControl.Height / 2;           
+            double distanceY = draggableControl.Height / 2;
 
-            for (int i = 0; i < dList.Count; i++)
-            {                
-                if (i <= 0)
+            if (RemoveNumbers(draggableControl.Tag.ToString()) == "transformer")
+            {
+                x = draggableControl.RenderTransform.Value.OffsetX + 43;
+                y = draggableControl.RenderTransform.Value.OffsetY + 43;
+
+                distanceX = draggableControl.Width / 2;
+                distanceY = draggableControl.Height / 2;
+
+                for (int i = 0; i < dList.Count; i++)
                 {
-                    dList[i].GetDot().RenderTransform = new TranslateTransform(x + distanceX, y);
+                    if (i <= 0)
+                    {
+                        dList[i].GetDot().RenderTransform = new TranslateTransform(x + distanceX , y-(distanceY/2));
+                    }
+                    else if (i <= 1)
+                    {
+                        dList[i].GetDot().RenderTransform = new TranslateTransform(x + distanceX, y + (distanceY/2));
+                    }
+                    else if (i <= 2)
+                    {
+                        dList[i].GetDot().RenderTransform = new TranslateTransform(x - distanceX, y-(distanceY/2));
+                    }
+                    else
+                    {
+                        dList[i].GetDot().RenderTransform = new TranslateTransform(x - distanceX, y + (distanceY/2));
+                    }
+                    dList[i].GetDot().Visibility = Visibility.Visible;
                 }
-                else if (i <= 1)
+            }
+            else
+            {
+                for (int i = 0; i < dList.Count; i++)
                 {
-                    dList[i].GetDot().RenderTransform = new TranslateTransform(x, y + distanceY);
+                    if (i <= 0)
+                    {
+                        dList[i].GetDot().RenderTransform = new TranslateTransform(x + distanceX, y);
+                    }
+                    else if (i <= 1)
+                    {
+                        dList[i].GetDot().RenderTransform = new TranslateTransform(x, y + distanceY);
+                    }
+                    else if (i <= 2)
+                    {
+                        dList[i].GetDot().RenderTransform = new TranslateTransform(x - distanceX, y);
+                    }
+                    else
+                    {
+                        dList[i].GetDot().RenderTransform = new TranslateTransform(x, y - distanceY);
+                    }
+                    dList[i].GetDot().Visibility = Visibility.Visible;
                 }
-                else if (i <= 2)
+            }
+        }
+        private string RemoveNumbers(string name)
+        {
+            foreach (char w in name)
+            {
+                if (Char.IsNumber(w))
                 {
-                    dList[i].GetDot().RenderTransform = new TranslateTransform(x - distanceX, y);
+                    name = name.Remove(name.Length - 1);
                 }
-                else
-                {
-                    dList[i].GetDot().RenderTransform = new TranslateTransform(x, y - distanceY);
-                }
-                dList[i].GetDot().Visibility = Visibility.Visible;
             }
 
+            return name;
         }
     }
 }
